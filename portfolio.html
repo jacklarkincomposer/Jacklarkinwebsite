@@ -1,445 +1,681 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portfolio — Jack Larkin Composer</title>
-  <meta name="description" content="Portfolio of original scores, rescores, and compositions by Jack Larkin. Film, games, and TV music.">
-  <link rel="icon" href="assets/images/logo.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://i.ytimg.com">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <style>
-    /* ════════════════════════════
-       PORTFOLIO GALLERY (adapted from your component)
-    ════════════════════════════ */
-    #galleryView { display:block; padding:0; }
-    .gal-rail { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:980px; margin:0 auto; padding:0 24px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio — Jack Larkin Composer</title>
+<meta name="description" content="Portfolio of original scores, rescores, and compositions by Jack Larkin. Film, games, and TV music.">
+<link rel="icon" href="assets/images/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+/* ── Audio player overrides to inherit site glass theme ── */
+:root {
+  --accent:         #d4a84b;
+  --accent-dim:     rgba(212,168,75,0.18);
+  --bg-track:       rgba(255,255,255,0.04);
+  --bg-hover:       rgba(255,255,255,0.07);
+  --bg-active:      rgba(255,255,255,0.10);
+  --border-active:  rgba(212,168,75,0.50);
+  --bar-track:      rgba(255,255,255,0.12);
+  --bar-filled:     rgba(255,255,255,0.85);
+  --text-primary:   #f0f0f0;
+  --text-secondary: rgba(255,255,255,0.42);
+  --art-size:       60px;
+  --radius-card:    10px;
+  --radius-art:     7px;
+}
 
-    .gal-card {
-      cursor:pointer; border-radius:10px; overflow:hidden;
-      background:rgba(255,255,255,0.06);
-      -webkit-tap-highlight-color:transparent;
-      transition:transform 0.18s ease, box-shadow 0.18s ease;
-    }
-    .gal-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.5); }
-    .gal-card:active { transform:scale(0.96); opacity:0.8; }
+.player-shell {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
 
-    .gal-thumb { position:relative; width:100%; padding-bottom:56.25%; background:#111; overflow:hidden; }
-    .gal-thumb img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity 0.3s; }
-    .gal-thumb img.loaded { opacity:1; }
-    .gal-play-overlay {
-      position:absolute; top:0; left:0; right:0; bottom:0;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(0,0,0,0.28); transition:background 0.2s;
-    }
-    .gal-card:hover .gal-play-overlay { background:rgba(0,0,0,0.15); }
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-card);
+}
+.vol-group { display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+.vol-icon { flex-shrink:0; cursor:pointer; opacity:0.45; line-height:0; transition:opacity 0.2s; }
+.vol-icon:hover { opacity:0.85; }
+.vol-icon.muted { opacity:0.25; }
 
-    .gal-source-badge {
-      position:absolute; bottom:8px; right:8px;
-      background:rgba(0,0,0,0.7); border:1px solid rgba(212,168,75,0.3);
-      border-radius:4px; padding:2px 7px;
-      font-family:var(--font-heading); font-size:0.6rem; font-weight:700;
-      letter-spacing:0.08em; color:var(--gold); text-transform:uppercase;
-    }
+input[type=range] {
+  flex:1; -webkit-appearance:none; appearance:none;
+  height:2px; border-radius:99px; background:var(--bar-track);
+  cursor:pointer; outline:none; min-width:0;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:12px; height:12px;
+  border-radius:50%; background:#fff; cursor:pointer; transition:transform 0.15s;
+}
+input[type=range]:hover::-webkit-slider-thumb { transform:scale(1.3); }
+input[type=range]::-moz-range-thumb {
+  width:12px; height:12px; border-radius:50%; border:none; background:#fff; cursor:pointer;
+}
 
-    .gal-card-meta { padding:8px 10px 12px; }
-    .gal-card-title {
-      font-family:var(--font-heading); font-size:0.78rem; font-weight:600; line-height:1.35;
-      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; color:#eee;
-    }
+.vol-pct { font-size:0.72rem; color:var(--text-secondary); min-width:34px; text-align:right; font-variant-numeric:tabular-nums; }
 
-    @keyframes galShimmer { from{background-position:-400px 0} to{background-position:400px 0} }
-    .gal-skel {
-      border-radius:4px; height:12px;
-      background:linear-gradient(90deg,#1e1e1e 25%,#2a2a2a 50%,#1e1e1e 75%);
-      background-size:800px 100%; animation:galShimmer 1.4s infinite linear;
-    }
-    .gal-skel-short { width:55%; margin-top:5px; height:9px; }
+.ap-ctrl-btn {
+  flex-shrink:0; background:none;
+  border:1px solid rgba(255,255,255,0.12); border-radius:6px;
+  color:var(--text-secondary); font-size:0.68rem; font-weight:600;
+  font-family:var(--font-heading); letter-spacing:0.05em;
+  padding:4px 10px; cursor:pointer;
+  transition:background 0.15s, border-color 0.15s, color 0.15s; white-space:nowrap;
+}
+.ap-ctrl-btn:hover { border-color:rgba(255,255,255,0.4); color:#fff; }
+.ap-ctrl-btn.on { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
 
-    /* ── Player View ── */
-    #playerView { display:none; flex-direction:column; width:100%; background:#0a0a0f; }
+.filter-section {
+  display:flex; flex-direction:column; gap:6px; padding:8px 12px;
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.07); border-radius:var(--radius-card);
+}
+.filter-group-label { font-size:0.6rem; font-weight:700; letter-spacing:0.1em; color:rgba(255,255,255,0.22); text-transform:uppercase; }
+.filter-row { display:flex; flex-wrap:nowrap; gap:5px; overflow-x:auto; padding-bottom:3px; scrollbar-width:none; }
+.filter-row::-webkit-scrollbar { display:none; }
 
-    .gal-player-bar {
-      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-      padding:10px 14px; background:rgba(0,0,0,0.75);
-      border-bottom:1px solid rgba(255,255,255,0.06);
-      position:relative; z-index:2;
-    }
-    .gal-ctrl-btn {
-      display:flex; align-items:center; gap:6px;
-      background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.2);
-      border-radius:8px; color:#fff; font-family:var(--font-heading);
-      font-size:0.74rem; font-weight:600; letter-spacing:0.04em;
-      padding:9px 14px; cursor:pointer; min-height:42px;
-      -webkit-tap-highlight-color:transparent;
-      transition:background 0.15s, border-color 0.15s;
-    }
-    .gal-ctrl-btn:hover { background:rgba(255,255,255,0.16); }
-    .gal-ctrl-btn.active { background:rgba(212,168,75,0.12); border-color:var(--gold-mid); }
-    .gal-info-dot {
-      width:6px; height:6px; border-radius:50%;
-      background:var(--gold); box-shadow:0 0 6px var(--gold);
-      display:none; flex-shrink:0;
-    }
-    .gal-ctrl-btn.active .gal-info-dot { display:block; }
-    .gal-now-playing {
-      margin-left:auto; font-size:0.68rem; color:rgba(255,255,255,0.35);
-      font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;
-    }
+.filter-pill {
+  font-size:0.68rem; font-weight:600; letter-spacing:0.05em;
+  padding:3px 10px; border-radius:99px; border:1px solid rgba(255,255,255,0.12);
+  color:var(--text-secondary); cursor:pointer; background:none;
+  transition:all 0.15s; white-space:nowrap; flex-shrink:0;
+  font-family:var(--font-heading);
+}
+.filter-pill:hover  { border-color:rgba(255,255,255,0.35); color:#fff; }
+.filter-pill.active { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+.filter-pill.album        { border-color:rgba(180,120,255,0.3); color:rgba(200,160,255,0.6); }
+.filter-pill.album:hover  { border-color:rgba(200,160,255,0.6); color:rgba(220,190,255,0.9); }
+.filter-pill.album.active { border-color:rgba(200,160,255,0.8); color:rgba(220,190,255,1); background:rgba(180,120,255,0.15); }
 
-    .gal-player-stage { position:relative; display:flex; flex-direction:row; align-items:stretch; overflow:hidden; }
-    .gal-video-col { flex:1 1 auto; min-width:0; }
-    .gal-video-ratio { position:relative; width:100%; padding-bottom:56.25%; background:#000; }
-    .gal-video-ratio iframe, .gal-video-ratio video { position:absolute; top:0; left:0; width:100%; height:100%; border:0; }
-    .gal-video-ratio video { object-fit:contain; background:#000; }
+.track-wrap {
+  display:flex; flex-direction:column;
+  border-radius:var(--radius-card); overflow:hidden;
+  border:1px solid transparent; transition:border-color 0.2s;
+}
+.track-wrap.active  { border-color:var(--border-active); }
+.track-wrap.hidden  { display:none; }
+@keyframes borderPulse { 0%,100%{border-color:rgba(212,168,75,0.50)} 50%{border-color:rgba(212,168,75,0.18)} }
+.track-wrap.active.playing { animation:borderPulse 2.2s ease-in-out infinite; }
 
-    .gal-info-wing {
-      flex-shrink:0; width:0; overflow:hidden;
-      transition:width 0.42s cubic-bezier(0.4,0,0.2,1);
-      background:rgba(14,14,22,0.98);
-      border-left:1px solid rgba(255,255,255,0.09);
-    }
-    .gal-info-wing.open { width:300px; }
+.track {
+  display:grid; grid-template-columns:var(--art-size) 1fr auto;
+  align-items:center; gap:14px; padding:13px 15px;
+  background:var(--bg-track); cursor:pointer; user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:background 0.2s, transform 0.15s;
+}
+.track:hover              { background:var(--bg-hover); transform:translateY(-1px); }
+.track-wrap.active .track { background:var(--bg-active); transform:none; }
 
-    .gal-wing-scroll {
-      width:300px; padding:20px 18px 28px;
-      display:flex; flex-direction:column; gap:12px;
-      overflow-y:auto; max-height:100%;
-      scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.12) transparent;
-    }
-    @keyframes galWingReveal { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:translateX(0)} }
-    .gal-info-wing.open .gal-wing-scroll { animation:galWingReveal 0.3s 0.18s ease both; }
+.shortcut-drawer {
+  display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap;
+  background:rgba(255,255,255,0.04); padding:0 15px;
+  max-height:0; overflow:hidden; transition:max-height 0.28s ease, padding 0.28s ease;
+}
+.track-wrap.active .shortcut-drawer { max-height:52px; padding:9px 15px; }
+.sc {
+  display:inline-flex; align-items:center; gap:5px;
+  background:none; border:1px solid rgba(255,255,255,0.10); border-radius:6px;
+  padding:3px 9px; cursor:pointer; transition:border-color 0.15s, background 0.15s;
+  white-space:nowrap; color:inherit; font:inherit;
+}
+.sc:hover { border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.06); }
+.sc-key { font-size:0.62rem; font-weight:700; letter-spacing:0.04em; color:var(--accent); font-family:ui-monospace,"SF Mono",monospace; background:rgba(212,168,75,0.12); border-radius:3px; padding:1px 5px; }
+.sc-label { font-size:0.65rem; color:var(--text-secondary); letter-spacing:0.02em; }
+.sc-sep { width:3px; height:3px; border-radius:50%; background:rgba(255,255,255,0.15); flex-shrink:0; }
 
-    .gal-wing-title { font-family:var(--font-heading); font-size:0.92rem; font-weight:700; line-height:1.4; color:#fff; }
-    .gal-wing-divider { height:1px; background:linear-gradient(90deg,rgba(212,168,75,0.2),transparent); flex-shrink:0; }
-    .gal-wing-desc { font-size:0.8rem; line-height:1.8; color:rgba(255,255,255,0.62); font-weight:300; }
-    .gal-wing-desc p+p { margin-top:10px; }
-    .gal-wing-loading { display:flex; flex-direction:column; gap:8px; }
-    .gal-wing-loading .gal-skel { height:11px; }
-    .gal-wing-loading .gal-skel:nth-child(2) { width:88%; }
-    .gal-wing-loading .gal-skel:nth-child(3) { width:72%; }
+.art { position:relative; width:var(--art-size); height:var(--art-size); border-radius:var(--radius-art); overflow:hidden; flex-shrink:0; background:rgba(255,255,255,0.06); }
+.art img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.4s ease, filter 0.25s; }
+.track:hover .art img { transform:scale(1.07); }
+.track-wrap.active .track .art img { filter:brightness(0.55); }
+.art-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+.art-placeholder svg { opacity:0.25; }
 
-    .gal-ext-link {
-      display:flex; align-items:center; justify-content:center; gap:7px;
-      padding:9px 14px; background:rgba(0,0,0,0.5);
-      border-top:1px solid rgba(255,255,255,0.05);
-      text-decoration:none; color:rgba(255,255,255,0.35);
-      font-size:0.68rem; font-family:var(--font-heading); font-weight:600; letter-spacing:0.04em;
-      transition:color 0.15s, background 0.15s;
-    }
-    .gal-ext-link:hover { color:rgba(255,255,255,0.75); background:rgba(255,255,255,0.04); }
-    .gal-ext-link.hidden { display:none; }
+.btn-play { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; border:none; background:transparent; cursor:pointer; border-radius:var(--radius-art); transition:background 0.2s; }
+.btn-play:hover { background:rgba(0,0,0,0.28); }
+.spinner { position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.45); border-radius:var(--radius-art); pointer-events:none; }
+.track-wrap.loading .spinner { display:flex; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.spinner svg { animation:spin 0.75s linear infinite; }
 
-    /* ── Sound Design Portfolio link ── */
-    .sd-portfolio-link {
-      text-align:center; padding:24px 0 10px;
-    }
-    .sd-portfolio-link a {
-      font-family:var(--font-heading); font-size:0.75rem; font-weight:600;
-      letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted);
-      border:1px solid var(--border-light); padding:8px 24px;
-      transition:all 0.2s ease;
-    }
-    .sd-portfolio-link a:hover { border-color:var(--gold-mid); color:var(--gold); }
+.info { display:flex; flex-direction:column; gap:6px; min-width:0; }
+.title-row { display:flex; align-items:baseline; gap:9px; min-width:0; }
+.track-num { font-size:0.68rem; font-weight:600; letter-spacing:0.08em; color:var(--text-secondary); flex-shrink:0; transition:color 0.2s; }
+.track-wrap.active .track-num { color:var(--accent); }
+.track-title { font-size:0.88rem; font-weight:500; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.track-wrap.active .track-title { color:#fff; }
+.track-desc { font-size:0.72rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tag-row { display:flex; flex-wrap:wrap; gap:4px; }
+.tag { font-size:0.62rem; font-weight:600; letter-spacing:0.06em; padding:2px 7px; border-radius:99px; border:1px solid rgba(255,255,255,0.14); color:var(--text-secondary); }
+.tag.album-tag { border-color:rgba(180,120,255,0.25); color:rgba(200,160,255,0.6); }
+.track-wrap.active .tag           { border-color:rgba(212,168,75,0.3);  color:rgba(212,168,75,0.75); }
+.track-wrap.active .tag.album-tag { border-color:rgba(200,160,255,0.5); color:rgba(220,190,255,0.9); }
 
-    /* ── Tracks embed ── */
-    .tracks-section {
-      max-width:980px; margin:0 auto; padding:20px 24px 30px;
-    }
+.progress { position:relative; display:flex; align-items:center; height:18px; cursor:pointer; }
+.progress::before { content:''; position:absolute; left:0; right:0; height:2px; background:var(--bar-track); border-radius:99px; pointer-events:none; }
+.progress-fill { position:relative; z-index:1; height:2px; width:0%; background:var(--bar-filled); border-radius:99px; pointer-events:none; transition:width 0.1s linear; }
+.track-wrap.active .progress-fill { background:var(--accent); }
+.progress-fill::after { content:''; position:absolute; right:-4px; top:50%; transform:translateY(-50%) scale(0); width:9px; height:9px; border-radius:50%; background:#fff; transition:transform 0.15s; }
+.progress:hover .progress-fill::after { transform:translateY(-50%) scale(1); }
+.track-wrap.active .progress:hover .progress-fill::after { background:var(--accent); }
 
-    @media (max-width:640px) {
-      .gal-rail { grid-template-columns:1fr; gap:10px; padding:0 16px; }
-      .gal-player-bar { padding:8px 10px; gap:6px; }
-      .gal-ctrl-btn { font-size:0.7rem; padding:8px 11px; min-height:38px; }
-      .gal-now-playing { display:none; }
-      .gal-player-stage { flex-direction:column; }
-      .gal-info-wing {
-        position:static !important; width:100% !important;
-        max-height:0; overflow:hidden; border-left:none;
-        border-top:2px solid rgba(212,168,75,0.25);
-        transition:max-height 0.45s cubic-bezier(0.4,0,0.2,1);
-        background:rgba(12,12,22,0.98);
-      }
-      .gal-info-wing.open { max-height:55vh; }
-      .gal-wing-scroll { width:100%; max-height:55vh; padding:16px 16px 28px; }
-    }
-    @media (min-width:541px) and (max-width:750px) { .gal-rail { grid-template-columns:repeat(2,1fr); } }
-    @media (min-width:641px) and (max-width:860px) { .gal-info-wing.open { width:250px; } .gal-wing-scroll { width:250px; } }
-  </style>
+.duration { font-size:0.75rem; color:var(--text-secondary); font-variant-numeric:tabular-nums; min-width:40px; text-align:right; cursor:pointer; transition:color 0.2s; flex-shrink:0; }
+.duration:hover { color:var(--accent); }
+.track-wrap.active .duration { color:rgba(255,255,255,0.65); }
+
+@media (max-width:480px) {
+  :root { --art-size:52px; }
+  .track { padding:11px 12px; gap:11px; }
+  .track-desc { display:none; }
+  .ap-ctrl-btn { padding:4px 7px; }
+  .sc-sep { display:none; }
+}
+</style>
 </head>
 <body>
-  <div class="site-bg"></div>
 
-  <div class="announce-bar">
-    <span class="announce-bar__text">Commissions Open!</span>
-    <a href="contact.html" class="announce-bar__link">Get in Touch</a>
+<div class="site-bg"></div>
+
+<!-- Announcement bar -->
+<div class="announce-bar" id="announceBar">
+  <span class="announce-bar__text">Commissions Open!</span>
+  <a href="contact.html" class="announce-bar__link">Get in Touch</a>
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__brand">
+    <img src="assets/images/logo.png" alt="Jack Larkin Composer" class="nav__logo">
+    <span class="nav__brand-text">Jack Larkin Composer</span>
+  </a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li class="nav__dropdown">
+      <a href="#" class="nav__dropdown-toggle">
+        Links
+        <span class="nav__dropdown-chevron">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </a>
+      <ul class="nav__dropdown-menu">
+        <li><a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a></li>
+      </ul>
+    </li>
+  </ul>
+  <a href="contact.html" class="nav__cta">Get in Touch</a>
+  <button class="nav__toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav__mobile-panel" id="mobilePanel">
+  <button class="nav__mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="services.html">Services</a>
+  <a href="contact.html">Contact</a>
+  <span class="mobile-links-label">Links</span>
+  <div class="mobile-links-group">
+    <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a>
   </div>
+</div>
 
-  <nav class="nav">
-    <a href="index.html" class="nav__brand">
-      <img src="assets/images/logo.png" alt="Jack Larkin Composer" class="nav__logo">
-      <span class="nav__brand-text">Jack Larkin Composer</span>
+<!-- Page title -->
+<div class="page-hero">
+  <div class="page-title"><h1>Portfolio</h1></div>
+</div>
+
+<div class="section"><h2 class="section-heading">Scores</h2></div>
+
+<!-- Gallery -->
+<div class="gal-rail" id="galRail"></div>
+
+<!-- Sound Design link -->
+<div class="sd-portfolio-link">
+  <a href="sound-design.html">Sound Design Portfolio</a>
+</div>
+
+<div class="section"><div class="divider"></div></div>
+
+<!-- Tracks section -->
+<div class="section" id="tracks">
+  <h2 class="section-heading">Tracks</h2>
+</div>
+<div class="tracks-section">
+  <p class="content-text" style="margin-bottom:20px;">
+    A selection of original compositions available to listen to.
+    Visit <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a> for the full catalogue.
+  </p>
+  <div class="audio-player-shell">
+    <div class="player-shell" id="playerShell">
+      <div id="trackList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p class="footer__email">Contact – <a href="mailto:jacklarkincomposer@gmail.com">jacklarkincomposer@gmail.com</a></p>
+  <div class="footer__socials">
+    <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
     </a>
-    <ul class="nav__links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="portfolio.html">Portfolio</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <a href="contact.html" class="nav__cta">Get in Touch</a>
-    <button class="nav__toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
-  </nav>
-  <div class="nav__mobile-panel" id="mobilePanel">
-    <button class="nav__mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
-    <a href="index.html">Home</a><a href="about.html">About</a><a href="portfolio.html">Portfolio</a><a href="services.html">Services</a><a href="contact.html">Contact</a>
-  </div>
-
-  <div class="page-hero">
-    <div class="page-title"><h1>Portfolio</h1></div>
-  </div>
-
-  <div class="section"><h2 class="section-heading">Scores</h2></div>
-
-  <!-- Gallery -->
-  <div id="galleryView">
-    <div class="gal-rail" id="galRail"></div>
-  </div>
-
-  <!-- Player -->
-  <div id="playerView">
-    <div class="gal-player-bar">
-      <button class="gal-ctrl-btn" id="backBtn" type="button">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        BACK
-      </button>
-      <button class="gal-ctrl-btn" id="infoToggle" type="button">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5" stroke-width="3"/><line x1="12" y1="11" x2="12" y2="16"/></svg>
-        INFO
-        <span class="gal-info-dot"></span>
-      </button>
-      <span class="gal-now-playing" id="nowPlaying"></span>
-    </div>
-    <div class="gal-player-stage" id="playerStage">
-      <div class="gal-video-col">
-        <div class="gal-video-ratio" id="videoRatio"></div>
-      </div>
-      <div class="gal-info-wing" id="infoWing">
-        <div class="gal-wing-scroll" id="wingScroll">
-          <div class="gal-wing-title" id="wingTitle"></div>
-          <div class="gal-wing-divider"></div>
-          <div id="wingBody">
-            <div class="gal-wing-loading"><div class="gal-skel"></div><div class="gal-skel"></div><div class="gal-skel"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <a class="gal-ext-link hidden" id="extOpenLink" href="#" target="_blank" rel="noopener">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      OPEN IN YOUTUBE FOR FULLSCREEN
+    <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener" aria-label="SoundCloud">
+      <svg viewBox="0 0 24 24"><path d="M1 18v-3m3 4V14m3 6V11m3 9V8m3 12V4m3 16V7m3 13v-6m3 6v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </a>
+    <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener" aria-label="YouTube">
+      <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" fill="none" stroke="currentColor" stroke-width="1.5"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48" fill="currentColor"/></svg>
     </a>
   </div>
+  <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
+</footer>
 
-  <div class="sd-portfolio-link">
-    <a href="#">Sound Design Portfolio</a>
-  </div>
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  'use strict';
 
-  <div class="section"><div class="divider"></div></div>
+  /* ── Video data ── */
+  var VIDEOS = [
+    {
+      type:'youtube', ytId:'SgOkNH9-5zM',
+      title:'Blood Message – Official Reveal Trailer | Full Rescore (2025)',
+      badge:'Rescore',
+      desc:['Blood Message – Official Reveal Trailer | Original Music Rescore (unofficial)','All rights to Blood Message belong to their respective owners. This channel is not affiliated with 24 Entertainment or NetEase Games.','The original music has been completely replaced with new, independently composed and produced music, while some original dialogue and sound effects remain.','Copyright / Fair Use Notice: This upload may contain copyrighted material used under an assertion of fair use for non‑commercial, transformative purposes.','Hope you enjoy this rescore!']
+    },
+    {
+      type:'youtube', ytId:'cSebHnDfkJo',
+      title:'Between Places – Cinematic Car Spec Ad Rescore',
+      badge:'Rescore',
+      desc:['Rescore and sound redesign of "Between Places | Cinematic Car Spec Ad | Sony FX3." All rights to the original film belong to the original filmmakers.','The original music and most audio have been replaced with new, independently composed music and original sound design.','Copyright / Fair Use Notice: All copyrighted material remains the property of its respective owners. No copyright infringement is intended.','Hope you enjoy this rescore and sound redesign!']
+    },
+    {
+      type:'youtube', ytId:'Rke-PiQnqLU',
+      title:'Puss in Boots: The Last Wish – Stone Giant Fight | Original Rescore',
+      badge:'Rescore',
+      desc:['Puss in Boots: The Last Wish – Stone Giant Fight | Original Music Rescore (unofficial)','My 1st year university project — a rescore of the iconic Stone Giant fight scene. The original music has been completely replaced with my own independently composed and produced score.','All rights to Puss in Boots: The Last Wish belong to DreamWorks Animation, Universal Pictures, and any related entities.','Copyright / Fair Use Notice: This upload may contain copyrighted material used under an assertion of fair use.','Hope you enjoy this rescore!']
+    },
+    {
+      type:'youtube', ytId:'OyuPVvGmgXg',
+      title:'Spider-Man: Into the Spider-Verse – Official Trailer | Full Rescore',
+      badge:'Rescore',
+      desc:['Spider-Man: Into the Spider-Verse – Official Trailer | Original Music Rescore (unofficial)','All rights belong to Sony Pictures, Sony Pictures Animation, Marvel Entertainment, and any related entities.','The original music has been completely replaced with new, independently composed and produced music. Intended as a transformative work for artistic practice.','Copyright / Fair Use Notice: All copyrighted material remains the property of its respective owners.','Hope you enjoy this rescore!']
+    },
+    {
+      type:'youtube', ytId:'zTgk1UZA76k',
+      title:'Avatar: The Way of Water – Official Trailer | Full Rescore (2022)',
+      badge:'Rescore',
+      desc:['Avatar: The Way of Water – Official Trailer | Original Music Rescore (unofficial)','All rights belong to James Cameron, 20th Century Studios, Disney, and any related entities.','The original music has been completely replaced with new, independently composed and produced music.','Copyright / Fair Use Notice: This upload may contain copyrighted material used under an assertion of fair use for non‑commercial, transformative purposes.','Hope you enjoy this rescore!']
+    },
+    {
+      type:'youtube', ytId:'tgMDNLQSBj0',
+      title:'The Witcher 3: Wild Hunt – Original Inspired Soundtrack | Dark Slavic Folk',
+      badge: null,
+      desc:['The Witcher 3: Wild Hunt – Original Music | Inspired Soundtrack (unofficial)','An original piece of music I composed inspired by the soundtrack of The Witcher 3: Wild Hunt (2015). After being completely captivated by the raw, dark Slavic folk sound created by Marcin Przybyłowicz, Mikołaj Stroiński, Percival Schuttenbach, and Piotr Musiał, I wanted to create something in my own take on the style.','I focused on emulating the traditional Slavic folk vocal style and layered an intimate cello part at the opening to capture that dark, raw feeling.','All rights to The Witcher 3: Wild Hunt belong to CD Projekt Red. This is an original, fan-made composition — not a reproduction of the original music.','Hope you enjoy!']
+    },
+    {
+      type:'cloudflare',
+      src:'https://cdn.jacklarkincomposer.co.uk/Videos/Piper%20-%20Jack%20Larkin%20(%20film%20and%20videogames%20-%20assignment%202).mov',
+      thumb:'https://cdn.jacklarkincomposer.co.uk/Images/Piper%20image.webp',
+      title:'Piper (2016) – Original Rescore | Jack Larkin',
+      badge:'Rescore',
+      desc:['Piper (2016) – Original Music Rescore | University Assignment','A full rescore of the Pixar short film Piper (2016) composed and produced as part of a first-year university assignment in Film & Video Games Music.','The original score has been completely replaced with new, independently composed and produced music. Sound design and some original audio elements have been retained to preserve the emotional arc of the film.','All rights to Piper, its characters, story, and world belong to Pixar Animation Studios and The Walt Disney Company. This channel is not affiliated with, endorsed by, or sponsored by Pixar or Disney.','Copyright / Fair Use Notice: This upload contains copyrighted material used under an assertion of fair use for non-commercial, transformative, educational, and artistic purposes.','Hope you enjoy this rescore!']
+    }
+  ];
 
-  <!-- Tracks section -->
-  <div class="section"><h2 class="section-heading">Tracks</h2></div>
-  <div class="tracks-section">
-    <p class="content-text" style="margin-bottom:16px;">A selection of original compositions available to listen to. Visit <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a> for the full catalogue.</p>
-    <!-- Embed your SoundCloud playlist or music player widget here -->
-    <div style="text-align:center; padding:40px 0; color:var(--text-dim); font-size:0.85rem; border:1px dashed var(--border-light); border-radius:8px;">
-      [ SoundCloud or custom audio player embed goes here ]
-    </div>
-  </div>
+  /* ── Build gallery ── */
+  var rail = document.getElementById('galRail');
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p class="footer__email">Contact - <a href="mailto:jacklarkincomposer@gmail.com">jacklarkincomposer@gmail.com</a></p>
-    <div class="footer__socials">
-      <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
-      <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener" aria-label="SoundCloud"><svg viewBox="0 0 24 24"><path d="M1 18v-3m3 4V14m3 6V11m3 9V8m3 12V4m3 16V7m3 13v-6m3 6v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg></a>
-      <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" fill="none" stroke="currentColor" stroke-width="1.5"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48" fill="currentColor"/></svg></a>
-    </div>
-    <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
-  </footer>
+  function safe(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  <script src="assets/js/main.js"></script>
-  <script>
-  (function () {
-    'use strict';
+  VIDEOS.forEach(function (v, i) {
+    var card = document.createElement('div');
+    card.className = 'gal-card';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', 'Play: ' + v.title);
 
-    // ── Your portfolio gallery component (adapted with namespaced classes) ──
+    var thumbSrc = v.type === 'youtube'
+      ? 'https://i.ytimg.com/vi/' + v.ytId + '/hqdefault.jpg'
+      : v.thumb || '';
 
-    var YOUTUBE_VIDEOS = [
-      'https://www.youtube.com/watch?v=SgOkNH9-5zM',
-      'https://www.youtube.com/watch?v=cSebHnDfkJo',
-      'https://www.youtube.com/watch?v=Rke-PiQnqLU',
-      'https://youtu.be/OyuPVvGmgXg',
-      'https://youtu.be/zTgk1UZA76k',
-      'https://youtu.be/tgMDNLQSBj0'
-    ];
+    var badgeHTML = v.badge
+      ? '<span class="gal-badge gal-badge--rescore">' + safe(v.badge) + '</span>'
+      : '';
 
-    var CF_VIDEOS = [
-      {
-        id:'piper-rescore',
-        url:'https://cdn.jacklarkincomposer.co.uk/Videos/Piper%20-%20Jack%20Larkin%20(%20film%20and%20videogames%20-%20assignment%202).mov',
-        title:'Piper (2016) \u2013 Original Rescore | Jack Larkin',
-        thumb:'https://cdn.jacklarkincomposer.co.uk/Images/Piper%20image.webp',
-        description:[
-          'Piper (2016) \u2013 Original Music Rescore | University Assignment',
-          'A full rescore of the Pixar short film Piper (2016) composed and produced as part of a first-year university assignment in Film & Video Games Music.',
-          'The original score has been completely replaced with new, independently composed and produced music. Sound design and some original audio elements have been retained.',
-          'All rights to Piper belong to Pixar Animation Studios and The Walt Disney Company.',
-          'Hope you enjoy this rescore!'
-        ]
+    card.innerHTML =
+      '<div class="gal-thumb">' +
+        '<img src="' + thumbSrc + '" alt="' + safe(v.title) + '" loading="lazy">' +
+        '<div class="gal-play-overlay" aria-hidden="true">' +
+          '<svg viewBox="0 0 64 64" width="52" height="52"><circle cx="32" cy="32" r="32" fill="rgba(0,0,0,0.55)"/><polygon points="26,20 50,32 26,44" fill="white"/></svg>' +
+        '</div>' +
+        badgeHTML +
+      '</div>' +
+      '<div class="gal-card-meta"><div class="gal-card-title">' +
+        (v.type === 'youtube'
+          ? '<div class="gal-skel"></div><div class="gal-skel gal-skel-short"></div>'
+          : safe(v.title)) +
+      '</div></div>';
+
+    var img = card.querySelector('img');
+    img.addEventListener('load',  function () { img.classList.add('loaded'); });
+    img.addEventListener('error', function () { img.style.opacity = '0.15'; });
+
+    /* Fetch title for YT cards */
+    if (v.type === 'youtube') {
+      (function (card, v) {
+        fetch('https://noembed.com/embed?url=https://www.youtube.com/watch?v=' + v.ytId)
+          .then(function (r) { return r.ok ? r.json() : {}; })
+          .then(function (d) {
+            var t = d.title || v.title;
+            card.querySelector('.gal-card-title').textContent = t;
+            img.alt = t;
+          })
+          .catch(function () {
+            card.querySelector('.gal-card-title').textContent = v.title;
+          });
+      }(card, v));
+    }
+
+    function go() { JLPlayer.open(VIDEOS, i); }
+    card.addEventListener('click', go);
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+    });
+    rail.appendChild(card);
+  });
+
+}());
+</script>
+
+<!-- ── Audio Player ── -->
+<script>
+(function () {
+  'use strict';
+
+  var LOGO     = 'https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png';
+  var SPECOPS  = 'https://cdn.jacklarkincomposer.co.uk/Images/Spec%20Ops%20Logo.png';
+  var NOESCAPE = 'https://cdn.jacklarkincomposer.co.uk/Images/No%20escape%20Album%202.png';
+  var DESERT   = 'https://cdn.jacklarkincomposer.co.uk/Images/The%20Desert.png';
+
+  var TRACKS = [
+    { title:'Under Pressure',      src:'https://cdn.jacklarkincomposer.co.uk/Audio/Canadian%20side%20vers2.mp3',                                                image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
+    { title:'Losing Signal',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Dark%20gritty%20Piano%20(Final%20Mix).mp3',                                  image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
+    { title:'Crossing the Desert', src:'https://cdn.jacklarkincomposer.co.uk/Audio/Crossing%20the%20desert%20-%20Main%20theme%20Music%20vers5%20(final).mp3',   image:DESERT,   description:'Orchestral · Epic · World',        mood:['Orchestral','Epic','World'],        album:'The Desert' },
+    { title:'The Bridge',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Polish%20side%20FinalVers%20(looped%20ending%20-%20no%20fade).mp3',           image:SPECOPS,  description:'Orchestral · Dark · Dramatic',     mood:['Orchestral','Dark','Dramatic'],     album:'Spec Ops'   },
+    { title:'Closing In',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Closing-In_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Tense',    mood:['Orchestral','Thriller','Tense'],    album:'No Escape'  },
+    { title:'Cold Trail',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Cold-Trail_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Dark',      mood:['Orchestral','Thriller','Dark'],     album:'No Escape'  },
+    { title:'Hot Pursuit',         src:'https://cdn.jacklarkincomposer.co.uk/Audio/Hot-Pursuit_001_Main-Mix_Jack-Larkin.wav',                                   image:NOESCAPE, description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:'No Escape'  },
+    { title:'Breathing Distance',  src:'https://cdn.jacklarkincomposer.co.uk/Audio/Breathing-Distance_001_Main-Mix_Jack-Larkin.wav',                            image:NOESCAPE, description:'Orchestral · Thriller · Dramatic',  mood:['Orchestral','Thriller','Dramatic'], album:'No Escape'  },
+    { title:'Burning Sands',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Burning%20sands.mp3',                                                        image:DESERT,   description:'Orchestral · World · Epic',         mood:['Orchestral','World','Epic'],        album:'The Desert' },
+    { title:'Iron Titan',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/IRON%20TITAN.mp3',                                                           image:LOGO,     description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:null         },
+    { title:'Desert Mirage',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Desert%20Mirage%20IG%20post.mp3',                                            image:DESERT,   description:'Orchestral · World · Dark',         mood:['Orchestral','World','Dark'],        album:'The Desert' }
+  ];
+
+  var PLACEHOLDER = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/></svg>';
+  var PLAY_ICON   = '<svg viewBox="0 0 24 24" width="19" height="19" fill="white"><polygon points="7,5 20,12 7,19"/></svg>';
+  var PAUSE_ICON  = '<svg viewBox="0 0 24 24" width="19" height="19" fill="white"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>';
+  var SPIN_ICON   = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10" opacity="0.9"/><path d="M12 2a10 10 0 0 0-10 10" opacity="0.25"/></svg>';
+  var VOL_ON      = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>';
+  var VOL_OFF     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0017.73 18l1.27 1.27L20.27 18 5.27 3 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
+
+  var fmt = function (s) {
+    return (s == null || isNaN(s)) ? '--:--'
+      : (s < 0 ? '-' : '') + Math.floor(Math.abs(s)/60) + ':' + String(Math.floor(Math.abs(s)%60)).padStart(2,'0');
+  };
+
+  var pool = TRACKS.map(function (t) {
+    var a = new Audio(); a.preload = 'none'; a._src = t.src; return a;
+  });
+  function ensureLoaded(i) { if (!pool[i].src) { pool[i].src = pool[i]._src; pool[i].load(); } }
+
+  var activeIdx = -1, isPlaying = false, showRemaining = false;
+  var autoAdvance = true, shuffleOn = false, loopOne = false;
+  var isMuted = false, preMuteVol = 1, currentVol = 1;
+  var activeMood = 'All', activeAlbum = 'All';
+  var rafId = null, pendingSeek = {};
+  var wraps = [], trackRefs = [];
+
+  function applyFilters() {
+    wraps.forEach(function (w, i) {
+      var t = TRACKS[i];
+      var ok = (activeMood === 'All' || (t.mood||[]).includes(activeMood))
+            && (activeAlbum === 'All' || t.album === activeAlbum);
+      w.classList.toggle('hidden', !ok);
+    });
+  }
+  function setBtn(i, p) { trackRefs[i].btnPlay.innerHTML = p ? PAUSE_ICON : PLAY_ICON; wraps[i].classList.toggle('playing', p); }
+  function stopTicker() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+  function resetWrap(i) {
+    stopTicker(); wraps[i].classList.remove('active','playing','loading');
+    trackRefs[i].btnPlay.innerHTML = PLAY_ICON;
+    trackRefs[i].fill.style.width = '0%';
+    trackRefs[i].dur.textContent = fmt(pool[i].duration) || '--:--';
+  }
+  function play(i) {
+    if (activeIdx === i && isPlaying) return;
+    if (activeIdx >= 0 && activeIdx !== i) { pool[activeIdx].pause(); resetWrap(activeIdx); }
+    ensureLoaded(i); activeIdx = i; isPlaying = true;
+    wraps[i].classList.add('active'); setBtn(i, true);
+    pool[i].volume = currentVol; pool[i].play().catch(function(){});
+  }
+  function pause() { if (activeIdx < 0 || !isPlaying) return; isPlaying = false; pool[activeIdx].pause(); setBtn(activeIdx, false); }
+  function toggle(i) { activeIdx === i && isPlaying ? pause() : play(i); }
+
+  function startTicker() {
+    stopTicker();
+    function tick() {
+      if (activeIdx < 0) { rafId = null; return; }
+      var a = pool[activeIdx];
+      if (a.duration) {
+        trackRefs[activeIdx].fill.style.width = (a.currentTime / a.duration * 100).toFixed(2) + '%';
+        trackRefs[activeIdx].dur.textContent = showRemaining ? fmt(a.currentTime - a.duration) : fmt(a.currentTime);
       }
-    ];
-
-    var DESCRIPTIONS = {
-      'SgOkNH9-5zM': ['Blood Message \u2013 Official Reveal Trailer | Original Music Rescore (unofficial)','All rights to Blood Message belong to their respective owners.','This video is a re\u2011score of the official Blood Message reveal/release trailer. The original music has been completely replaced.','Copyright / Fair Use Notice: This upload may contain copyrighted material used under fair use.','Hope you enjoy this rescore!'],
-      'cSebHnDfkJo': ['Rescore and sound redesign of the short film/spec commercial \u201cBetween Places.\u201d','The original music and most audio have been replaced with new, independently composed music and original sound design.','Copyright / Fair Use Notice: All copyrighted material remains the property of its respective owners.','Hope you enjoy this rescore and sound redesign!'],
-      'Rke-PiQnqLU': ['Puss in Boots: The Last Wish \u2013 Stone Giant Fight | Original Music Rescore (unofficial)','My 1st year university project \u2014 a rescore of the iconic Stone Giant fight scene.','All rights belong to DreamWorks Animation, Universal Pictures.','Hope you enjoy this rescore!'],
-      'OyuPVvGmgXg': ['Spider-Man: Into the Spider-Verse \u2013 Official Trailer | Original Music Rescore (unofficial)','All rights belong to Sony Pictures, Sony Pictures Animation, Marvel Entertainment.','This is a re-score with independently composed music. Intended as a transformative work.','Hope you enjoy this rescore!'],
-      'zTgk1UZA76k': ['Avatar: The Way of Water \u2013 Official Trailer | Original Music Rescore (unofficial)','All rights belong to James Cameron, 20th Century Studios, Disney.','The original music has been completely replaced with new, independently composed music.','Hope you enjoy this rescore!'],
-      'tgMDNLQSBj0': ['The Witcher 3: Wild Hunt \u2013 Original Music | Inspired Soundtrack (unofficial)','An original piece inspired by the raw, dark Slavic folk sound of the original score.','I focused on emulating the traditional Slavic folk vocal style and layered an intimate cello part.','All rights to The Witcher 3 belong to CD Projekt Red.','Hope you enjoy!']
-    };
-
-    var galleryView = document.getElementById('galleryView');
-    var playerView  = document.getElementById('playerView');
-    var videoRatio  = document.getElementById('videoRatio');
-    var backBtn     = document.getElementById('backBtn');
-    var infoToggle  = document.getElementById('infoToggle');
-    var infoWing    = document.getElementById('infoWing');
-    var wingTitle   = document.getElementById('wingTitle');
-    var wingBody    = document.getElementById('wingBody');
-    var wingScroll  = document.getElementById('wingScroll');
-    var extOpenLink = document.getElementById('extOpenLink');
-    var nowPlaying  = document.getElementById('nowPlaying');
-    var rail        = document.getElementById('galRail');
-
-    var metaCache = {}, infoOpen = false, currentKey = null;
-
-    function getYtId(url) { var m=url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m?m[1]:null; }
-    function safe(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-    function buildWingHTML(meta) {
-      return '<div class="gal-wing-desc">'+meta.paragraphs.map(function(p){return '<p>'+safe(p)+'</p>';}).join('')+'</div>';
+      rafId = requestAnimationFrame(tick);
     }
-    function loadSkel() {
-      return '<div class="gal-wing-loading"><div class="gal-skel"></div><div class="gal-skel"></div><div class="gal-skel"></div></div>';
-    }
-    function syncWingH() {
-      if(window.innerWidth<=640){wingScroll.style.maxHeight='';return;}
-      var el=videoRatio.querySelector('iframe,video');
-      var h=el?el.parentElement.offsetHeight:0;
-      if(h>0) wingScroll.style.maxHeight=h+'px';
-    }
+    rafId = requestAnimationFrame(tick);
+  }
 
-    function fetchMeta(url,id) {
-      if(metaCache[id]) return Promise.resolve(metaCache[id]);
-      var title='Watch Video', paragraphs=DESCRIPTIONS[id]||['No description available.'];
-      return fetch('https://noembed.com/embed?url='+encodeURIComponent(url))
-        .then(function(r){return r.ok?r.json():{};})
-        .then(function(d){if(d.title)title=d.title;})
-        .catch(function(){})
-        .then(function(){ metaCache[id]={title:title,paragraphs:paragraphs}; return metaCache[id]; });
-    }
+  pool.forEach(function (a, i) {
+    a.addEventListener('waiting',        function(){ if(activeIdx===i) wraps[i].classList.add('loading'); });
+    a.addEventListener('canplay',        function(){ if(activeIdx===i) wraps[i].classList.remove('loading'); });
+    a.addEventListener('playing',        function(){ if(activeIdx!==i) return; wraps[i].classList.remove('loading'); startTicker(); });
+    a.addEventListener('pause',          function(){ if(activeIdx===i) stopTicker(); });
+    a.addEventListener('loadedmetadata', function(){
+      trackRefs[i].dur.textContent = fmt(a.duration);
+      if (pendingSeek[i] != null) { a.currentTime = pendingSeek[i] * a.duration; delete pendingSeek[i]; }
+    });
+    a.addEventListener('ended', function(){
+      if (activeIdx !== i) return;
+      stopTicker(); isPlaying = false; setBtn(i, false);
+      if (loopOne) { a.currentTime = 0; play(i); return; }
+      if (!autoAdvance) return;
+      var vis = wraps.map(function(_,j){ return j; }).filter(function(j){ return !wraps[j].classList.contains('hidden'); });
+      if (!vis.length) return;
+      var next = shuffleOn
+        ? (vis.filter(function(j){ return j !== i; })[Math.floor(Math.random()*(vis.length-1))] || vis[0])
+        : vis[(vis.indexOf(i)+1) % vis.length];
+      setTimeout(function(){ play(next); }, 100);
+    });
+  });
 
-    function getCfMeta(cf) { if(metaCache[cf.id])return metaCache[cf.id]; var m={title:cf.title,paragraphs:cf.description}; metaCache[cf.id]=m; return m; }
+  var shell = document.getElementById('playerShell');
+  var trackList = document.getElementById('trackList');
 
-    function buildRail() {
-      YOUTUBE_VIDEOS.forEach(function(url) {
-        var id=getYtId(url); if(!id)return;
-        var card=document.createElement('div');
-        card.className='gal-card'; card.setAttribute('role','button'); card.setAttribute('tabindex','0');
-        card.innerHTML='<div class="gal-thumb"><img src="https://i.ytimg.com/vi/'+id+'/hqdefault.jpg" alt="thumbnail" loading="lazy"><div class="gal-play-overlay" aria-hidden="true"><svg viewBox="0 0 64 64" width="52" height="52"><circle cx="32" cy="32" r="32" fill="rgba(0,0,0,0.55)"/><polygon points="26,20 50,32 26,44" fill="white"/></svg></div></div><div class="gal-card-meta"><div class="gal-card-title"><div class="gal-skel"></div><div class="gal-skel gal-skel-short"></div></div></div>';
-        var img=card.querySelector('img');
-        img.addEventListener('load',function(){img.classList.add('loaded');});
-        function go(){showYtPlayer(id,url);} card.addEventListener('click',go);
-        card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
-        rail.appendChild(card);
-        fetchMeta(url,id).then(function(meta){ card.querySelector('.gal-card-title').textContent=meta.title; img.alt=meta.title; card.setAttribute('aria-label','Play: '+meta.title); });
+  /* Controls row */
+  var ctrlRow = document.createElement('div');
+  ctrlRow.className = 'controls-row';
+  ctrlRow.innerHTML =
+    '<div class="vol-group">' +
+      '<span class="vol-icon" id="apVolIcon">' + VOL_ON + '</span>' +
+      '<input type="range" id="apVolSlider" min="0" max="1" step="0.01" value="1">' +
+      '<span class="vol-pct" id="apVolPct">100%</span>' +
+    '</div>' +
+    '<button class="ap-ctrl-btn on" id="apBtnAuto" title="Auto-advance">Auto</button>' +
+    '<button class="ap-ctrl-btn"    id="apBtnShuf" title="Shuffle">Shuffle</button>' +
+    '<button class="ap-ctrl-btn"    id="apBtnLoop" title="Loop">Loop</button>';
+  shell.insertBefore(ctrlRow, trackList);
+
+  var volIcon   = ctrlRow.querySelector('#apVolIcon');
+  var volSlider = ctrlRow.querySelector('#apVolSlider');
+  var volPct    = ctrlRow.querySelector('#apVolPct');
+
+  function applyVol(v, updateSlider) {
+    currentVol = Math.max(0, Math.min(1, v));
+    if (activeIdx >= 0) pool[activeIdx].volume = currentVol;
+    if (updateSlider !== false) volSlider.value = currentVol;
+    volPct.textContent = Math.round(currentVol*100) + '%';
+    isMuted = currentVol === 0;
+    volIcon.innerHTML = isMuted ? VOL_OFF : VOL_ON;
+    volIcon.classList.toggle('muted', isMuted);
+  }
+  volSlider.addEventListener('input', function() { preMuteVol = parseFloat(volSlider.value)||preMuteVol; applyVol(parseFloat(volSlider.value), false); });
+  volIcon.addEventListener('click', function() { isMuted ? applyVol(preMuteVol) : (preMuteVol=currentVol, applyVol(0)); });
+
+  var btnAuto = ctrlRow.querySelector('#apBtnAuto');
+  var btnShuf = ctrlRow.querySelector('#apBtnShuf');
+  var btnLoop = ctrlRow.querySelector('#apBtnLoop');
+  btnAuto.addEventListener('click', function(){ autoAdvance=!autoAdvance; btnAuto.classList.toggle('on',autoAdvance); });
+  btnShuf.addEventListener('click', function(){ shuffleOn=!shuffleOn;     btnShuf.classList.toggle('on',shuffleOn); });
+  btnLoop.addEventListener('click', function(){ loopOne=!loopOne;         btnLoop.classList.toggle('on',loopOne); });
+
+  /* Filter section */
+  var allMoods  = ['All'].concat(Array.from(new Set(TRACKS.flatMap(function(t){ return t.mood||[]; }))));
+  var allAlbums = ['All'].concat(Array.from(new Set(TRACKS.map(function(t){ return t.album; }).filter(Boolean))));
+  var filterSection = document.createElement('div');
+  filterSection.className = 'filter-section';
+
+  function buildFilterRow(label, values, isAlbum, setActive) {
+    var lbl = document.createElement('div'); lbl.className='filter-group-label'; lbl.textContent=label;
+    filterSection.appendChild(lbl);
+    var row = document.createElement('div'); row.className='filter-row';
+    values.forEach(function(val) {
+      var pill = document.createElement('button');
+      pill.className = 'filter-pill' + (isAlbum?' album':'') + (val==='All'?' active':'');
+      pill.textContent = val;
+      pill.addEventListener('click', function(){
+        row.querySelectorAll('.filter-pill').forEach(function(p){ p.classList.remove('active'); });
+        pill.classList.add('active'); setActive(val); applyFilters();
       });
+      row.appendChild(pill);
+    });
+    filterSection.appendChild(row);
+  }
+  buildFilterRow('Mood',   allMoods,  false, function(v){ activeMood=v; });
+  buildFilterRow('Albums', allAlbums, true,  function(v){ activeAlbum=v; });
+  shell.insertBefore(filterSection, trackList);
 
-      CF_VIDEOS.forEach(function(cf) {
-        var card=document.createElement('div');
-        card.className='gal-card'; card.setAttribute('role','button'); card.setAttribute('tabindex','0'); card.setAttribute('aria-label','Play: '+cf.title);
-        card.innerHTML='<div class="gal-thumb"><img src="'+cf.thumb+'" alt="'+safe(cf.title)+'" loading="lazy"><div class="gal-play-overlay" aria-hidden="true"><svg viewBox="0 0 64 64" width="52" height="52"><circle cx="32" cy="32" r="32" fill="rgba(0,0,0,0.55)"/><polygon points="26,20 50,32 26,44" fill="white"/></svg></div><span class="gal-source-badge">Portfolio</span></div><div class="gal-card-meta"><div class="gal-card-title">'+safe(cf.title)+'</div></div>';
-        var img=card.querySelector('img');
-        img.addEventListener('load',function(){img.classList.add('loaded');});
-        function go(){showCfPlayer(cf);} card.addEventListener('click',go);
-        card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
-        rail.appendChild(card);
-        getCfMeta(cf);
-      });
-    }
+  /* Track rows */
+  TRACKS.forEach(function(t, idx) {
+    var wrap = document.createElement('div'); wrap.className='track-wrap'; wraps.push(wrap);
+    var artHTML = t.image
+      ? '<img src="'+t.image+'" alt="'+t.title+'" loading="lazy" decoding="async">'
+      : '<div class="art-placeholder">'+PLACEHOLDER+'</div>';
+    var descHTML = t.description ? '<div class="track-desc">'+t.description+'</div>' : '';
+    var moodTags = (t.mood||[]).map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
+    var albumTag = t.album ? '<span class="tag album-tag">'+t.album+'</span>' : '';
+    var tagHTML  = (moodTags||albumTag) ? '<div class="tag-row">'+moodTags+albumTag+'</div>' : '';
 
-    function enterPlayer(title) {
-      infoOpen=false; infoWing.classList.remove('open'); infoToggle.classList.remove('active');
-      wingBody.innerHTML=loadSkel();
-      galleryView.style.display='none'; playerView.style.display='flex';
-      nowPlaying.textContent=title||''; wingTitle.textContent=title||'';
-      setTimeout(syncWingH,60);
-      try{window.scrollTo(0,0);}catch(e){}
-    }
+    wrap.innerHTML =
+      '<div class="track">' +
+        '<div class="art">' + artHTML +
+          '<button class="btn-play" tabindex="-1" aria-hidden="true">'+PLAY_ICON+'</button>' +
+          '<div class="spinner">'+SPIN_ICON+'</div>' +
+        '</div>' +
+        '<div class="info">' +
+          '<div class="title-row"><span class="track-num">'+String(idx+1).padStart(2,'0')+'</span><span class="track-title">'+t.title+'</span></div>' +
+          descHTML + tagHTML +
+          '<div class="progress"><div class="progress-fill"></div></div>' +
+        '</div>' +
+        '<span class="duration">--:--</span>' +
+      '</div>' +
+      '<div class="shortcut-drawer">' +
+        '<button class="sc" data-action="toggle"   tabindex="-1"><span class="sc-key">Space</span><span class="sc-label">Play / Pause</span></button>' +
+        '<div class="sc-sep"></div>' +
+        '<button class="sc" data-action="back"     tabindex="-1"><span class="sc-key">←</span><span class="sc-label">−10s</span></button>' +
+        '<button class="sc" data-action="forward"  tabindex="-1"><span class="sc-key">→</span><span class="sc-label">+10s</span></button>' +
+        '<div class="sc-sep"></div>' +
+        '<button class="sc" data-action="mute"     tabindex="-1"><span class="sc-key">M</span><span class="sc-label">Mute</span></button>' +
+        '<button class="sc" data-action="duration" tabindex="-1"><span class="sc-key">click time</span><span class="sc-label">Toggle remaining</span></button>' +
+      '</div>';
 
-    function showYtPlayer(id,url) {
-      currentKey=id;
-      var t=metaCache[id]?metaCache[id].title:'';
-      enterPlayer(t);
-      videoRatio.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?rel=0&playsinline=1&modestbranding=1" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>';
-      extOpenLink.href='https://www.youtube.com/watch?v='+id;
-      extOpenLink.classList.remove('hidden');
-      if(!metaCache[id]) fetchMeta(url,id);
-    }
+    trackRefs.push({
+      btnPlay: wrap.querySelector('.btn-play'),
+      fill:    wrap.querySelector('.progress-fill'),
+      dur:     wrap.querySelector('.duration')
+    });
 
-    function showCfPlayer(cf) {
-      currentKey=cf.id; enterPlayer(cf.title);
-      videoRatio.innerHTML='<video src="'+cf.url+'" controls playsinline preload="metadata" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;object-fit:contain;"></video>';
-      var vid=videoRatio.querySelector('video'); if(vid)vid.play().catch(function(){});
-      extOpenLink.classList.add('hidden');
-    }
+    var trackEl  = wrap.querySelector('.track');
+    var progress = wrap.querySelector('.progress');
+    var dur      = trackRefs[idx].dur;
+    var drawer   = wrap.querySelector('.shortcut-drawer');
 
-    function showGallery() {
-      var v=videoRatio.querySelector('video'); if(v){v.pause();v.src='';}
-      var f=videoRatio.querySelector('iframe'); if(f)f.src='';
-      videoRatio.innerHTML='';
-      playerView.style.display='none'; galleryView.style.display='block';
-      currentKey=null; infoOpen=false; infoWing.classList.remove('open'); infoToggle.classList.remove('active');
-    }
-
-    function openInfo() {
-      infoOpen=true; infoWing.classList.add('open'); infoToggle.classList.add('active');
-      syncWingH(); wingScroll.scrollTop=0;
-      if(!currentKey)return;
-      var cf=null;
-      for(var i=0;i<CF_VIDEOS.length;i++){if(CF_VIDEOS[i].id===currentKey){cf=CF_VIDEOS[i];break;}}
-      if(cf){ var m=getCfMeta(cf); wingTitle.textContent=m.title; wingBody.innerHTML=buildWingHTML(m); return; }
-      var url='';
-      for(var j=0;j<YOUTUBE_VIDEOS.length;j++){if(getYtId(YOUTUBE_VIDEOS[j])===currentKey){url=YOUTUBE_VIDEOS[j];break;}}
-      fetchMeta(url,currentKey).then(function(m){ wingTitle.textContent=m.title; wingBody.innerHTML=buildWingHTML(m); });
-    }
-    function closeInfo() { infoOpen=false; infoWing.classList.remove('open'); infoToggle.classList.remove('active'); }
-
-    backBtn.addEventListener('click',showGallery);
-    infoToggle.addEventListener('click',function(){ infoOpen?closeInfo():openInfo(); });
-    window.addEventListener('resize',function(){ if(infoOpen)syncWingH(); });
-    document.addEventListener('keydown',function(e){
-      if(playerView.style.display==='flex'){
-        if(e.key==='Escape'){infoOpen?closeInfo():showGallery();}
-        if(e.key==='i'||e.key==='I'){infoOpen?closeInfo():openInfo();}
+    drawer.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var action = e.target.closest('[data-action]') && e.target.closest('[data-action]').dataset.action;
+      if (!action) return;
+      var a = pool[idx];
+      switch(action) {
+        case 'toggle':   toggle(idx); break;
+        case 'back':     if(activeIdx===idx) a.currentTime=Math.max(0,a.currentTime-10); break;
+        case 'forward':  if(activeIdx===idx) a.currentTime=Math.min(a.duration||0,a.currentTime+10); break;
+        case 'mute':     isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
+        case 'duration': showRemaining=!showRemaining; break;
       }
     });
 
-    buildRail();
-  }());
-  </script>
+    wrap.querySelector('.btn-play').addEventListener('click', function(e){ e.stopPropagation(); toggle(idx); });
+    trackEl.addEventListener('click', function(e){ if(progress.contains(e.target)||dur.contains(e.target)) return; toggle(idx); });
+    trackEl.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();toggle(idx);} });
+    dur.addEventListener('click', function(e){ e.stopPropagation(); showRemaining=!showRemaining; });
+    progress.addEventListener('click', function(e){
+      e.stopPropagation();
+      var a = pool[idx]; ensureLoaded(idx);
+      var rect = progress.getBoundingClientRect();
+      var ratio = Math.max(0, Math.min(1, (e.clientX-rect.left)/rect.width));
+      if (a.duration) { a.currentTime=ratio*a.duration; if(activeIdx!==idx||!isPlaying) play(idx); }
+      else { pendingSeek[idx]=ratio; play(idx); }
+    });
+    trackList.appendChild(wrap);
+  });
+
+  document.addEventListener('keydown', function(e) {
+    var tag = document.activeElement.tagName;
+    if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+    switch(e.key) {
+      case ' ':          e.preventDefault(); if(activeIdx>=0) toggle(activeIdx); break;
+      case 'ArrowRight': e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.min(pool[activeIdx].duration||0,pool[activeIdx].currentTime+10); break;
+      case 'ArrowLeft':  e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.max(0,pool[activeIdx].currentTime-10); break;
+      case 'm': case 'M': isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
+    }
+  });
+
+}());
+</script>
 </body>
 </html>

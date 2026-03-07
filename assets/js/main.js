@@ -159,11 +159,12 @@ window.JLPlayer = (function () {
       if (e.key === 'ArrowRight') _goto(_idx + 1);
     });
 
-    /* Mobile swipe down to close */
+    /* Mobile swipe down on bar to close */
     var touchY = 0;
+    _els.back.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
     _overlay.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
     _overlay.addEventListener('touchend', function (e) {
-      if (e.changedTouches[0].clientY - touchY > 80 && !_infoOpen) _close();
+      if (e.changedTouches[0].clientY - touchY > 100 && !_infoOpen) _close();
     }, { passive: true });
   }
 

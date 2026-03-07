@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Portfolio — Jack Larkin Composer</title>
 <meta name="description" content="Portfolio of original scores, rescores, and compositions by Jack Larkin. Film, games, and TV music.">
+<meta property="og:title" content="Portfolio — Jack Larkin Composer">
+<meta property="og:description" content="Original scores, rescores and compositions for film, games, and TV by Jack Larkin.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jacklarkincomposer.co.uk/portfolio.html">
+<meta property="og:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
 <link rel="icon" href="assets/images/logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -280,7 +287,7 @@ input[type=range]::-moz-range-thumb {
 
 <!-- Footer -->
 <footer class="footer">
-  <p class="footer__email">Contact – <a href="mailto:jacklarkincomposer@gmail.com">jacklarkincomposer@gmail.com</a></p>
+  <p class="footer__email">Contact – <a href="/cdn-cgi/l/email-protection#204a41434b4c41524b494e434f4d504f53455260474d41494c0e434f4d"><span class="__cf_email__" data-cfemail="72181311191e1300191b1c111d1f021d01170032151f131b1e5c111d1f">[email&#160;protected]</span></a></p>
   <div class="footer__socials">
     <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram">
       <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
@@ -295,7 +302,7 @@ input[type=range]::-moz-range-thumb {
   <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
 </footer>
 
-<script src="assets/js/main.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/main.js"></script>
 <script>
 (function () {
   'use strict';
@@ -670,12 +677,4 @@ input[type=range]::-moz-range-thumb {
     switch(e.key) {
       case ' ':          e.preventDefault(); if(activeIdx>=0) toggle(activeIdx); break;
       case 'ArrowRight': e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.min(pool[activeIdx].duration||0,pool[activeIdx].currentTime+10); break;
-      case 'ArrowLeft':  e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.max(0,pool[activeIdx].currentTime-10); break;
-      case 'm': case 'M': isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
-    }
-  });
-
-}());
-</script>
-</body>
-</html>
+      case 'ArrowLeft':

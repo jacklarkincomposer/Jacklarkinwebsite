@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About — Jack Larkin Composer</title>
 <meta name="description" content="Jack Larkin is a UK-based composer and sound designer studying Screen Composition at the University of Huddersfield.">
+<meta property="og:title" content="About — Jack Larkin Composer">
+<meta property="og:description" content="UK-based composer for games, TV, and film. Studying Screen Composition at the University of Huddersfield.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jacklarkincomposer.co.uk/about.html">
+<meta property="og:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
 <link rel="icon" href="assets/images/logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,7 +121,7 @@
 
 <!-- Footer -->
 <footer class="footer">
-  <p class="footer__email">Contact – <a href="mailto:jacklarkincomposer@gmail.com">jacklarkincomposer@gmail.com</a></p>
+  <p class="footer__email">Contact – <a href="/cdn-cgi/l/email-protection#4923282a2225283b2220272a262439263a2c3b092e24282025672a2624"><span class="__cf_email__" data-cfemail="8ae0ebe9e1e6ebf8e1e3e4e9e5e7fae5f9eff8caede7ebe3e6a4e9e5e7">[email&#160;protected]</span></a></p>
   <div class="footer__socials">
     <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram">
       <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
@@ -129,7 +136,7 @@
   <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
 </footer>
 
-<script src="assets/js/main.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/main.js"></script>
 <script>
 (function () {
   'use strict';
@@ -140,7 +147,7 @@
   var TESTIMONIALS = [
     {
       type:   'quote',
-      quote:  'Jack was amazing at building a soundtrack to the film, working closely with me to build a style while injecting his own knowledge into the project. His professionalism and willingness to take feedback elevated the film.',
+      quote:  'Jack was amazing at building a soundtrack to the film, working closely with the director to build a style while injecting his own knowledge into the project. His professionalism and willingness to take feedback elevated the film.',
       author: 'Amir Leo Elharrif',
       role:   'Director — Comet Madness',
       logo:   COMET_IMG
@@ -251,12 +258,4 @@
     mAllCards[mCurrent].classList.remove('m-active');
     mCurrent = (i + TESTIMONIALS.length) % TESTIMONIALS.length;
     mAllCards[mCurrent].classList.add('m-active');
-    mCounter.textContent = (mCurrent + 1) + ' / ' + TESTIMONIALS.length;
-  }
-  document.getElementById('testMPrev').addEventListener('click', function(){ mShow(mCurrent-1); });
-  document.getElementById('testMNext').addEventListener('click', function(){ mShow(mCurrent+1); });
-
-}());
-</script>
-</body>
-</html>
+    mCounter.textContent = (mCurrent + 1) + ' / '

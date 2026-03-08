@@ -13,17 +13,20 @@
     toggle.addEventListener('click', function () {
       panel.classList.add('open');
       document.body.style.overflow = 'hidden';
+      toggle.setAttribute('aria-expanded', 'true');
     });
     if (close) {
       close.addEventListener('click', function () {
         panel.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
       });
     }
     panel.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
         panel.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
       });
     });
   }

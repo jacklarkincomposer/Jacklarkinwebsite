@@ -59,7 +59,7 @@
 .form-group select,
 .form-group textarea {
   width:100%; padding:12px 14px;
-  background:rgba(255,255,255,0.05);
+  background:rgba(10,10,14,0.85);
   border:1px solid rgba(255,255,255,0.1); border-radius:6px;
   font-size:15px; font-family:var(--font-body);
   transition:border-color .2s, background .2s; color:var(--text);
@@ -71,7 +71,7 @@
 .form-group textarea::-webkit-scrollbar { display:none; }
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus { border-color:var(--gold-mid); outline:none; background:rgba(255,255,255,0.08); }
+.form-group textarea:focus { border-color:var(--gold-mid); outline:none; background:rgba(10,10,14,0.95); }
 .form-group.error input,
 .form-group.error select,
 .form-group.error textarea { border-color:#ef5350; }
@@ -316,7 +316,7 @@
 
     <div class="form-group">
       <label for="reference">Reference / Inspiration</label>
-      <input type="text" id="reference" name="reference" placeholder="Any songs or artists you'd like me to reference? (Optional)" maxlength="200">
+      <input type="text" id="reference" name="reference" placeholder="Paste a link to a song or track you'd like to reference (Optional)" maxlength="300">
     </div>
 
     <div class="form-group" style="margin-bottom:34px">
@@ -474,4 +474,19 @@
         rushNote.style.display = 'none';
         pricePreview.classList.remove('show');
         charCounter.textContent = '0 / 1500';
-        charCounter.className = 'char-count
+        charCounter.className = 'char-counter';
+      })
+      .catch(function () {
+        toast('Something went wrong. Please try again or email me directly.', 'error');
+      })
+      .finally(function () {
+        projType.value = origType;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        btnLabel.textContent = 'Send Message';
+      });
+  });
+}());
+</script>
+</body>
+</html>

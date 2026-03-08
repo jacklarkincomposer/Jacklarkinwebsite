@@ -50,8 +50,10 @@ body {
 /* ── Background Texture ── */
 .site-bg {
   position: fixed;
-  inset: 0;
+  left: 0; right: 0;
+  top: 0; height: 115%;
   z-index: -1;
+  will-change: transform;
   background: var(--bg) url('../images/bg-texture.png') center center / cover no-repeat;
 }
 
@@ -1120,3 +1122,30 @@ img { max-width: 100%; display: block; }
 @media (max-width: 540px) {
   .gal-rail { grid-template-columns: 1fr; gap: 10px; padding: 0 16px; }
 }
+
+/* ── Show More / Less ── */
+.show-more-row { text-align: center; padding: 16px 0 4px; }
+.show-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.show-more-btn:hover { border-color: var(--gold-mid); color: var(--gold); }
+.show-more-btn svg { transition: transform 0.25s ease; flex-shrink: 0; }
+.show-more-btn.expanded svg { transform: rotate(180deg); }
+.gal-capped   { display: none !important; }
+.track-capped { display: none !important; }
+.card-capped  { display: none !important; }

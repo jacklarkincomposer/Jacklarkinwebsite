@@ -54,7 +54,9 @@
     window.addEventListener('scroll', function () {
       if (!ticking) {
         requestAnimationFrame(function () {
-          siteBg.style.backgroundPosition = 'center calc(50% + ' + (window.scrollY * 0.15) + 'px)';
+          var maxShift = window.innerHeight * 0.08;
+          var shift = Math.min(maxShift, window.scrollY * 0.04);
+          siteBg.style.transform = 'translateY(-' + shift + 'px)';
           ticking = false;
         });
         ticking = true;

@@ -677,4 +677,12 @@ input[type=range]::-moz-range-thumb {
     switch(e.key) {
       case ' ':          e.preventDefault(); if(activeIdx>=0) toggle(activeIdx); break;
       case 'ArrowRight': e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.min(pool[activeIdx].duration||0,pool[activeIdx].currentTime+10); break;
-      case 'ArrowLeft':
+      case 'ArrowLeft':  e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.max(0,pool[activeIdx].currentTime-10); break;
+      case 'm': case 'M': isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
+    }
+  });
+
+}());
+</script>
+</body>
+</html>

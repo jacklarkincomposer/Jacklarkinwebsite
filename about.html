@@ -258,4 +258,21 @@
     mAllCards[mCurrent].classList.remove('m-active');
     mCurrent = (i + TESTIMONIALS.length) % TESTIMONIALS.length;
     mAllCards[mCurrent].classList.add('m-active');
-    mCounter.textContent = (mCurrent + 1) + ' / '
+    mCounter.textContent = (mCurrent + 1) + ' / ' + TESTIMONIALS.length;
+  }
+
+  document.getElementById('testMPrev').addEventListener('click', function(){ mShow(mCurrent - 1); });
+  document.getElementById('testMNext').addEventListener('click', function(){ mShow(mCurrent + 1); });
+
+  var mTouchX = 0;
+  mCardsEl.addEventListener('touchstart', function(e){ mTouchX = e.touches[0].clientX; }, { passive: true });
+  mCardsEl.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - mTouchX;
+    if (Math.abs(dx) < 40) return;
+    mShow(dx < 0 ? mCurrent + 1 : mCurrent - 1);
+  }, { passive: true });
+
+}());
+</script>
+</body>
+</html>

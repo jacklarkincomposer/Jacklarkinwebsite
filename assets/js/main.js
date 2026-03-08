@@ -47,6 +47,21 @@
     obs.observe(announceBar);
   }
 
+  /* ── Background parallax ── */
+  var siteBg = document.querySelector('.site-bg');
+  if (siteBg) {
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          siteBg.style.backgroundPosition = 'center calc(50% + ' + (window.scrollY * 0.15) + 'px)';
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
   /* ── Links dropdown ── */
   document.querySelectorAll('.nav__dropdown').forEach(function (dd) {
     var toggle = dd.querySelector('.nav__dropdown-toggle');

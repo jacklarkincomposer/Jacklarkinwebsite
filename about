@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About — Jack Larkin Composer</title>
+<meta name="description" content="Jack Larkin is a UK-based composer and sound designer studying Screen Composition at the University of Huddersfield.">
+<meta property="og:title" content="About — Jack Larkin Composer">
+<meta property="og:description" content="UK-based composer for games, TV, and film. Studying Screen Composition at the University of Huddersfield.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jacklarkincomposer.co.uk/about/">
+<meta property="og:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
+<link rel="icon" href="assets/images/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="site-bg"></div>
+
+<!-- Announcement bar -->
+<div class="announce-bar" id="announceBar">
+  <span class="announce-bar__text">Commissions Open!</span>
+  <a href="contact.html" class="announce-bar__link">Get in Touch</a>
+</div>
+
+<!-- Nav -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__brand">
+    <img src="assets/images/logo.png" alt="Jack Larkin Composer" class="nav__logo">
+    <span class="nav__brand-text">Jack Larkin Composer</span>
+  </a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li class="nav__dropdown">
+      <a href="#" class="nav__dropdown-toggle">
+        Links
+        <span class="nav__dropdown-chevron">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </a>
+      <ul class="nav__dropdown-menu">
+        <li><a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a></li>
+      </ul>
+    </li>
+  </ul>
+  <a href="contact.html" class="nav__cta">Get in Touch</a>
+  <button class="nav__toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav__mobile-panel" id="mobilePanel">
+  <button class="nav__mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="services.html">Services</a>
+  <a href="contact.html">Contact</a>
+  <span class="mobile-links-label">Links</span>
+  <div class="mobile-links-group">
+    <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a>
+  </div>
+</div>
+
+<!-- Page title -->
+<div class="page-hero">
+  <div class="page-title"><h1>About</h1></div>
+</div>
+
+<!-- About Me -->
+<div class="section section--narrow">
+  <h2 class="section-heading">About Me</h2>
+</div>
+<div class="about-text">
+  <p>I'm Jack, a composer and sound designer currently in my final year at the University of Huddersfield studying Screen Composition and Sound Design. Over the past five years I've written music for online content creators, independent game teams and short film productions, working closely with directors and creators complementing their projects with bespoke soundtracks.</p>
+  <p>My writing spans many different areas of music, from ambient, world music and hybrid orchestral/electronic styles, with a particular passion for cinematic scoring. I've always been drawn to the way music can completely transform moving images, and that fascination with atmosphere and storytelling is what inspired me towards screen composition. I work from brief to delivery, taking feedback seriously and adapting quickly to a project's needs. I am comfortable working in many different styles with a keen ear for attention to detail and always open to explore new areas.</p>
+  <p>Alongside composition I have a strong background in sound design, giving me an understanding of how music and audio sit together in a final mix. I'm always looking to push into new genres and styles.</p>
+</div>
+<div class="about-cta">
+  <a href="services.html">What I Offer</a>
+</div>
+
+<div class="section"><div class="divider"></div></div>
+
+<!-- Testimonials -->
+<div class="section section--narrow">
+  <h2 class="section-heading">Testimonials</h2>
+</div>
+
+<div class="testimonials-section" id="testWidget">
+  <!-- Desktop -->
+  <div class="test-nav-bars" id="testNavBars" role="tablist" aria-label="Testimonial navigation"></div>
+  <div class="test-cards-container" id="testCards" role="region" aria-label="Testimonials" aria-live="polite"></div>
+  <!-- Mobile -->
+  <div class="test-mobile" id="testMobile">
+    <div id="testMCards"></div>
+    <div class="m-test-nav">
+      <button class="m-test-arrow" id="testMPrev" aria-label="Previous">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="m-test-counter" id="testMCounter">1 / 2</span>
+      <button class="m-test-arrow" id="testMNext" aria-label="Next">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p class="footer__email">Contact – <a href="/cdn-cgi/l/email-protection#4923282a2225283b2220272a262439263a2c3b092e24282025672a2624"><span class="__cf_email__" data-cfemail="8ae0ebe9e1e6ebf8e1e3e4e9e5e7fae5f9eff8caede7ebe3e6a4e9e5e7">[email&#160;protected]</span></a></p>
+  <div class="footer__socials">
+    <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+    </a>
+    <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener" aria-label="SoundCloud">
+      <svg viewBox="0 0 24 24"><path d="M1 18v-3m3 4V14m3 6V11m3 9V8m3 12V4m3 16V7m3 13v-6m3 6v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </a>
+    <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener" aria-label="YouTube">
+      <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" fill="none" stroke="currentColor" stroke-width="1.5"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48" fill="currentColor"/></svg>
+    </a>
+  </div>
+  <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var CONFIG = { autoInterval: 8000, resumeDelay: 15000 };
+  var COMET_IMG = 'https://cdn.jacklarkincomposer.co.uk/Images/518198685_17868898722405210_3481227417446351479_n.jpg';
+
+  var TESTIMONIALS = [
+    {
+      type:   'quote',
+      quote:  'Jack was amazing at building a soundtrack to the film, working closely with the director to build a style while injecting his own knowledge into the project. His professionalism and willingness to take feedback elevated the film.',
+      author: 'Amir Leo Elharrif',
+      role:   'Director — Comet Madness',
+      logo:   COMET_IMG
+    },
+    {
+      type:        'project',
+      tag:         'Project — 2025',
+      description: "Comet Madness is a dark comedy short film set in 1910, following a dysfunctional family gathering for a last supper as a comet threatens the end of the world. Inspired by the real Halley's Comet panic of the 1910s, the film explores scandal, secrets, and a world without consequences. Jack composed and designed the full soundtrack for the production.",
+      author:      'Comet Madness',
+      role:        'Dark Comedy Short Film · Dir. Amir Leo Elharrif',
+      logo:        COMET_IMG
+    }
+  ];
+
+  var cardsEl = document.getElementById('testCards');
+  var navEl   = document.getElementById('testNavBars');
+  var current = 0, autoTimer = null, resumeTimer = null;
+
+  function initials(name) { return name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase(); }
+
+  TESTIMONIALS.forEach(function (t, i) {
+    var logoInner = t.logo
+      ? '<img src="' + t.logo + '" alt="' + t.author + '" loading="lazy">'
+      : '<span style="color:rgba(255,255,255,0.6);font-size:20px;font-style:italic">' + initials(t.author) + '</span>';
+    var body = t.type === 'quote'
+      ? '<span class="test-quote-mark">\u201C</span><p class="test-body test-italic">' + t.quote + '</p>'
+      : '<span class="test-tag">' + t.tag + '</span><p class="test-body">' + t.description + '</p>';
+    var card = document.createElement('div');
+    card.className = 'test-card' + (i === 0 ? ' active' : '');
+    card.setAttribute('role', 'tabpanel');
+    card.innerHTML = '<div class="test-logo">' + logoInner + '</div>' +
+      '<div class="test-content">' + body +
+      '<p class="test-author"><strong>' + t.author + '</strong> — ' + t.role + '</p></div>';
+    cardsEl.appendChild(card);
+  });
+
+  var allCards = Array.from(cardsEl.querySelectorAll('.test-card'));
+
+  TESTIMONIALS.forEach(function (t, i) {
+    var wrap = document.createElement('div');
+    wrap.className = 'test-bar-wrap' + (i === 0 ? ' active' : '');
+    wrap.setAttribute('role', 'tab');
+    wrap.dataset.label = t.author;
+    wrap.innerHTML = '<div class="test-bar-track"><div class="test-bar-fill"></div></div>';
+    wrap.addEventListener('click', function () { onBarClick(i); });
+    navEl.appendChild(wrap);
+  });
+
+  var allWraps = Array.from(navEl.querySelectorAll('.test-bar-wrap'));
+  var allFills = allWraps.map(function (w) { return w.querySelector('.test-bar-fill'); });
+
+  function startFill(idx) {
+    allFills.forEach(function(f){ f.style.transition='none'; f.style.width='0%'; });
+    allFills[idx].getBoundingClientRect();
+    allFills[idx].style.transition = 'width ' + CONFIG.autoInterval + 'ms linear';
+    allFills[idx].style.width = '100%';
+  }
+  function stopFill() {
+    allFills.forEach(function(f){
+      var pct = (parseFloat(getComputedStyle(f).width)/parseFloat(getComputedStyle(f.parentElement).width)*100).toFixed(2)+'%';
+      f.style.transition='none'; f.style.width=pct;
+    });
+  }
+  function showCard(index) {
+    allCards[current].style.position = 'absolute';
+    allCards[current].classList.remove('active');
+    allWraps[current].classList.remove('active');
+    allFills[current].style.transition = 'none';
+    allFills[current].style.width = index > current ? '100%' : '0%';
+    current = index;
+    allCards[current].style.position = 'relative';
+    allCards[current].classList.add('active');
+    allWraps[current].classList.add('active');
+    requestAnimationFrame(function(){
+      cardsEl.style.height = allCards[current].offsetHeight + 'px';
+      setTimeout(function(){ cardsEl.style.height=''; }, 550);
+    });
+    startFill(current);
+  }
+  function startAuto() { clearInterval(autoTimer); autoTimer=setInterval(function(){ showCard((current+1)%TESTIMONIALS.length); },CONFIG.autoInterval); startFill(current); }
+  function stopAuto()  { clearInterval(autoTimer); stopFill(); }
+  function onBarClick(i) { stopAuto(); clearTimeout(resumeTimer); showCard(i); resumeTimer=setTimeout(startAuto,CONFIG.resumeDelay); }
+
+  document.addEventListener('visibilitychange', function(){ document.hidden?stopAuto():startAuto(); });
+  startAuto();
+
+  /* Mobile */
+  var mCardsEl = document.getElementById('testMCards');
+  var mCounter = document.getElementById('testMCounter');
+  var mCurrent = 0;
+
+  TESTIMONIALS.forEach(function (t, i) {
+    var logoInner = t.logo ? '<img src="' + t.logo + '" alt="' + t.author + '" loading="lazy">' : '';
+    var bodyHTML = t.type === 'quote'
+      ? '<p class="m-test-text m-italic">\u201C' + t.quote + '\u201D</p>'
+      : '<span class="m-test-tag">' + t.tag + '</span><p class="m-test-text">' + t.description + '</p>';
+    var card = document.createElement('div');
+    card.className = 'm-test-card' + (i === 0 ? ' m-active' : '');
+    card.innerHTML =
+      '<div class="m-test-header"><div class="m-test-logo">' + logoInner + '</div>' +
+      '<div><div class="m-test-name">' + t.author + '</div><div class="m-test-role">' + t.role + '</div></div></div>' +
+      bodyHTML;
+    mCardsEl.appendChild(card);
+  });
+
+  var mAllCards = Array.from(mCardsEl.querySelectorAll('.m-test-card'));
+  function mShow(i) {
+    mAllCards[mCurrent].classList.remove('m-active');
+    mCurrent = (i + TESTIMONIALS.length) % TESTIMONIALS.length;
+    mAllCards[mCurrent].classList.add('m-active');
+    mCounter.textContent = (mCurrent + 1) + ' / '

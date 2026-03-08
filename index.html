@@ -262,4 +262,12 @@
   heroThumb.addEventListener('load', function () { heroThumb.classList.add('loaded'); });
   if (heroThumb.complete && heroThumb.naturalWidth) heroThumb.classList.add('loaded');
 
-  heroC
+  heroCard.addEventListener('click', function () { JLPlayer.open(VIDEOS, 0); });
+  heroCard.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); JLPlayer.open(VIDEOS, 0); }
+  });
+
+}());
+</script>
+</body>
+</html>

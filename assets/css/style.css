@@ -20,9 +20,9 @@
 
   /* Typography */
   --font-display:  'Playfair Display', Georgia, serif;
-  --font-heading:  'Syne', sans-serif;
+  --font-heading:  'Playfair Display', Georgia, serif;
   --font-body:     'DM Sans', sans-serif;
-  --font-serif:    'Georgia', serif;
+  --font-serif:    'Playfair Display', Georgia, serif;
 
   /* Liquid glass tokens */
   --glass-bg:      rgba(8,8,14,0.25);

@@ -40,7 +40,7 @@ A custom-built static website for [jacklarkincomposer.co.uk](https://jacklarkinc
 ## Tech Stack
 
 - Pure HTML / CSS / JS — no build tools, no frameworks
-- Google Fonts: Playfair Display, Syne, DM Sans
+- Google Fonts: Libre Baskerville, Montserrat, Lora (italic)
 - EmailJS for contact form submissions (`service_vobl839`, `template_ea5tghs`, public key `5FtKlbfKWIuJqIPPQ`)
 - YouTube embeds for video portfolio via JLPlayer
 - Cloudflare CDN for self-hosted video files and email obfuscation
@@ -65,9 +65,9 @@ GitHub Pages supports clean URLs (no `.html` extension) via the folder/index.htm
 ## Design System
 
 ### Fonts
-- **Playfair Display** — page headings, mobile nav links, testimonial quotes
-- **Syne** — desktop nav links, section headings, buttons, labels
-- **DM Sans** — body text, form fields, captions
+- **Libre Baskerville** — page headings, mobile nav links, testimonial quotes
+- **Montserrat** — desktop nav links, section headings, buttons, labels
+- **Lora (italic)** — body text, form fields, captions
 
 ### Colour Tokens (CSS custom properties in `style.css`)
 | Variable | Value | Usage |
@@ -155,7 +155,7 @@ Items beyond the cap get `display: none !important` via `.gal-capped` / `.track-
 - Mobile: active link is gold (`color: var(--gold)`)
 
 **Mobile menu**
-- Full-screen overlay panel with Playfair Display font, vertical link list
+- Full-screen overlay panel with Libre Baskerville font, vertical link list
 - External links (YouTube, Instagram, SoundCloud) grouped separately below a "Links" label, displayed inline
 - Closes on link click, close button, or `aria-expanded` toggle
 

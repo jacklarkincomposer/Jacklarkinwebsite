@@ -32,10 +32,10 @@
   }
 
   /* ── Active nav link ── */
-  var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  var currentPath = window.location.pathname;
   document.querySelectorAll('.nav__links a, .nav__mobile-panel a').forEach(function (a) {
     var href = a.getAttribute('href');
-    if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+    if (href && href === currentPath) {
       a.classList.add('active');
     }
   });
@@ -66,6 +66,19 @@
       }
     }, { passive: true });
   }
+
+  /* ── Scroll to top ── */
+  var scrollBtn = document.createElement('button');
+  scrollBtn.className = 'scroll-top';
+  scrollBtn.setAttribute('aria-label', 'Scroll to top');
+  scrollBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>';
+  document.body.appendChild(scrollBtn);
+  window.addEventListener('scroll', function () {
+    scrollBtn.classList.toggle('visible', window.scrollY > 300);
+  }, { passive: true });
+  scrollBtn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   /* ── Links dropdown ── */
   document.querySelectorAll('.nav__dropdown').forEach(function (dd) {

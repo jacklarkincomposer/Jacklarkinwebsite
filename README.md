@@ -7,22 +7,33 @@ A custom-built static website for [jacklarkincomposer.co.uk](https://jacklarkinc
 ## File Structure
 
 ```
-├── index.html          # Homepage
-├── about.html          # About + Testimonials
-├── portfolio.html      # Portfolio gallery + Audio tracks
-├── services.html       # Services overview
-├── contact.html        # Contact form (EmailJS)
-├── sound-design.html   # Sound Design sub-portfolio
+├── index.html              # Homepage (served at /)
+├── about/
+│   └── index.html          # About + Testimonials (served at /about/)
+├── portfolio/
+│   └── index.html          # Portfolio gallery + Audio tracks (served at /portfolio/)
+├── services/
+│   └── index.html          # Services overview (served at /services/)
+├── contact/
+│   └── index.html          # Contact form (served at /contact/)
+├── sound-design/
+│   └── index.html          # Sound Design sub-portfolio (served at /sound-design/)
+├── 404.html                # Custom 404 page (auto-served by GitHub Pages)
+├── CNAME                   # Custom domain: jacklarkincomposer.co.uk
 ├── assets/
 │   ├── css/
-│   │   └── style.css   # All shared site styles
+│   │   └── style.css       # All shared site styles
 │   ├── js/
-│   │   └── main.js     # Shared nav, mobile menu, parallax & JLPlayer
+│   │   └── main.js         # Shared nav, mobile menu, parallax, scroll-to-top & JLPlayer
 │   └── images/
 │       ├── bg-texture.png  # Background texture image
 │       └── logo.png        # Site logo
 └── README.md
 ```
+
+### Asset path convention
+- Root `index.html` references assets with no prefix: `assets/css/style.css`
+- All subdirectory pages use `../assets/css/style.css`, `../assets/js/main.js` etc.
 
 ---
 
@@ -32,7 +43,7 @@ A custom-built static website for [jacklarkincomposer.co.uk](https://jacklarkinc
 - Google Fonts: Playfair Display, Syne, DM Sans
 - EmailJS for contact form submissions (`service_vobl839`, `template_ea5tghs`, public key `5FtKlbfKWIuJqIPPQ`)
 - YouTube embeds for video portfolio via JLPlayer
-- Cloudflare CDN for self-hosted video files
+- Cloudflare CDN for self-hosted video files and email obfuscation
 - GitHub Pages for hosting
 
 ---
@@ -41,10 +52,13 @@ A custom-built static website for [jacklarkincomposer.co.uk](https://jacklarkinc
 
 1. Create a GitHub repo and push all files to the `main` branch
 2. In repo Settings → Pages → set source to `main` branch, root `/`
-3. Point your domain: add a `CNAME` file containing `jacklarkincomposer.co.uk`
+3. Add a `CNAME` file at the repo root containing `jacklarkincomposer.co.uk` — this is required for the custom domain to resolve; without it GitHub Pages serves a 404 for the domain
 4. In your domain registrar, add a CNAME record pointing to `<username>.github.io`
 
-> **Note on case sensitivity:** GitHub Pages runs on Linux, which is case-sensitive. All HTML filenames must be lowercase-hyphenated (e.g. `sound-design.html`, not `Sound design.html`). All internal links must match exactly.
+### Clean URLs
+GitHub Pages supports clean URLs (no `.html` extension) via the folder/index.html pattern. Each page lives in its own directory (`about/index.html`), so GitHub Pages serves it at `/about/`. There is no `.htaccess` or server config involved — the directory structure alone provides this.
+
+> **Note on case sensitivity:** GitHub Pages runs on Linux, which is case-sensitive. All filenames and directory names must be lowercase-hyphenated. All internal links must match exactly.
 
 ---
 
@@ -76,7 +90,7 @@ background: var(--glass-bg-mid);
 backdrop-filter: var(--glass-blur);
 border: 1px solid var(--glass-border);
 ```
-Contact form inputs use a solid dark background (`rgba(10,10,14,0.85)`) so text is legible against the glass card.
+Contact form inputs use a solid dark background (`rgba(10,10,14,0.85)`) so text is legible against the glass card. The audio player uses darker overrides (`rgba(8,8,14,0.35–0.60)`) applied via an inline `<style>` block at the top of `portfolio/index.html`.
 
 ---
 
@@ -106,7 +120,7 @@ Video objects passed to `JLPlayer.open(videos, startIndex)` follow this shape:
 }
 ```
 
-### Audio Player (portfolio.html)
+### Audio Player (`portfolio/index.html`)
 Custom-built audio player with track list. Features:
 - Waveform-style scrubber, volume slider, time display
 - Keyboard shortcuts: `Space` (play/pause), `←`/`→` (seek 10s), `M` (mute)
@@ -117,29 +131,61 @@ Custom-built audio player with track list. Features:
 
 ### Gallery Caps — Show More / Show Less
 All three gallery-style sections have a cap to prevent the page from becoming too long when more content is added:
-- **Video gallery** (portfolio.html, sound-design.html): cap 6
-- **Audio tracks** (portfolio.html): cap 8
-- **Recent Work grid** (index.html): cap 6 (future-proofing)
+- **Video gallery** (portfolio, sound-design): cap 6
+- **Audio tracks** (portfolio): cap 8
+- **Recent Work grid** (index): cap 6 (future-proofing)
 
 Items beyond the cap get `display: none !important` via `.gal-capped` / `.track-capped` / `.card-capped`. A "Show More ↓ / Show Less ↑" button toggles them. The arrow rotates via CSS.
 
-### Contact Form (contact.html)
+### Navigation
+
+**Desktop nav CTA ("Get in Touch" button)**
+- On all pages except the contact page: links to `/contact/`
+- On the contact page: text changes to "Prefer email?" and links directly to `mailto:jacklarkincomposer@gmail.com?subject=Commission%20Enquiry` — this avoids a redundant round-trip to a page the user is already on
+
+**Announcement bar**
+- Mirrors the same logic: "Get in Touch" → `/contact/` on all pages except contact, where it reads "Prefer email?" and links to `mailto:`
+
+**CTA visibility**
+- The nav CTA is hidden by default and revealed via `IntersectionObserver` once the announcement bar scrolls out of the viewport, preventing duplicate CTAs when both are visible
+
+**Active nav link**
+- `main.js` reads `window.location.pathname` and adds `.active` to any nav link whose `href` matches exactly. This works with the clean URL structure (`/`, `/about/`, `/portfolio/` etc.)
+- Desktop: active link is white (`color: #fff`) with the gold underline bar at full scale
+- Mobile: active link is gold (`color: var(--gold)`)
+
+**Mobile menu**
+- Full-screen overlay panel with Playfair Display font, vertical link list
+- External links (YouTube, Instagram, SoundCloud) grouped separately below a "Links" label, displayed inline
+- Closes on link click, close button, or `aria-expanded` toggle
+
+### Scroll-to-Top Button
+A 44px glass circle button is injected into the DOM by `main.js` on every page. It:
+- Appears (opacity + translateY transition) after the user scrolls more than 300px
+- Smooth-scrolls to the top on click
+- Sits fixed bottom-right (28px from edges; 18px on mobile)
+- Uses `--glass-bg-mid` / `--glass-bg-deep` on hover, with a gold arrow icon
+
+### Contact Form (`contact/index.html`)
 Uses EmailJS to send form data without a backend. Anti-spam measures:
-- Honeypot field (hidden off-screen, bots fill it in, submission is silently swallowed)
+- Honeypot field (hidden off-screen; bots fill it in, submission is silently swallowed)
 - 3-second minimum time-on-page before a real send is attempted
 - 30-second cooldown between submissions
 
 Fields: Name\*, Email\*, Company/Channel, Project Type\* (with "Other" expand), Music Style\* (tag grid + free-text), Budget\*, Timeline\* (with rush-fee note), Reference/Inspiration (link to a song), Additional Details (1500 char limit with live counter).
 
-### Testimonials (about.html)
+### Testimonials (`about/index.html`)
 Desktop: stacked cards with animated progress-bar navigation and auto-rotation timer. Mobile (≤600px): swipe-able card carousel with prev/next arrow buttons and a counter. Implemented as two separate HTML structures — `.test-cards-container` (desktop) and `.test-mobile` (mobile) — toggled via CSS.
 
-### Navigation
-- Sticky nav bar with liquid glass effect
-- "Get in Touch" CTA button hidden until the announcement bar scrolls out of the viewport (IntersectionObserver)
-- Mobile: full-screen overlay with Playfair Display font, compact spacing
-- Desktop nav links use Syne font
-- Active page link highlighted via JS matching `window.location.pathname`
+### Custom 404 Page (`404.html`)
+Served automatically by GitHub Pages for any unrecognised URL. Matches the site design — same nav, footer, liquid glass variables, and font stack. Contains a gold "Back to Home" link. Lives at the repo root (not in a subdirectory) so GitHub Pages picks it up correctly.
+
+### Hero Image Preload (`index.html`)
+The homepage hero thumbnail (`https://i.ytimg.com/vi/zTgk1UZA76k/maxresdefault.jpg`) is preloaded via:
+```html
+<link rel="preload" as="image" href="https://i.ytimg.com/vi/zTgk1UZA76k/maxresdefault.jpg">
+```
+This tells the browser to fetch the image at the same priority as CSS, eliminating the flash of empty space before the thumbnail loads.
 
 ---
 
@@ -149,16 +195,17 @@ Desktop: stacked cards with animated progress-bar navigation and auto-rotation t
 Add a new object to the `VIDEOS` array in the relevant page's `<script>` block. The gallery cap will automatically handle the "Show More" button if you go beyond 6.
 
 ### New Audio Track (Portfolio)
-Add a new object to the `TRACKS` array in `portfolio.html`. The player cap will handle "Show More" if you go beyond 8.
+Add a new object to the `TRACKS` array in `portfolio/index.html`. The player cap will handle "Show More" if you go beyond 8.
 
 ### New Testimonial (About)
-Add to both the desktop `TESTIMONIALS` array and the matching mobile `MOBILE_TESTIMONIALS` array in `about.html`.
+Add to both the desktop `TESTIMONIALS` array and the matching mobile `MOBILE_TESTIMONIALS` array in `about/index.html`.
 
 ---
 
 ## Known Considerations
 
-- All filenames are lowercase-hyphenated for GitHub Pages compatibility
+- All filenames and directory names are lowercase-hyphenated for GitHub Pages compatibility
+- The `CNAME` file must always be present in the repo root; GitHub Pages will remove the custom domain binding if it is ever deleted (e.g. via a force-push that omits it)
 - The background texture is loaded from `assets/images/bg-texture.png` — this can be moved to CDN by updating the `url()` in `style.css`
 - EmailJS credentials are embedded in the client-side JS; this is standard practice for EmailJS as they are designed to be public-facing
-- The sound-design page may take a moment to propagate after any filename rename on GitHub Pages (Linux CDN caching)
+- Cloudflare proxies the site in production and obfuscates email addresses in the HTML (replacing them with `data-cfemail` encoded spans decoded by a Cloudflare script). The `404.html` uses a plain `mailto:` link because it may be served before Cloudflare's script loads

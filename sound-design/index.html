@@ -96,7 +96,7 @@
 <div class="gal-rail" id="galRail"></div>
 
 <!-- Back to portfolio -->
-<div class="see-all" style="padding: 32px 0 10px;">
+<div class="see-all see-all--top">
   <a href="/portfolio/">← Back to Full Portfolio</a>
 </div>
 
@@ -189,11 +189,14 @@
     img.addEventListener('load',  function () { img.classList.add('loaded'); });
     img.addEventListener('error', function () { img.style.opacity = '0.15'; });
 
-    /* Fetch real title */
+    /* Fetch real title (5 s timeout via AbortController) */
     (function (card, v) {
-      fetch('https://noembed.com/embed?url=https://www.youtube.com/watch?v=' + v.ytId)
+      var ctrl = new AbortController();
+      var timer = setTimeout(function () { ctrl.abort(); }, 5000);
+      fetch('https://noembed.com/embed?url=https://www.youtube.com/watch?v=' + v.ytId, { signal: ctrl.signal })
         .then(function (r) { return r.ok ? r.json() : {}; })
         .then(function (d) {
+          clearTimeout(timer);
           card.querySelector('.gal-skel-title').textContent = d.title || v.title;
           img.alt = d.title || v.title;
         })

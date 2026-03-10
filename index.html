@@ -264,7 +264,7 @@
     gridCards.forEach(function(c, i) { if (i >= GRID_CAP) c.classList.add('card-capped'); });
     var gridMoreRow = document.createElement('div');
     gridMoreRow.className = 'show-more-row';
-    gridMoreRow.style.cssText = 'max-width:980px;margin:0 auto;padding:12px 24px 0;text-align:center;';
+    /* layout handled by .show-more-row in style.css */
     gridMoreRow.innerHTML = '<button class="show-more-btn" id="gridMoreBtn"><span>Show More</span><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>';
     grid.insertAdjacentElement('afterend', gridMoreRow);
     var gridExpanded = false;

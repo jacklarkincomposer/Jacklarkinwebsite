@@ -2,6 +2,32 @@
    JACK LARKIN COMPOSER — Shared JS v2.0
    Navigation, mobile menu, scroll effects, JLPlayer
 ============================================================ */
+
+/* ── Master rAF loop — single requestAnimationFrame driving all callbacks ── */
+var rAF = {
+  callbacks: new Map(),
+  running: false,
+  register: function (id, fn) { this.callbacks.set(id, fn); },
+  unregister: function (id) { this.callbacks.delete(id); },
+  start: function () {
+    if (this.running) return;
+    this.running = true;
+    var self = this;
+    var loop = function () {
+      if (!self.running) return;
+      self.callbacks.forEach(function (fn) { fn(); });
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  },
+  pause:  function () { this.running = false; },
+  resume: function () { this.start(); }
+};
+document.addEventListener('visibilitychange', function () {
+  document.hidden ? rAF.pause() : rAF.resume();
+});
+rAF.start();
+
 (function () {
   'use strict';
 
@@ -50,21 +76,18 @@
     obs.observe(announceBar);
   }
 
-  /* ── Background parallax ── */
+  /* ── Background parallax (driven by master rAF loop) ── */
   var siteBg = document.querySelector('.site-bg');
   if (siteBg) {
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        requestAnimationFrame(function () {
-          var maxShift = window.innerHeight * 0.08;
-          var shift = Math.min(maxShift, window.scrollY * 0.04);
-          siteBg.style.transform = 'translateY(-' + shift + 'px)';
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
+    var pendingScroll = false;
+    window.addEventListener('scroll', function () { pendingScroll = true; }, { passive: true });
+    rAF.register('parallax', function () {
+      if (!pendingScroll) return;
+      pendingScroll = false;
+      var maxShift = window.innerHeight * 0.08;
+      var shift = Math.min(maxShift, window.scrollY * 0.04);
+      siteBg.style.transform = 'translateY(-' + shift + 'px)';
+    });
   }
 
   /* ── Scroll to top ── */

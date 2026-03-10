@@ -175,7 +175,7 @@
   TESTIMONIALS.forEach(function (t, i) {
     var logoInner = t.logo
       ? '<img src="' + t.logo + '" alt="' + t.author + '" loading="lazy">'
-      : '<span style="color:rgba(255,255,255,0.6);font-size:20px;font-style:italic">' + initials(t.author) + '</span>';
+      : '<span class="test-logo__initials">' + initials(t.author) + '</span>';
     var body = t.type === 'quote'
       ? '<span class="test-quote-mark">\u201C</span><p class="test-body test-italic">' + t.quote + '</p>'
       : '<span class="test-tag">' + t.tag + '</span><p class="test-body">' + t.description + '</p>';
@@ -205,7 +205,8 @@
 
   function startFill(idx) {
     allFills.forEach(function(f){ f.style.transition='none'; f.style.width='0%'; });
-    allFills[idx].getBoundingClientRect();
+    /* Force style flush without layout-thrashing read — void avoids the pointless getBoundingClientRect call */
+    void allFills[idx].offsetWidth;
     allFills[idx].style.transition = 'width ' + CONFIG.autoInterval + 'ms linear';
     allFills[idx].style.width = '100%';
   }

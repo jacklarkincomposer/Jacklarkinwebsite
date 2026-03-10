@@ -1447,21 +1447,24 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   .hero-autoplay-iframe { display: none; }
   .hero-watch-btn { display: none !important; }
 }
-/* Desktop: hide mobile-only elements, show just the iframe */
+/* Desktop: hide mobile-only overlay elements, show just the iframe */
 @media (min-width: 769px) {
-  .hero-mobile-thumb { display: none; }
   .hero-play-btn { display: none; }
   .hero-thumb-label { display: none; }
 }
-/* Mobile thumbnail — override the .hero-thumb img opacity:0 rule */
+/* Mobile thumbnail — in normal flow on mobile so it gives height to the container */
 .hero-mobile-thumb {
-  position: absolute;
-  inset: 0;
+  display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
   opacity: 1 !important;
   transform: none !important;
+  aspect-ratio: 16/9;
+}
+/* On desktop the thumbnail is hidden; the iframe (absolute) fills the container instead */
+@media (min-width: 769px) {
+  .hero-mobile-thumb { display: none; }
 }
 /* Watch button (desktop, below hero card) */
 .hero-watch-btn {

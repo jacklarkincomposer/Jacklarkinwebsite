@@ -15,6 +15,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
 <link rel="icon" href="../assets/images/logo.png" type="image/png">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&family=Lora:ital,wght@1,400&display=swap" rel="stylesheet">
@@ -23,13 +24,20 @@
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+<canvas id="particles-canvas"></canvas>
+<div id="aurora">
+  <div class="aurora-band aurora-band--1"></div>
+  <div class="aurora-band aurora-band--2"></div>
+  <div class="aurora-band aurora-band--3"></div>
+</div>
+<canvas id="grain"></canvas>
 
 <div class="site-bg"></div>
 
 <!-- Announcement bar -->
 <div class="announce-bar" id="announceBar">
   <span class="announce-bar__text">Commissions Open!</span>
-  <a href="mailto:jacklarkincomposer@gmail.com?subject=Commission%20Enquiry" class="announce-bar__link">Prefer email?</a>
+  <a href="mailto:jacklarkincomposer@gmail.com?subject=Commission%20Enquiry" class="announce-bar__link shimmer-hover">Prefer email?</a>
 </div>
 
 <!-- Navigation -->
@@ -83,7 +91,7 @@
 </div>
 
 <!-- Page title -->
-<div class="page-hero">
+<div class="page-hero reveal">
   <div class="page-title"><h1>Contact</h1></div>
 </div>
 
@@ -122,18 +130,24 @@
     </div>
 
     <div class="form-group" id="projectTypeGroup">
-      <label for="projectType">Project Type <span class="required">*</span></label>
-      <select id="projectType" name="project_type">
-        <option value="">Select project type</option>
-        <option value="Film Score">Film Score</option>
-        <option value="Game Music">Game Music</option>
-        <option value="TV/Series">TV / Series Music</option>
-        <option value="YouTube Content">YouTube Content</option>
-        <option value="Podcast">Podcast Music</option>
-        <option value="Commercial">Commercial / Ad</option>
-        <option value="Trailer">Trailer Music</option>
-        <option value="Other">Other (please specify below)</option>
-      </select>
+      <label>Project Type <span class="required">*</span></label>
+      <div class="custom-select" id="selectProjectType">
+        <div class="custom-select__trigger" onclick="toggleDropdown('selectProjectType')" role="button" tabindex="0" aria-haspopup="listbox">
+          <span class="custom-select__value">Select project type</span>
+          <svg class="custom-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <ul class="custom-select__menu" role="listbox">
+          <li role="option" data-value="Film Score" onclick="selectOption('selectProjectType','Film Score','Film Score');handleProjectTypeChange('Film Score')">Film Score</li>
+          <li role="option" data-value="Game Music" onclick="selectOption('selectProjectType','Game Music','Game Music');handleProjectTypeChange('Game Music')">Game Music</li>
+          <li role="option" data-value="TV/Series" onclick="selectOption('selectProjectType','TV/Series','TV / Series Music');handleProjectTypeChange('TV/Series')">TV / Series Music</li>
+          <li role="option" data-value="YouTube Content" onclick="selectOption('selectProjectType','YouTube Content','YouTube Content');handleProjectTypeChange('YouTube Content')">YouTube Content</li>
+          <li role="option" data-value="Podcast" onclick="selectOption('selectProjectType','Podcast','Podcast Music');handleProjectTypeChange('Podcast')">Podcast Music</li>
+          <li role="option" data-value="Commercial" onclick="selectOption('selectProjectType','Commercial','Commercial / Ad');handleProjectTypeChange('Commercial')">Commercial / Ad</li>
+          <li role="option" data-value="Trailer" onclick="selectOption('selectProjectType','Trailer','Trailer Music');handleProjectTypeChange('Trailer')">Trailer Music</li>
+          <li role="option" data-value="Other" onclick="selectOption('selectProjectType','Other','Other (please specify below)');handleProjectTypeChange('Other')">Other (please specify below)</li>
+        </ul>
+        <input type="hidden" name="project_type" id="projectType">
+      </div>
       <div class="other-project-field" id="otherProjectField">
         <input type="text" id="otherProjectType" name="other_project_type" placeholder="Please describe your project type" maxlength="120">
       </div>
@@ -163,27 +177,39 @@
 
     <div class="form-row">
       <div class="form-group" id="budgetGroup">
-        <label for="budgetRange">Budget Range <span class="required">*</span></label>
-        <select id="budgetRange" name="budget_range">
-          <option value="">Select budget</option>
-          <option value="Under £100">Under £100</option>
-          <option value="£100-250">£100 – £250</option>
-          <option value="£250-500">£250 – £500</option>
-          <option value="£500-1000">£500 – £1,000</option>
-          <option value="£1000+">£1,000+</option>
-          <option value="Let's discuss">Let's discuss</option>
-        </select>
+        <label>Budget Range <span class="required">*</span></label>
+        <div class="custom-select" id="selectBudget">
+          <div class="custom-select__trigger" onclick="toggleDropdown('selectBudget')" role="button" tabindex="0" aria-haspopup="listbox">
+            <span class="custom-select__value">Select budget</span>
+            <svg class="custom-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <ul class="custom-select__menu" role="listbox">
+            <li role="option" data-value="Under £100" onclick="selectOption('selectBudget','Under £100','Under £100');handleBudgetChange()">Under £100</li>
+            <li role="option" data-value="£100-250" onclick="selectOption('selectBudget','£100-250','£100 – £250');handleBudgetChange()">£100 – £250</li>
+            <li role="option" data-value="£250-500" onclick="selectOption('selectBudget','£250-500','£250 – £500');handleBudgetChange()">£250 – £500</li>
+            <li role="option" data-value="£500-1000" onclick="selectOption('selectBudget','£500-1000','£500 – £1,000');handleBudgetChange()">£500 – £1,000</li>
+            <li role="option" data-value="£1000+" onclick="selectOption('selectBudget','£1000+','£1,000+');handleBudgetChange()">£1,000+</li>
+            <li role="option" data-value="Let's discuss" onclick="selectOption('selectBudget','Let\'s discuss','Let\'s discuss');handleBudgetChange()">Let's discuss</li>
+          </ul>
+          <input type="hidden" name="budget_range" id="budgetRange">
+        </div>
         <div class="error-message">Please select a budget</div>
       </div>
       <div class="form-group" id="timelineGroup">
-        <label for="timeline">Timeline <span class="required">*</span></label>
-        <select id="timeline" name="timeline">
-          <option value="">When do you need it?</option>
-          <option value="ASAP">ASAP (+50% rush fee)</option>
-          <option value="This week">This week (+50% rush fee)</option>
-          <option value="This month">This month</option>
-          <option value="Flexible">Flexible</option>
-        </select>
+        <label>Timeline <span class="required">*</span></label>
+        <div class="custom-select" id="selectTimeline">
+          <div class="custom-select__trigger" onclick="toggleDropdown('selectTimeline')" role="button" tabindex="0" aria-haspopup="listbox">
+            <span class="custom-select__value">When do you need it?</span>
+            <svg class="custom-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <ul class="custom-select__menu" role="listbox">
+            <li role="option" data-value="ASAP" onclick="selectOption('selectTimeline','ASAP','ASAP (+50% rush fee)');handleTimelineChange()">ASAP (+50% rush fee)</li>
+            <li role="option" data-value="This week" onclick="selectOption('selectTimeline','This week','This week (+50% rush fee)');handleTimelineChange()">This week (+50% rush fee)</li>
+            <li role="option" data-value="This month" onclick="selectOption('selectTimeline','This month','This month');handleTimelineChange()">This month</li>
+            <li role="option" data-value="Flexible" onclick="selectOption('selectTimeline','Flexible','Flexible');handleTimelineChange()">Flexible</li>
+          </ul>
+          <input type="hidden" name="timeline" id="timeline">
+        </div>
         <div class="error-message">Please select a timeline</div>
       </div>
     </div>
@@ -202,7 +228,7 @@
       <span class="char-counter" id="charCounter">0 / 1500</span>
     </div>
 
-    <button type="submit" class="submit-btn" id="submitBtn">
+    <button type="submit" class="submit-btn shimmer-hover" id="submitBtn">
       Send Message
       <span class="btn-spinner"></span>
     </button>
@@ -213,19 +239,40 @@
 
 <!-- Footer -->
 <footer class="footer">
-  <p class="footer__email">Contact – <a href="/cdn-cgi/l/email-protection#53393230383f3221383a3d303c3e233c20362113343e323a3f7d303c3e"><span class="__cf_email__" data-cfemail="1d777c7e76717c6f7674737e72706d726e786f5d7a707c7471337e7270">[email&#160;protected]</span></a></p>
-  <div class="footer__socials">
-    <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram">
-      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
-    </a>
-    <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener" aria-label="SoundCloud">
-      <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </a>
-    <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener" aria-label="YouTube">
-      <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" fill="none" stroke="currentColor" stroke-width="1.5"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48" fill="currentColor"/></svg>
-    </a>
+  <div class="footer__inner">
+    <div class="footer__col footer__col--brand">
+      <a href="/" class="footer__logo-link">
+        <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
+        <span class="footer__logo-name">Jack Larkin</span>
+      </a>
+      <p class="footer__tagline">Composer for Games, TV &amp; Film</p>
+      <div class="footer__socials">
+        <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram" class="shimmer-hover">
+          <svg width="24" height="24" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        </a>
+        <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener" aria-label="SoundCloud" class="shimmer-hover">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener" aria-label="YouTube" class="shimmer-hover">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" fill="none" stroke="currentColor" stroke-width="1.5"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </div>
   </div>
-  <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
+  <div class="footer__bar">
+    <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
+    <details class="footer__sitemap" open>
+      <summary>Sitemap</summary>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/portfolio/">Portfolio</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/sound-design/">Sound Design</a></li>
+      </ul>
+    </details>
+  </div>
 </footer>
 
 <div class="notification" id="notification" role="status" aria-live="polite"></div>
@@ -259,13 +306,6 @@
     charCounter.className = 'char-counter' + (len >= max ? ' limit' : len > max * .9 ? ' warning' : '');
   });
 
-  projType.addEventListener('change', function () {
-    var o = this.value === 'Other';
-    otherField.classList.toggle('show', o);
-    if (o) otherInput.focus(); else otherInput.value = '';
-    if (this.value) clearErr('projectTypeGroup');
-  });
-
   document.querySelectorAll('.genre-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var g = this.dataset.genre, on = this.classList.toggle('selected');
@@ -286,8 +326,16 @@
       : 'With rush fee: <strong>£' + Math.round(r[0] * 1.5) + ' – £' + Math.round(r[1] * 1.5) + '</strong>';
     pricePreview.classList.add('show');
   }
-  budgetSel.addEventListener('change',   function () { clearErr('budgetGroup');   updatePrice(); });
-  timelineSel.addEventListener('change', function () { clearErr('timelineGroup'); updatePrice(); });
+
+  /* Custom dropdown change handlers (called from onclick in HTML) */
+  window.handleProjectTypeChange = function (val) {
+    var o = val === 'Other';
+    otherField.classList.toggle('show', o);
+    if (o) otherInput.focus(); else otherInput.value = '';
+    if (val) clearErr('projectTypeGroup');
+  };
+  window.handleBudgetChange = function () { clearErr('budgetGroup'); updatePrice(); };
+  window.handleTimelineChange = function () { clearErr('timelineGroup'); updatePrice(); };
 
   var valEmail = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); };
   var showErr  = function (id) { document.getElementById(id).classList.add('error'); };

@@ -4,26 +4,25 @@
 ============================================================ */
 
 /* ── Master rAF loop — single requestAnimationFrame driving all callbacks ── */
-var rAF = {
+const rAF = {
   callbacks: new Map(),
   running: false,
-  register: function (id, fn) { this.callbacks.set(id, fn); },
-  unregister: function (id) { this.callbacks.delete(id); },
-  start: function () {
-    if (this.running) return;
-    this.running = true;
-    var self = this;
-    var loop = function () {
-      if (!self.running) return;
-      self.callbacks.forEach(function (fn) { fn(); });
+  register:   (id, fn) => rAF.callbacks.set(id, fn),
+  unregister: (id)     => rAF.callbacks.delete(id),
+  start() {
+    if (rAF.running) return;
+    rAF.running = true;
+    const loop = () => {
+      if (!rAF.running) return;
+      rAF.callbacks.forEach(fn => fn());
       requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
   },
-  pause:  function () { this.running = false; },
-  resume: function () { this.start(); }
+  pause()  { rAF.running = false; },
+  resume() { rAF.start(); }
 };
-document.addEventListener('visibilitychange', function () {
+document.addEventListener('visibilitychange', () => {
   document.hidden ? rAF.pause() : rAF.resume();
 });
 rAF.start();
@@ -37,9 +36,16 @@ rAF.start();
   var close  = document.getElementById('mobileClose');
   if (toggle && panel) {
     toggle.addEventListener('click', function () {
-      panel.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      toggle.setAttribute('aria-expanded', 'true');
+      var isOpen = panel.classList.contains('open');
+      if (isOpen) {
+        panel.classList.remove('open');
+        document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+      } else {
+        panel.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        toggle.setAttribute('aria-expanded', 'true');
+      }
     });
     if (close) {
       close.addEventListener('click', function () {
@@ -92,9 +98,9 @@ rAF.start();
 
   /* ── Scroll to top ── */
   var scrollBtn = document.createElement('button');
-  scrollBtn.className = 'scroll-top';
+  scrollBtn.className = 'scroll-top shimmer-hover';
   scrollBtn.setAttribute('aria-label', 'Scroll to top');
-  scrollBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>';
+  scrollBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>';
   document.body.appendChild(scrollBtn);
   window.addEventListener('scroll', function () {
     scrollBtn.classList.toggle('visible', window.scrollY > 300);
@@ -116,6 +122,211 @@ rAF.start();
     });
   });
 
+  /* ── Gold glow border ── */
+  if (document.querySelector('.gallery-item, .gal-card')) {
+    var glowCards = Array.from(document.querySelectorAll('.gallery-item, .gal-card'));
+    var mouseX = 0, mouseY = 0, mouseMoved = false;
+    document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      mouseMoved = true;
+    }, { passive: true });
+    rAF.register('glowBorder', function () {
+      if (!mouseMoved) return;
+      mouseMoved = false;
+      glowCards.forEach(function (card) {
+        var rect = card.getBoundingClientRect();
+        var cx = rect.left + rect.width / 2;
+        var cy = rect.top + rect.height / 2;
+        var angle = Math.atan2(mouseY - cy, mouseX - cx) * (180 / Math.PI) + 90;
+        card.style.setProperty('--start', angle.toFixed(1));
+      });
+    });
+  }
+
+  /* ── Scroll reveal ── */
+  (function () {
+    var reveals = Array.from(document.querySelectorAll('.reveal'));
+    if (!reveals.length) return;
+    var revealObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(function (el, i) {
+      var siblings = Array.from(el.parentNode.children).filter(function (c) {
+        return c.classList.contains('reveal');
+      });
+      var sibIdx = siblings.indexOf(el);
+      if (sibIdx > 0) el.style.transitionDelay = (sibIdx * 0.1) + 's';
+      revealObs.observe(el);
+    });
+  }());
+
+  /* ── Page transitions ── */
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.4s ease';
+    window.addEventListener('load', function () {
+      document.body.style.opacity = '1';
+    });
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest('a[href]');
+      if (!link) return;
+      var href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+      e.preventDefault();
+      document.body.style.opacity = '0';
+      setTimeout(function () { window.location.href = href; }, 250);
+    });
+  }
+
+}());
+
+/* ── Custom dropdown helpers ── */
+function toggleDropdown(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var isOpen = el.classList.contains('open');
+  document.querySelectorAll('.custom-select.open').forEach(function (d) { d.classList.remove('open'); });
+  if (!isOpen) el.classList.add('open');
+}
+function selectOption(id, value, label) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.querySelector('.custom-select__value').textContent = label;
+  el.querySelector('input[type="hidden"]').value = value;
+  el.classList.remove('open');
+  el.querySelectorAll('li').forEach(function (li) {
+    li.classList.toggle('selected', li.dataset.value === value);
+  });
+}
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.custom-select')) {
+    document.querySelectorAll('.custom-select.open').forEach(function (d) { d.classList.remove('open'); });
+  }
+});
+
+/* ── Gold Particle System ── */
+(function () {
+  var canvas = document.getElementById('particles-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W, H, particles = [];
+  var isMobile = window.matchMedia('(max-width: 768px)').matches;
+  var COUNT = isMobile ? 40 : 80;
+  var mouse = { x: -9999, y: -9999 };
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
+
+  document.addEventListener('mousemove', function (e) {
+    mouse.x = e.clientX; mouse.y = e.clientY;
+  }, { passive: true });
+
+  function randBetween(a, b) { return a + Math.random() * (b - a); }
+
+  function Particle() {
+    this.reset();
+  }
+  Particle.prototype.reset = function () {
+    this.x  = randBetween(0, W);
+    this.y  = randBetween(0, H);
+    this.r  = randBetween(0.5, 2.2);
+    this.vx = randBetween(-0.15, 0.15);
+    this.vy = randBetween(-0.3, -0.05);
+    this.alpha = randBetween(0.2, 0.7);
+  };
+
+  for (var i = 0; i < COUNT; i++) particles.push(new Particle());
+
+  if (prefersReduced) {
+    /* Static single render */
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(function (p) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(212,168,75,' + p.alpha * 0.4 + ')';
+      ctx.fill();
+    });
+    return;
+  }
+
+  rAF.register('particles', function () {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(function (p) {
+      /* Mouse magnetism */
+      var dx = mouse.x - p.x;
+      var dy = mouse.y - p.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        p.vx += dx * 0.00008;
+        p.vy += dy * 0.00008;
+      }
+      p.x += p.vx;
+      p.y += p.vy;
+      /* Speed cap */
+      var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (speed > 0.8) { p.vx *= 0.8 / speed; p.vy *= 0.8 / speed; }
+      /* Edge wrap */
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+
+      /* Edge alpha fade */
+      var edgeDist = Math.min(p.x, p.y, W - p.x, H - p.y);
+      var edgeFade = Math.min(1, edgeDist / 80);
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(212,168,75,' + (p.alpha * edgeFade) + ')';
+      ctx.fill();
+    });
+  });
+}());
+
+/* ── Film Grain ── */
+(function () {
+  var grain = document.getElementById('grain');
+  if (!grain) return;
+  var gctx = grain.getContext('2d');
+  var gW, gH, frame = 0;
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function grainResize() {
+    gW = grain.width  = window.innerWidth;
+    gH = grain.height = window.innerHeight;
+  }
+  window.addEventListener('resize', grainResize, { passive: true });
+  grainResize();
+
+  function renderGrain() {
+    var img = gctx.createImageData(gW, gH);
+    var d   = img.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var v = (Math.random() * 255) | 0;
+      d[i] = d[i+1] = d[i+2] = v;
+      d[i+3] = 255;
+    }
+    gctx.putImageData(img, 0, 0);
+  }
+
+  if (prefersReduced) { renderGrain(); return; }
+
+  rAF.register('grain', function () {
+    frame++;
+    if (frame % 3 !== 0) return;
+    renderGrain();
+  });
 }());
 
 /* ============================================================
@@ -308,11 +519,7 @@ window.JLPlayer = (function () {
 
     document.body.style.overflow = 'hidden';
     _overlay.classList.add('open');
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        _overlay.classList.add('visible');
-      });
-    });
+    setTimeout(function () { _overlay.classList.add('visible'); }, 20);
     setTimeout(function () { _els.back.focus(); }, 240);
   }
 

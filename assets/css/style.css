@@ -1442,12 +1442,11 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   border: 0;
   pointer-events: none;
 }
-/* Mobile: hide iframe, show thumbnail + play overlay */
+/* Mobile: hide watch button (iframe never injected on mobile via JS) */
 @media (max-width: 768px) {
-  .hero-autoplay-iframe { display: none; }
   .hero-watch-btn { display: none !important; }
 }
-/* Desktop: hide mobile-only overlay elements, show just the iframe */
+/* Desktop: hide mobile-only overlay elements; iframe injected via JS */
 @media (min-width: 769px) {
   .hero-play-btn { display: none; }
   .hero-thumb-label { display: none; }

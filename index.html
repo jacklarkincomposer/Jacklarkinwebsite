@@ -102,14 +102,8 @@
 <div class="intro-row reveal">
   <div class="intro-row__media">
     <div class="hero-card" id="heroCard">
-      <div class="hero-thumb">
+      <div class="hero-thumb" id="heroThumb" data-ytid="zTgk1UZA76k">
         <img class="hero-mobile-thumb" src="https://i.ytimg.com/vi/zTgk1UZA76k/maxresdefault.jpg" alt="Avatar: The Way of Water – Full Rescore" fetchpriority="high">
-        <iframe class="hero-autoplay-iframe"
-          src="https://www.youtube.com/embed/zTgk1UZA76k?autoplay=1&mute=1&loop=1&playlist=zTgk1UZA76k&controls=0&rel=0&playsinline=1&modestbranding=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          title="Avatar: The Way of Water – Full Rescore"></iframe>
         <button class="hero-play-btn" id="heroPlayBtn" aria-label="Play: Avatar: The Way of Water – Full Rescore">
           <div class="hero-play-circle">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="7,5 20,12 7,19"/></svg>
@@ -338,6 +332,23 @@
       this.querySelector('span').textContent = gridExpanded ? 'Show Less' : 'Show More';
       this.classList.toggle('expanded', gridExpanded);
     });
+  }
+
+  /* ── Hero: inject autoplay iframe on desktop only ── */
+  if (window.matchMedia('(min-width: 769px)').matches) {
+    var heroThumb = document.getElementById('heroThumb');
+    if (heroThumb) {
+      var ytId = heroThumb.dataset.ytid;
+      var iframe = document.createElement('iframe');
+      iframe.className = 'hero-autoplay-iframe';
+      iframe.src = 'https://www.youtube.com/embed/' + ytId +
+        '?autoplay=1&mute=1&loop=1&playlist=' + ytId + '&controls=0&rel=0&playsinline=1&modestbranding=1';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.title = 'Avatar: The Way of Water – Full Rescore';
+      heroThumb.insertBefore(iframe, heroThumb.querySelector('.hero-play-btn'));
+    }
   }
 
   /* ── Hero buttons → open Avatar (index 0) ── */

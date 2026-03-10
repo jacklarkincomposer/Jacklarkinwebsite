@@ -1443,8 +1443,31 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   pointer-events: none;
 }
 /* Mobile: hide watch button (iframe never injected on mobile via JS) */
+/* Mobile: no iframe injected, so fix thumb height and show watch button */
 @media (max-width: 768px) {
-  .hero-watch-btn { display: none !important; }
+  .hero-thumb {
+    padding-bottom: 0;
+    height: auto;
+    background: transparent;
+  }
+  .hero-mobile-thumb {
+    display: block !important;
+    opacity: 1 !important;
+    position: static !important;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+  /* Hide all other children of hero-thumb on mobile */
+  .hero-thumb .hero-play-btn,
+  .hero-thumb .hero-thumb-label,
+  .hero-thumb .hero-autoplay-iframe {
+    display: none !important;
+  }
+  .hero-watch-btn {
+    display: flex;
+  }
 }
 /* Desktop: hide mobile-only overlay elements; iframe injected via JS */
 @media (min-width: 769px) {

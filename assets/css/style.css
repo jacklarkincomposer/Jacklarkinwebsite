@@ -1453,13 +1453,15 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   .hero-play-btn { display: none; }
   .hero-thumb-label { display: none; }
 }
-/* Mobile thumbnail */
+/* Mobile thumbnail — override the .hero-thumb img opacity:0 rule */
 .hero-mobile-thumb {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 1 !important;
+  transform: none !important;
 }
 /* Watch button (desktop, below hero card) */
 .hero-watch-btn {
@@ -1527,38 +1529,6 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   }
 }
 
-/* Gold glow border — portfolio & sound-design cards */
-@media (prefers-reduced-motion: no-preference) {
-  .gallery-item,
-  .gal-card {
-    position: relative;
-  }
-  .gallery-item::before,
-  .gal-card::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: conic-gradient(
-      from calc(var(--start, 0) * 1deg) at 50% 50%,
-      transparent 0deg,
-      rgba(212,168,75,var(--active, 0)) 60deg,
-      transparent 120deg
-    );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 1;
-    transition: --active 0.3s;
-  }
-  .gallery-item:hover::before,
-  .gal-card:hover::before {
-    --active: 0.7;
-  }
-}
 
 /* ── Scroll reveal ── */
 .reveal { opacity: 0; transform: translateY(24px); }

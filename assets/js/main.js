@@ -122,28 +122,6 @@ rAF.start();
     });
   });
 
-  /* ── Gold glow border ── */
-  if (document.querySelector('.gallery-item, .gal-card')) {
-    var glowCards = Array.from(document.querySelectorAll('.gallery-item, .gal-card'));
-    var mouseX = 0, mouseY = 0, mouseMoved = false;
-    document.addEventListener('mousemove', function (e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      mouseMoved = true;
-    }, { passive: true });
-    rAF.register('glowBorder', function () {
-      if (!mouseMoved) return;
-      mouseMoved = false;
-      glowCards.forEach(function (card) {
-        var rect = card.getBoundingClientRect();
-        var cx = rect.left + rect.width / 2;
-        var cy = rect.top + rect.height / 2;
-        var angle = Math.atan2(mouseY - cy, mouseX - cx) * (180 / Math.PI) + 90;
-        card.style.setProperty('--start', angle.toFixed(1));
-      });
-    });
-  }
-
   /* ── Scroll reveal ── */
   (function () {
     var reveals = Array.from(document.querySelectorAll('.reveal'));

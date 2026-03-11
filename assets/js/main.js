@@ -272,40 +272,6 @@ document.addEventListener('click', function (e) {
   });
 }());
 
-/* ── Film Grain ── */
-(function () {
-  var grain = document.getElementById('grain');
-  if (!grain) return;
-  var gctx = grain.getContext('2d');
-  var gW, gH, frame = 0;
-  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function grainResize() {
-    gW = grain.width  = window.innerWidth;
-    gH = grain.height = window.innerHeight;
-  }
-  window.addEventListener('resize', grainResize, { passive: true });
-  grainResize();
-
-  function renderGrain() {
-    var img = gctx.createImageData(gW, gH);
-    var d   = img.data;
-    for (var i = 0; i < d.length; i += 4) {
-      var v = (Math.random() * 255) | 0;
-      d[i] = d[i+1] = d[i+2] = v;
-      d[i+3] = 255;
-    }
-    gctx.putImageData(img, 0, 0);
-  }
-
-  if (prefersReduced) { renderGrain(); return; }
-
-  rAF.register('grain', function () {
-    frame++;
-    if (frame % 3 !== 0) return;
-    renderGrain();
-  });
-}());
 
 /* ============================================================
    JLPlayer — Unified video player overlay

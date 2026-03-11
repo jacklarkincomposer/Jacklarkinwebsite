@@ -28,8 +28,6 @@
   <div class="aurora-band aurora-band--2"></div>
   <div class="aurora-band aurora-band--3"></div>
 </div>
-<canvas id="grain"></canvas>
-
 <div class="site-bg"></div>
 
 <!-- Announcement bar -->
@@ -103,7 +101,7 @@
   <div class="intro-row__media">
     <div class="hero-card" id="heroCard">
       <div class="hero-thumb" id="heroThumb" data-ytid="zTgk1UZA76k">
-        <img class="hero-mobile-thumb" src="https://i.ytimg.com/vi/zTgk1UZA76k/maxresdefault.jpg" alt="Avatar: The Way of Water – Full Rescore" fetchpriority="high">
+        <img class="hero-mobile-thumb" src="https://i.ytimg.com/vi/zTgk1UZA76k/maxresdefault.jpg" alt="Avatar: The Way of Water – Full Rescore" fetchpriority="high" loading="eager">
         <button class="hero-play-btn" id="heroPlayBtn" aria-label="Play: Avatar: The Way of Water – Full Rescore">
           <div class="hero-play-circle">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="7,5 20,12 7,19"/></svg>
@@ -352,6 +350,7 @@
   }
 
   /* ── Hero buttons → open Avatar (index 0) ── */
+  /* ── Hero buttons → open Avatar (index 0) ── */
   ['heroPlayBtn', 'heroWatchBtn'].forEach(function (id) {
     var btn = document.getElementById(id);
     if (btn) btn.addEventListener('click', function () { JLPlayer.open(VIDEOS, 0); });
@@ -365,24 +364,40 @@
 
   var CONFIG = { autoInterval: 8000, resumeDelay: 15000 };
   var COMET_IMG = 'https://cdn.jacklarkincomposer.co.uk/Images/518198685_17868898722405210_3481227417446351479_n.jpg';
+  var JOE_IMG     = 'https://cdn.jacklarkincomposer.co.uk/Images/Joewoodcockmusiclogo.png';
+  var KERESLEY_IMG = 'https://cdn.jacklarkincomposer.co.uk/Images/Keresley-Grange.webp';
 
   var TESTIMONIALS = [
-    {
-      type:   'quote',
-      quote:  'Jack was amazing at building a soundtrack to the film, working closely with the director to build a style while injecting his own knowledge into the project. His professionalism and willingness to take feedback elevated the film.',
-      author: 'Amir Leo Elharrif',
-      role:   'Director — Comet Madness',
-      logo:   COMET_IMG
-    },
-    {
-      type:        'project',
-      tag:         'Project — 2025',
-      description: "Comet Madness is a dark comedy short film set in 1910, following a dysfunctional family gathering for a last supper as a comet threatens the end of the world. Inspired by the real Halley's Comet panic of the 1910s, the film explores scandal, secrets, and a world without consequences. Jack composed and designed the full soundtrack for the production.",
-      author:      'Comet Madness',
-      role:        'Dark Comedy Short Film · Dir. Amir Leo Elharrif',
-      logo:        COMET_IMG
-    }
-  ];
+  {
+    type:   'quote',
+    quote:  'Jack was amazing at building a soundtrack to the film, working closely with the director to build a style while injecting his own knowledge into the project. His professionalism and willingness to take feedback elevated the film.',
+    author: 'Amir Leo Elharrif',
+    role:   'Director — Comet Madness',
+    logo:   COMET_IMG
+  },
+  {
+    type:        'project',
+    tag:         'Project — 2025',
+    description: "Comet Madness is a dark comedy short film set in 1910, following a dysfunctional family gathering for a last supper as a comet threatens the end of the world. Inspired by the real Halley's Comet panic of the 1910s, the film explores scandal, secrets, and a world without consequences. Jack composed and designed the full soundtrack for the production.",
+    author:      'Comet Madness',
+    role:        'Dark Comedy Short Film · Dir. Amir Leo Elharrif',
+    logo:        COMET_IMG
+  },
+  {
+    type:   'quote',
+    quote:  'Jack has a deep understanding of working within DAWs such as Logic Pro and Pro Tools to record, mix and master tracks. Working alongside him on a track that had been poorly recorded, we were able to get it to a much better place. He was a real asset to the whole process.',
+    author: 'Joe Woodcock',
+    role:   'Film & TV Composer — Joe Woodcock Music',
+    logo:   JOE_IMG
+  },
+  {
+    type:   'quote',
+    quote:  'Jack produced a lovely bespoke backing track for our new school song, writing it to fit the words and fragments of melody the children had composed. The children, staff, and parents all loved it when it was performed at our school concert!',
+    author: 'Keresley Grange',
+    role:   'Music Teacher — Coventry Primary School',
+    logo:   KERESLEY_IMG
+  }
+];
 
   var cardsEl = document.getElementById('testCards');
   var navEl   = document.getElementById('testNavBars');

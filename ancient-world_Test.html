@@ -942,12 +942,12 @@
   const activeStemSet = new Set();
 
   // Per-stem nodes
-  const stemBuffers = {};   // decoded AudioBuffer per stem
-  const stemSources = {};   // currently running AudioBufferSourceNode
-  const stemGains   = {};   // GainNode per stem (controls volume)
+  // Per-stem nodes
+  const stemElements = {};  // <audio> element per stem
+  const stemGains    = {};  // GainNode per stem (controls volume)
 
-  // ── Load & decode all stems, then start them all looping at gain 0 ──
-  async function initAudio() {
+  // Wire <audio> elements into Web Audio graph — browser streams, no fetch/CORS needed
+  function initAudio() {
     if (audioCtx) return;
 
     audioCtx   = new (window.AudioContext || window.webkitAudioContext)();
@@ -955,44 +955,26 @@
     masterGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
     masterGain.connect(audioCtx.destination);
 
-    // Show loading state on the begin button
-    const btn = document.querySelector('.begin-btn');
-    if (btn) { btn.textContent = 'Loading…'; btn.disabled = true; }
-
-    // Fetch + decode all stems in parallel
-    await Promise.all(STEMS.map(async stem => {
-      const url = CDN_BASE + STEM_FILES[stem];
-      try {
-        const res    = await fetch(url);
-        const buf    = await res.arrayBuffer();
-        stemBuffers[stem] = await audioCtx.decodeAudioData(buf);
-      } catch (err) {
-        console.warn(`[Audio] Failed to load stem: ${stem}`, err);
-        stemBuffers[stem] = null; // graceful degradation
-      }
-    }));
-
-    // Create a GainNode per stem and start each looping at volume 0
     STEMS.forEach(stem => {
+      const el      = document.createElement('audio');
+      el.src        = CDN_BASE + STEM_FILES[stem];
+      el.loop       = true;
+      el.preload    = 'auto';
+      el.crossOrigin = 'anonymous';
+      document.body.appendChild(el);
+      stemElements[stem] = el;
+
+      const source   = audioCtx.createMediaElementSource(el);
       const gainNode = audioCtx.createGain();
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      source.connect(gainNode);
       gainNode.connect(masterGain);
       stemGains[stem] = gainNode;
 
-      if (stemBuffers[stem]) {
-        const src = audioCtx.createBufferSource();
-        src.buffer = stemBuffers[stem];
-        src.loop   = true;
-        src.connect(gainNode);
-        src.start(0);
-        stemSources[stem] = src;
-      }
+      el.play().catch(() => {});
     });
 
     audioStarted = true;
-
-    // Restore button
-    if (btn) { btn.textContent = 'Begin the Journey'; btn.disabled = false; }
   }
 
   // ── Fade a stem in (3 s ramp) ──
@@ -1094,8 +1076,8 @@
   // ========================
   // START JOURNEY
   // ========================
-  async function startJourney() {
-    await initAudio();
+  function startJourney() {
+    initAudio();
     activateStem('solo');
     activateStem('harp');
     showNotification('Journey Begins — Solo String + Harp');

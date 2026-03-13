@@ -1492,6 +1492,8 @@
         const outroLockY = outroEl.offsetTop;
         window.scrollTo({ top: outroLockY, behavior: 'smooth' });
         outroScrollLocked = true;
+        document.querySelector('.outro-title').classList.add('revealed');
+        document.querySelector('.outro-credits').classList.add('revealed');
 
         // After one full musical loop (19.2s) — transition to credits
         setTimeout(() => {

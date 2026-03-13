@@ -645,11 +645,18 @@
     background: transparent;
     z-index: 800;
     pointer-events: none;
-    transition: box-shadow 0.4s;
+    opacity: 0;
+    transition: opacity 0.6s;
   }
-  #pace-lock.active {
-    box-shadow: 0 0 24px 4px rgba(201,168,76,0.5), 0 0 6px 1px rgba(201,168,76,0.8);
+  #pace-lock.unlocked {
+    opacity: 1;
+    box-shadow: 0 0 24px 6px rgba(201,168,76,0.5), 0 0 6px 1px rgba(201,168,76,0.9);
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    animation: glow-pulse 1.5s ease-in-out 3;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1; }
   }
 
   #pace-warning {
@@ -666,7 +673,7 @@
     color: var(--gold);
     z-index: 800;
     opacity: 0;
-    transition: opacity 0.4s, transform 0.4s;
+    transition: opacity 0.3s, transform 0.3s;
     pointer-events: none;
     backdrop-filter: blur(8px);
   }
@@ -1302,192 +1309,158 @@
   }
 
   // ========================
-  // SCROLL ENGINE — bi-directional, pace-locked, credits gate
+  // SCROLL ENGINE — bi-directional, per-section pace lock, credits gate
   // ========================
   const scrollIndicator = document.getElementById('scroll-indicator');
   const progressBar     = document.getElementById('progress-bar');
   const paceLock        = document.getElementById('pace-lock');
   const paceWarning     = document.getElementById('pace-warning');
 
-  // Scroll pacing — minimum seconds per section when audio is playing
-  const MIN_SECTION_TIME = 10;       // seconds
-  let   lastSectionTime  = 0;        // audioCtx.currentTime when last section fired
-  let   paceLocked       = false;
-  let   paceWarnTimeout  = null;
-  let   lastScrollY      = 0;
-
-  // Bi-directional arc — each entry has the stems for that state
-  // When scrolling into a section: apply its add/remove
-  // When scrolling back out: revert to previous section's state
+  // ── Musical arc ──
   const SECTION_ARC = [
-    {
-      id: 'chapter-1',
-      add:    ['solo', 'harp'],
-      remove: []
-    },
-    {
-      id: 'chapter-2',
-      add:    ['lightperc'],
-      remove: []
-    },
-    {
-      id: 'chapter-3',
-      add:    ['cello', 'lightorc'],
-      remove: []
-    },
-    {
-      id: 'chapter-4',
-      add:    ['doublebass', 'choir'],
-      remove: ['harp', 'lightperc']
-    },
-    {
-      id: 'chapter-5',
-      add:    ['medperc', 'fullstring'],
-      remove: ['cello', 'lightorc', 'doublebass']
-    },
-    {
-      id: 'outro',
-      add:    ['fullorc', 'heavyperc'],
-      remove: ['solo', 'fullstring', 'medperc']
-    }
+    { id: 'chapter-1', add: ['solo', 'harp'],                  remove: [] },
+    { id: 'chapter-2', add: ['lightperc'],                     remove: [] },
+    { id: 'chapter-3', add: ['cello', 'lightorc'],             remove: [] },
+    { id: 'chapter-4', add: ['doublebass', 'choir'],           remove: ['harp', 'lightperc'] },
+    { id: 'chapter-5', add: ['medperc', 'fullstring'],         remove: ['cello', 'lightorc', 'doublebass'] },
+    { id: 'outro',     add: ['fullorc', 'heavyperc'],          remove: ['solo', 'fullstring', 'medperc'] }
   ];
 
-  // Track the highest section index reached
   let currentArcIndex = -1;
 
-  // Credits gate state
-  let outroReached    = false;
-  let creditsUnlocked = false;
-  let creditsScrolled = false;
+  // ── Per-section pace lock ──
+  // Each section index gets one timer. Once elapsed it is permanently unlocked.
+  // unlockedSections: Set of arc indices the user has already waited through.
+  const unlockedSections = new Set();
 
-  const revealEls = document.querySelectorAll(
-    '.chapter-number, .chapter-title, .chapter-mood, .chapter-text, .chapter-visual, .stem-reveal, .impact-text, .impact-rule, .outro-title, .outro-credits'
-  );
+  // locked = timer is currently running for a section
+  let paceLocked       = false;
+  let lockedScrollY    = 0;
+  let paceTimer        = null;
+  let warnHideTimeout  = null;
 
-  // ── Apply a specific arc index, fading stems in/out ──
+  const MIN_SECTION_TIME = 10000; // ms
+
+  function startSectionTimer(idx) {
+    paceLocked    = true;
+    lockedScrollY = window.scrollY;
+    paceLock.classList.remove('unlocked');
+
+    clearTimeout(paceTimer);
+    paceTimer = setTimeout(() => {
+      paceLocked = false;
+      unlockedSections.add(idx);
+      // Golden glow — section is now open
+      paceLock.classList.add('unlocked');
+      setTimeout(() => paceLock.classList.remove('unlocked'), 4500);
+    }, MIN_SECTION_TIME);
+  }
+
+  function showPaceWarning() {
+    paceWarning.classList.add('show');
+    clearTimeout(warnHideTimeout);
+    warnHideTimeout = setTimeout(() => paceWarning.classList.remove('show'), 1200);
+  }
+
+  // ── Intercept scroll to enforce pace lock (forward only) ──
+  window.addEventListener('scroll', () => {
+    // Only block forward scroll while locked
+    if (paceLocked && audioStarted && !muted) {
+      if (window.scrollY > lockedScrollY) {
+        window.scrollTo({ top: lockedScrollY, behavior: 'instant' });
+        showPaceWarning();
+        return;
+      }
+    }
+    onScroll();
+  }, { passive: false });
+
+  // ── Apply arc — bi-directional, no re-triggering locks ──
   function applyArcIndex(idx) {
     if (idx === currentArcIndex) return;
+    const goingForward = idx > currentArcIndex;
 
-    const going_forward = idx > currentArcIndex;
-
-    if (going_forward) {
-      // Apply all arcs from currentArcIndex+1 up to idx
+    if (goingForward) {
       for (let i = currentArcIndex + 1; i <= idx; i++) {
         SECTION_ARC[i].add.forEach(s => activateStem(s));
         SECTION_ARC[i].remove.forEach(s => deactivateStem(s));
       }
     } else {
-      // Revert — undo arcs from currentArcIndex down to idx+1
+      // Scrolling back — reverse transitions, no lock
       for (let i = currentArcIndex; i > idx; i--) {
-        // Reverse: re-activate what was removed, deactivate what was added
         SECTION_ARC[i].remove.forEach(s => activateStem(s));
         SECTION_ARC[i].add.forEach(s => deactivateStem(s));
       }
     }
-
     currentArcIndex = idx;
   }
 
-  // ── Pace lock: block forward scroll for MIN_SECTION_TIME ──
-  function triggerPaceLock() {
-    if (paceLocked) return;
-    paceLocked = true;
-    paceLock.classList.add('active');
-    paceWarning.classList.add('show');
+  // ── Credits gate ──
+  let outroReached    = false;
+  let creditsUnlocked = false;
 
-    clearTimeout(paceWarnTimeout);
-    paceWarnTimeout = setTimeout(() => {
-      paceLocked = false;
-      paceWarning.classList.remove('show');
-      // Glow lingers briefly then fades
-      setTimeout(() => paceLock.classList.remove('active'), 1500);
-    }, (MIN_SECTION_TIME - (audioCtx ? audioCtx.currentTime - lastSectionTime : 0)) * 1000);
-  }
-
-  // ── Override scroll to enforce pace lock ──
-  let scrollLockY = 0;
-  window.addEventListener('scroll', () => {
-    if (paceLocked && audioStarted && !muted) {
-      const scrollY = window.scrollY;
-      if (scrollY > scrollLockY) {
-        // Trying to scroll forward — block it
-        window.scrollTo({ top: scrollLockY, behavior: 'instant' });
-        paceWarning.classList.add('show');
-        clearTimeout(paceWarnTimeout);
-        paceWarnTimeout = setTimeout(() => paceWarning.classList.remove('show'), 1200);
-        return;
-      }
-    }
-    lastScrollY = window.scrollY;
-    onScroll();
-  }, { passive: false });
+  // ── Visual reveal elements ──
+  const revealEls = document.querySelectorAll(
+    '.chapter-number, .chapter-title, .chapter-mood, .chapter-text, .chapter-visual, .stem-reveal, .impact-text, .impact-rule, .outro-title, .outro-credits'
+  );
 
   function onScroll() {
     const scrollY = window.scrollY;
     const docH    = document.documentElement.scrollHeight - window.innerHeight;
-    const pct     = (scrollY / docH) * 100;
-    progressBar.style.width = pct + '%';
-
+    progressBar.style.width = ((scrollY / docH) * 100) + '%';
     if (scrollY > 100) scrollIndicator.classList.add('hidden');
 
-    // Scroll-reveal visual elements
+    // Visual reveals
     revealEls.forEach(el => {
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.85) {
         el.classList.add('revealed');
-        if (el.classList.contains('stem-reveal')) {
-          el.querySelectorAll('.stem-bar').forEach(bar => bar.classList.add('active'));
-        }
+        if (el.classList.contains('stem-reveal'))
+          el.querySelectorAll('.stem-bar').forEach(b => b.classList.add('active'));
       }
     });
 
     if (!audioStarted) return;
 
-    // Determine which arc section the reader is currently in
+    // Determine which section the reader is in
     let activeIdx = -1;
     SECTION_ARC.forEach(({ id }, i) => {
       const el = document.getElementById(id);
       if (!el) return;
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight * 0.55) activeIdx = i;
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.55) activeIdx = i;
     });
 
-    // Pace check — only on forward movement
-    if (activeIdx > currentArcIndex && audioStarted && !muted) {
-      const now     = audioCtx ? audioCtx.currentTime : 0;
-      const elapsed = now - lastSectionTime;
-      if (lastSectionTime > 0 && elapsed < MIN_SECTION_TIME) {
-        // Too fast — set lock position and trigger warning
-        scrollLockY = window.scrollY - 1;
-        triggerPaceLock();
-        window.scrollTo({ top: scrollLockY, behavior: 'instant' });
+    const goingForward = activeIdx > currentArcIndex;
+
+    if (goingForward && !muted) {
+      // Only lock if this section hasn't been unlocked before
+      if (!unlockedSections.has(activeIdx)) {
+        applyArcIndex(activeIdx);
+        startSectionTimer(activeIdx);
         return;
       }
-      lastSectionTime = now;
     }
 
+    // Backward scroll or already-unlocked section — apply freely, no lock
     applyArcIndex(activeIdx);
 
-    // Credits gate — when outro is in view, start 10s timer
+    // Credits gate
     const outroEl = document.getElementById('outro');
     if (outroEl && !outroReached) {
       const rect = outroEl.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.5) {
         outroReached = true;
-        // Softer music for credits: solo + harp + lightorc
-        ['fullorc', 'heavyperc', 'choir', 'medperc', 'fullstring',
-         'doublebass', 'cello', 'lightperc'].forEach(s => deactivateStem(s));
+        ['fullorc','heavyperc','choir','medperc','fullstring',
+         'doublebass','cello','lightperc'].forEach(s => deactivateStem(s));
         activateStem('solo');
         activateStem('harp');
         activateStem('lightorc');
 
-        // After 10s, reveal credits page and auto-scroll
         setTimeout(() => {
           if (creditsUnlocked) return;
           creditsUnlocked = true;
           const creditsEl = document.getElementById('credits-page');
           creditsEl.classList.add('revealed');
-          // Smooth auto-scroll to credits
           creditsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 10000);
       }

@@ -634,6 +634,155 @@
   }
   #notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+
+  /* ========================
+     SCROLL PACE LOCK
+  ======================== */
+  #pace-lock {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 800;
+    pointer-events: none;
+    transition: box-shadow 0.4s;
+  }
+  #pace-lock.active {
+    box-shadow: 0 0 24px 4px rgba(201,168,76,0.5), 0 0 6px 1px rgba(201,168,76,0.8);
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  #pace-warning {
+    position: fixed;
+    bottom: 3rem; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(13,12,10,0.95);
+    border: 1px solid var(--gold-dim);
+    padding: 0.6rem 1.8rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    z-index: 800;
+    opacity: 0;
+    transition: opacity 0.4s, transform 0.4s;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+  }
+  #pace-warning.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ========================
+     VOLUME SLIDER
+  ======================== */
+  #volume-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+  #volume-wrap span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.45rem;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  #volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 70px;
+    height: 1px;
+    background: var(--gold-dim);
+    outline: none;
+    cursor: none;
+  }
+  #volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: none;
+    box-shadow: 0 0 6px var(--gold);
+  }
+  #volume-slider::-moz-range-thumb {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: none;
+    box-shadow: 0 0 6px var(--gold);
+  }
+
+  /* ========================
+     OUTRO + CREDITS PAGE
+  ======================== */
+  #outro {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 4rem 2rem;
+    position: relative;
+  }
+
+  #credits-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+    padding: 4rem 2rem;
+    opacity: 0;
+    transition: opacity 2s ease;
+    pointer-events: none;
+  }
+  #credits-page.revealed {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .credits-thankyou {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.5s, transform 1.5s;
+  }
+  #credits-page.revealed .credits-thankyou {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .credits-body {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 2.2;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.5s 0.4s, transform 1.5s 0.4s;
+  }
+  #credits-page.revealed .credits-body {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+
+  /* hero fade-in */
+  #hero {
+    opacity: 0;
+    animation: hero-fade 2s 0.3s forwards;
+  }
+  @keyframes hero-fade {
+    to { opacity: 1; }
+  }
+
 </style>
 </head>
 <body>
@@ -665,7 +814,16 @@
     <div class="stem-dot" id="stem-heavyperc"><span>Heavy Perc</span><div class="dot"></div></div>
   </div>
   <button id="mute-btn" onclick="toggleMute()">♪</button>
+  <div id="volume-wrap">
+    <span>Vol</span>
+    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8"
+      oninput="setVolume(this.value)">
+  </div>
 </div>
+
+<!-- Pace lock glow bar -->
+<div id="pace-lock"></div>
+<div id="pace-warning">Scrolling too fast</div>
 
 <!-- Fake visualiser bars -->
 <div id="visualiser"></div>
@@ -882,8 +1040,13 @@
 <!-- OUTRO -->
 <section id="outro">
   <p class="outro-title">The Ancient Wanderer — Original Soundtrack</p>
-  <p class="outro-credits">
-    Composed & Produced — [Your Name]<br>
+  <p class="outro-credits">Composed by Jack Larkin</p>
+</section>
+
+<!-- CREDITS PAGE — revealed after 10s gate -->
+<section id="credits-page">
+  <p class="credits-thankyou">Thank you for listening</p>
+  <p class="credits-body">
     Final Year Composition for Screen<br>
     Logic Pro · East West Composer Cloud<br><br>
     <em>All themes, motifs, and worlds fictional.</em>
@@ -1050,6 +1213,18 @@
     updateVisualiser();
   }
 
+  function setVolume(val) {
+    if (!masterGain) return;
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(parseFloat(val), audioCtx.currentTime);
+    if (val > 0 && muted) {
+      muted = false;
+      const btn = document.getElementById('mute-btn');
+      btn.textContent = '♪';
+      btn.style.color = 'var(--gold)';
+    }
+  }
+
   function toggleMute() {
     if (!audioCtx) return;
     muted = !muted;
@@ -1127,14 +1302,23 @@
   }
 
   // ========================
-  // SCROLL ENGINE
+  // SCROLL ENGINE — bi-directional, pace-locked, credits gate
   // ========================
   const scrollIndicator = document.getElementById('scroll-indicator');
-  const progressBar = document.getElementById('progress-bar');
+  const progressBar     = document.getElementById('progress-bar');
+  const paceLock        = document.getElementById('pace-lock');
+  const paceWarning     = document.getElementById('pace-warning');
 
-  // Musical arc: each section defines which stems to ADD and which to REMOVE
-  // when the section enters the viewport centre.
-  // Arc: sparse → build → peak → thin → outro
+  // Scroll pacing — minimum seconds per section when audio is playing
+  const MIN_SECTION_TIME = 10;       // seconds
+  let   lastSectionTime  = 0;        // audioCtx.currentTime when last section fired
+  let   paceLocked       = false;
+  let   paceWarnTimeout  = null;
+  let   lastScrollY      = 0;
+
+  // Bi-directional arc — each entry has the stems for that state
+  // When scrolling into a section: apply its add/remove
+  // When scrolling back out: revert to previous section's state
   const SECTION_ARC = [
     {
       id: 'chapter-1',
@@ -1168,21 +1352,80 @@
     }
   ];
 
-  // Outro strip — only solo string remains as the circle closes
-  const OUTRO_STRIP = ['harp','lightperc','cello','lightorc','doublebass',
-                       'choir','medperc','fullstring','fullorc','heavyperc'];
+  // Track the highest section index reached
+  let currentArcIndex = -1;
 
-  // Track which sections have already fired so we don't re-trigger
-  const firedSections = new Set();
+  // Credits gate state
+  let outroReached    = false;
+  let creditsUnlocked = false;
+  let creditsScrolled = false;
 
   const revealEls = document.querySelectorAll(
     '.chapter-number, .chapter-title, .chapter-mood, .chapter-text, .chapter-visual, .stem-reveal, .impact-text, .impact-rule, .outro-title, .outro-credits'
   );
 
+  // ── Apply a specific arc index, fading stems in/out ──
+  function applyArcIndex(idx) {
+    if (idx === currentArcIndex) return;
+
+    const going_forward = idx > currentArcIndex;
+
+    if (going_forward) {
+      // Apply all arcs from currentArcIndex+1 up to idx
+      for (let i = currentArcIndex + 1; i <= idx; i++) {
+        SECTION_ARC[i].add.forEach(s => activateStem(s));
+        SECTION_ARC[i].remove.forEach(s => deactivateStem(s));
+      }
+    } else {
+      // Revert — undo arcs from currentArcIndex down to idx+1
+      for (let i = currentArcIndex; i > idx; i--) {
+        // Reverse: re-activate what was removed, deactivate what was added
+        SECTION_ARC[i].remove.forEach(s => activateStem(s));
+        SECTION_ARC[i].add.forEach(s => deactivateStem(s));
+      }
+    }
+
+    currentArcIndex = idx;
+  }
+
+  // ── Pace lock: block forward scroll for MIN_SECTION_TIME ──
+  function triggerPaceLock() {
+    if (paceLocked) return;
+    paceLocked = true;
+    paceLock.classList.add('active');
+    paceWarning.classList.add('show');
+
+    clearTimeout(paceWarnTimeout);
+    paceWarnTimeout = setTimeout(() => {
+      paceLocked = false;
+      paceWarning.classList.remove('show');
+      // Glow lingers briefly then fades
+      setTimeout(() => paceLock.classList.remove('active'), 1500);
+    }, (MIN_SECTION_TIME - (audioCtx ? audioCtx.currentTime - lastSectionTime : 0)) * 1000);
+  }
+
+  // ── Override scroll to enforce pace lock ──
+  let scrollLockY = 0;
+  window.addEventListener('scroll', () => {
+    if (paceLocked && audioStarted && !muted) {
+      const scrollY = window.scrollY;
+      if (scrollY > scrollLockY) {
+        // Trying to scroll forward — block it
+        window.scrollTo({ top: scrollLockY, behavior: 'instant' });
+        paceWarning.classList.add('show');
+        clearTimeout(paceWarnTimeout);
+        paceWarnTimeout = setTimeout(() => paceWarning.classList.remove('show'), 1200);
+        return;
+      }
+    }
+    lastScrollY = window.scrollY;
+    onScroll();
+  }, { passive: false });
+
   function onScroll() {
     const scrollY = window.scrollY;
-    const docH = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = (scrollY / docH) * 100;
+    const docH    = document.documentElement.scrollHeight - window.innerHeight;
+    const pct     = (scrollY / docH) * 100;
     progressBar.style.width = pct + '%';
 
     if (scrollY > 100) scrollIndicator.classList.add('hidden');
@@ -1200,31 +1443,59 @@
 
     if (!audioStarted) return;
 
-    // Fire arc transitions when a section crosses the 55% viewport mark
-    SECTION_ARC.forEach(({ id, add, remove }) => {
-      if (firedSections.has(id)) return;
+    // Determine which arc section the reader is currently in
+    let activeIdx = -1;
+    SECTION_ARC.forEach(({ id }, i) => {
       const el = document.getElementById(id);
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight * 0.55) {
-        add.forEach(s => activateStem(s));
-        remove.forEach(s => deactivateStem(s));
-        firedSections.add(id);
-      }
+      if (rect.top < window.innerHeight * 0.55) activeIdx = i;
     });
 
-    // Final outro — strip everything except solo string once outro is well in view
-    const outro = document.getElementById('outro');
-    if (outro) {
-      const rect = outro.getBoundingClientRect();
-      if (rect.top < window.innerHeight * 0.4) {
-        OUTRO_STRIP.forEach(s => deactivateStem(s));
+    // Pace check — only on forward movement
+    if (activeIdx > currentArcIndex && audioStarted && !muted) {
+      const now     = audioCtx ? audioCtx.currentTime : 0;
+      const elapsed = now - lastSectionTime;
+      if (lastSectionTime > 0 && elapsed < MIN_SECTION_TIME) {
+        // Too fast — set lock position and trigger warning
+        scrollLockY = window.scrollY - 1;
+        triggerPaceLock();
+        window.scrollTo({ top: scrollLockY, behavior: 'instant' });
+        return;
+      }
+      lastSectionTime = now;
+    }
+
+    applyArcIndex(activeIdx);
+
+    // Credits gate — when outro is in view, start 10s timer
+    const outroEl = document.getElementById('outro');
+    if (outroEl && !outroReached) {
+      const rect = outroEl.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.5) {
+        outroReached = true;
+        // Softer music for credits: solo + harp + lightorc
+        ['fullorc', 'heavyperc', 'choir', 'medperc', 'fullstring',
+         'doublebass', 'cello', 'lightperc'].forEach(s => deactivateStem(s));
+        activateStem('solo');
+        activateStem('harp');
+        activateStem('lightorc');
+
+        // After 10s, reveal credits page and auto-scroll
+        setTimeout(() => {
+          if (creditsUnlocked) return;
+          creditsUnlocked = true;
+          const creditsEl = document.getElementById('credits-page');
+          creditsEl.classList.add('revealed');
+          // Smooth auto-scroll to credits
+          creditsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 10000);
       }
     }
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
 
   // ========================
   // HOVER CURSOR EFFECTS

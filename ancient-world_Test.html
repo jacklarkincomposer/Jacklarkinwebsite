@@ -32,7 +32,7 @@
   #notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ══════════════════════════════
-     CONTROLS — bottom right, properly sized
+     CONTROLS
   ══════════════════════════════ */
   #controls {
     position: fixed; bottom: 2rem; right: 2rem;
@@ -78,8 +78,8 @@
   #intro-modal {
     position: fixed; inset: 0; z-index: 2000;
     display: flex; align-items: center; justify-content: center;
-    background: rgba(13,12,10,0.96); backdrop-filter: blur(12px);
-    opacity: 1; transition: opacity 0.8s;
+    background: rgba(13,12,10,0.97); backdrop-filter: blur(12px);
+    opacity: 1; transition: opacity 1s;
   }
   #intro-modal.hidden { opacity: 0; pointer-events: none; }
   .intro-box {
@@ -88,7 +88,6 @@
     background: rgba(26,23,16,0.95);
     text-align: center; position: relative;
   }
-  /* corner marks */
   .intro-box::before, .intro-box::after {
     content: ''; position: absolute; width: 16px; height: 16px;
     border-color: var(--gold); border-style: solid; opacity: 0.5;
@@ -125,6 +124,7 @@
   .arrow-label { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); }
   .arrow-chevron { width: 20px; height: 20px; border-right: 1px solid var(--gold); border-bottom: 1px solid var(--gold); transform: rotate(45deg); margin-top: -4px; animation: bounce 1.8s ease-in-out infinite; opacity: 0.7; }
   @keyframes bounce { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(4px)} }
+
   #visualiser { position: fixed; bottom: 0; left: 0; right: 0; height: 36px; z-index: 400; pointer-events: none; display: flex; align-items: flex-end; justify-content: center; gap: 2px; padding-bottom: 3px; opacity: 0; transition: opacity 0.5s; }
   #visualiser.active { opacity: 0.3; }
   .vb { width: 2px; background: var(--gold); border-radius: 1px 1px 0 0; }
@@ -165,83 +165,37 @@
   @keyframes fup { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
   /* ══════════════════════════════
-     SCENE — 16/9 image above text
+     SCENE
   ══════════════════════════════ */
   .scene { padding: 0 0 6vh; background: var(--ash); }
 
-  /* Cinematic image — 16/9, capped so title stays visible */
   .scene-frame {
-    width: 100%;
-    aspect-ratio: 16/9;
-    max-height: 72vh;
-    position: relative;
-    overflow: hidden;
-    background: var(--stone);
+    width: 100%; aspect-ratio: 16/9; max-height: 72vh;
+    position: relative; overflow: hidden; background: var(--stone);
   }
   .scene-frame img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-    transform: scale(1.04);
-    transition: transform 10s ease;
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transform: scale(1.04); transition: transform 10s ease;
   }
   .scene.in-view .scene-frame img { transform: scale(1); }
+  .scene-frame::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 35%; background: linear-gradient(to bottom, transparent, var(--ash)); pointer-events: none; }
+  .scene-frame::before { content: ''; position: absolute; inset: 12px; z-index: 2; pointer-events: none; border: 1px solid rgba(201,168,76,0.2); }
 
-  /* Subtle bottom fade so image bleeds into dark body */
-  .scene-frame::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 35%;
-    background: linear-gradient(to bottom, transparent, var(--ash));
-    pointer-events: none;
-  }
+  .scene-body { max-width: 1100px; margin: 0 auto; padding: 3vh 8vw 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: start; }
 
-  /* Gold corner brackets */
-  .scene-frame::before {
-    content: ''; position: absolute; inset: 12px; z-index: 2; pointer-events: none;
-    border: 1px solid rgba(201,168,76,0.2);
-  }
-
-  /* Text below image */
-  .scene-body {
-    max-width: 1100px; margin: 0 auto;
-    padding: 3vh 8vw 0;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: start;
-  }
-
-  .scene-left {}
-  .scene-right {}
-
-  .scene-mood {
-    font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.35em;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem;
-    opacity: 0; transform: translateY(16px); transition: opacity 0.8s, transform 0.8s;
-  }
+  .scene-mood { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; opacity: 0; transform: translateY(16px); transition: opacity 0.8s, transform 0.8s; }
   .scene.in-view .scene-mood { opacity: 1; transform: translateY(0); }
 
-  .scene-title {
-    font-family: 'Cinzel', serif; font-size: clamp(1.5rem, 3vw, 2.6rem);
-    font-weight: 600; line-height: 1.15; color: var(--text); margin-bottom: 1rem;
-    opacity: 0; transform: translateY(16px); transition: opacity 0.8s 0.1s, transform 0.8s 0.1s;
-  }
+  .scene-title { font-family: 'Cinzel', serif; font-size: clamp(1.5rem, 3vw, 2.6rem); font-weight: 600; line-height: 1.15; color: var(--text); margin-bottom: 1rem; opacity: 0; transform: translateY(16px); transition: opacity 0.8s 0.1s, transform 0.8s 0.1s; }
   .scene.in-view .scene-title { opacity: 1; transform: translateY(0); }
 
-  .traveller-line {
-    font-size: 0.95rem; font-style: italic; color: var(--gold);
-    opacity: 0; transform: translateY(12px); transition: opacity 0.8s 0.2s, transform 0.8s 0.2s;
-    margin-bottom: 0.9rem; line-height: 1.6; border-left: 1px solid var(--gold-dim); padding-left: 1rem;
-  }
+  .traveller-line { font-size: 0.95rem; font-style: italic; color: var(--gold); opacity: 0; transform: translateY(12px); transition: opacity 0.8s 0.2s, transform 0.8s 0.2s; margin-bottom: 0.9rem; line-height: 1.6; border-left: 1px solid var(--gold-dim); padding-left: 1rem; }
   .scene.in-view .traveller-line { opacity: 0.75; transform: translateY(0); }
 
-  .scene-text {
-    font-size: 1.05rem; line-height: 1.85; color: var(--text-dim); font-style: italic;
-    opacity: 0; transform: translateY(16px); transition: opacity 0.8s 0.3s, transform 0.8s 0.3s;
-  }
+  .scene-text { font-size: 1.05rem; line-height: 1.85; color: var(--text-dim); font-style: italic; opacity: 0; transform: translateY(16px); transition: opacity 0.8s 0.3s, transform 0.8s 0.3s; }
   .scene.in-view .scene-text { opacity: 1; transform: translateY(0); }
 
-  /* Stem chart — right column */
-  .stem-chart {
-    display: flex; flex-direction: column; gap: 0.6rem;
-    opacity: 0; transform: translateY(16px); transition: opacity 0.8s 0.35s, transform 0.8s 0.35s;
-    padding-top: 0.5rem;
-  }
+  .stem-chart { display: flex; flex-direction: column; gap: 0.6rem; opacity: 0; transform: translateY(16px); transition: opacity 0.8s 0.35s, transform 0.8s 0.35s; padding-top: 0.5rem; }
   .scene.in-view .stem-chart { opacity: 1; transform: translateY(0); }
   .stem-chart-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.4rem; }
 
@@ -270,6 +224,10 @@
   .outro-sub { font-family: 'Cinzel', serif; font-size: clamp(0.65rem, 1.6vw, 1rem); letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; opacity: 0; transform: translateY(16px); transition: opacity 2s 0.5s, transform 2s 0.5s; position: relative; z-index: 2; }
   .outro-sub.revealed { opacity: 0.85; transform: translateY(0); }
 
+  /* Outro stem chart — uses .outro-in-view instead of .scene.in-view */
+  #outro.outro-in-view .sc-fill { width: var(--w); }
+  #outro.outro-in-view .sc-pip { background: var(--gold); box-shadow: 0 0 5px var(--gold); }
+
   /* ── Credits ── */
   #credits { min-height: 80vh; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 1.5rem; padding: 4rem 2rem; opacity: 0; transition: opacity 3s; pointer-events: none; }
   #credits.revealed { opacity: 1; pointer-events: auto; }
@@ -277,11 +235,14 @@
   #credits.revealed .credits-hl { opacity: 1; transform: translateY(0); }
   .credits-body { font-size: 0.9rem; font-style: italic; color: var(--text-dim); line-height: 2.5; opacity: 0; transform: translateY(14px); transition: opacity 2s 0.9s, transform 2s 0.9s; }
   #credits.revealed .credits-body { opacity: 0.55; transform: translateY(0); }
+
+  /* ── Mobile: restore cursor on touch devices ── */
+  @media (hover: none) { body { cursor: auto; } .cursor, .cursor-ring { display: none; } }
 </style>
 </head>
 <body>
 
-<!-- Intro modal -->
+<!-- Intro modal — single entry point, triggers audio -->
 <div id="intro-modal">
   <div class="intro-box">
     <p class="intro-eyebrow">An Audiovisual Experience</p>
@@ -292,7 +253,7 @@
       <div class="intro-hint"><span class="icon">⏳</span> Each section asks you to pause and listen</div>
       <div class="intro-hint"><span class="icon">♪</span> Use headphones for the full experience</div>
     </div>
-    <button class="intro-enter" onclick="closeIntro()">Enter the World</button>
+    <button class="intro-enter" id="intro-btn" onclick="enterWorld()">Enter the World</button>
   </div>
 </div>
 
@@ -307,7 +268,7 @@
 <div id="progress-bar"></div>
 <div id="notification"></div>
 <div id="pace-lock"></div>
-<div id="pace-warning">Take your time</div>
+<div id="pace-warning">Scrolling too fast</div>
 <div id="visualiser"></div>
 
 <!-- Controls -->
@@ -351,11 +312,10 @@
     <h1 class="hero-title">The Ancient<em>Wanderer</em></h1>
     <p class="hero-sub">An unnamed traveller. A world without edges.<br>A silence that remembers.</p>
     <div class="hero-rule"><div class="rl"></div><span>✦ ✦ ✦</span><div class="rl r"></div></div>
-    <button class="begin-btn" onclick="startJourney()">Begin the Journey</button>
   </div>
 </section>
 
-<!-- SCENE 1 — THE SUMMIT -->
+<!-- SCENE 1 -->
 <div class="scene" id="scene-1">
   <div class="scene-frame">
     <img src="https://cdn.jacklarkincomposer.co.uk/Images%201/The%20summit.png" alt="The Summit" loading="lazy">
@@ -377,13 +337,13 @@
   </div>
 </div>
 
-<!-- IMPACT -->
+<!-- IMPACT 1 -->
 <div class="impact" id="impact-1">
   <div class="impact-rule"></div>
   <p class="impact-text">A world <em>remembered</em> before it was ever known.</p>
 </div>
 
-<!-- SCENE 2 — THE VALLEY -->
+<!-- SCENE 2 -->
 <div class="scene" id="scene-2">
   <div class="scene-frame">
     <img src="https://cdn.jacklarkincomposer.co.uk/Images%201/the%20valley.png" alt="The Valley" loading="lazy">
@@ -406,7 +366,7 @@
   </div>
 </div>
 
-<!-- SCENE 3 — THE WORLD REVEALED -->
+<!-- SCENE 3 -->
 <div class="scene" id="scene-3">
   <div class="scene-frame">
     <img src="https://cdn.jacklarkincomposer.co.uk/Images%201/the%20world.png" alt="The World Revealed" loading="lazy">
@@ -431,13 +391,13 @@
   </div>
 </div>
 
-<!-- IMPACT -->
+<!-- IMPACT 2 -->
 <div class="impact" id="impact-2">
   <div class="impact-rule"></div>
   <p class="impact-text">Every silence was simply <em>the world</em> gathering its breath.</p>
 </div>
 
-<!-- SCENE 4 — THE SEA -->
+<!-- SCENE 4 -->
 <div class="scene" id="scene-4">
   <div class="scene-frame">
     <img src="https://cdn.jacklarkincomposer.co.uk/Images%201/Where%20are%20the%20sea%20holds%20It%27s%20dead.png" alt="Where the Sea Holds Its Dead" loading="lazy">
@@ -447,7 +407,7 @@
       <p class="scene-mood">Dark · Reverent · Still</p>
       <h2 class="scene-title">Where the Sea Holds Its Dead</h2>
       <p class="traveller-line">"To stand here is to understand that beauty and ruin are the same thing."</p>
-      <p class="scene-text">Cello and medium percussion enter beneath the choir — grounding the sacred in something earthen and inevitable. The harp falls silent. The solo string continues, quieter now. This is not sadness — it is completion. What stands here has already become something else.</p>
+      <p class="scene-text">Double bass and choir enter — grounding the sacred in something earthen and inevitable. The harp and light percussion fall away. The solo string continues, quieter now. This is not sadness — it is completion. What stands here has already become something else.</p>
     </div>
     <div class="scene-right">
       <div class="stem-chart">
@@ -455,14 +415,13 @@
         <div class="sc-row"><span class="sc-lbl">Solo String</span><div class="sc-track"><div class="sc-fill" style="--w:55%"></div></div><div class="sc-pip"></div></div>
         <div class="sc-row"><span class="sc-lbl">Cello</span><div class="sc-track"><div class="sc-fill" style="--w:65%"></div></div><div class="sc-pip"></div></div>
         <div class="sc-row"><span class="sc-lbl">Double Bass</span><div class="sc-track"><div class="sc-fill" style="--w:70%"></div></div><div class="sc-pip"></div></div>
-        <div class="sc-row"><span class="sc-lbl">Med Perc</span><div class="sc-track"><div class="sc-fill" style="--w:60%"></div></div><div class="sc-pip"></div></div>
         <div class="sc-row"><span class="sc-lbl">Choir</span><div class="sc-track"><div class="sc-fill" style="--w:75%"></div></div><div class="sc-pip"></div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SCENE 5 — THE ROAD -->
+<!-- SCENE 5 -->
 <div class="scene" id="scene-5">
   <div class="scene-frame">
     <img src="https://cdn.jacklarkincomposer.co.uk/Images%201/road%20leats%20to%20itseld.png" alt="The Road That Leads to Itself" loading="lazy">
@@ -489,7 +448,7 @@
 <section id="outro">
   <h2 class="outro-title">The Ancient Wanderer<br><em style="font-style:italic;font-weight:400;font-size:0.5em;letter-spacing:0.15em;color:var(--gold);display:block;margin-top:0.3em;">Original Composition</em></h2>
   <p class="outro-sub">Composed by Jack Larkin</p>
-  <div style="display:flex;flex-direction:column;gap:0.5rem;align-items:center;margin-top:0.5rem;opacity:0.6;" id="outro-stems">
+  <div style="display:flex;flex-direction:column;gap:0.5rem;align-items:center;margin-top:0.5rem;opacity:0.5;" id="outro-stems">
     <div class="sc-row" style="width:220px;"><span class="sc-lbl" style="width:80px;">Full Strings</span><div class="sc-track"><div class="sc-fill" style="--w:90%"></div></div><div class="sc-pip"></div></div>
     <div class="sc-row" style="width:220px;"><span class="sc-lbl" style="width:80px;">Full Orc</span><div class="sc-track"><div class="sc-fill" style="--w:80%"></div></div><div class="sc-pip"></div></div>
     <div class="sc-row" style="width:220px;"><span class="sc-lbl" style="width:80px;">Heavy Perc</span><div class="sc-track"><div class="sc-fill" style="--w:70%"></div></div><div class="sc-pip"></div></div>
@@ -508,215 +467,451 @@
 </section>
 
 <script>
-  // Cursor
-  const cur=document.getElementById('cursor'), ring=document.getElementById('cursor-ring');
-  let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-  (function t(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(t);})();
-  document.querySelectorAll('button,.begin-btn').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{ring.style.width='48px';ring.style.height='48px';ring.style.borderColor='var(--gold)';});
-    el.addEventListener('mouseleave',()=>{ring.style.width='34px';ring.style.height='34px';ring.style.borderColor='rgba(201,168,76,0.4)';});
+  // ══════════════════════════════
+  // CURSOR
+  // ══════════════════════════════
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx+'px'; cur.style.top = my+'px'; });
+  (function tick() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(tick); })();
+  document.querySelectorAll('button,.begin-btn,.intro-enter').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='var(--gold)'; });
+    el.addEventListener('mouseleave', () => { ring.style.width='34px'; ring.style.height='34px'; ring.style.borderColor='rgba(201,168,76,0.4)'; });
   });
 
-  // Audio
-  const CDN='https://cdn.jacklarkincomposer.co.uk/Stems/';
-  const SF={solo:'Solo_Strings_Melody.wav',harp:'Harp.wav',lightperc:'Light_Percussion.wav',cello:'Cello_Bass.wav',lightorc:'Light_Orchestra.wav',doublebass:'Double_Bass.wav',choir:'Choir.wav',medperc:'Med_Percussion.wav',fullstring:'Full_Strings_Melody.wav',fullorc:'Full_Orchestra.wav',heavyperc:'Heavy_Percussion.wav'};
-  const STEMS=Object.keys(SF);
-  const LOOP=19.2;
-  let actx=null,mg=null,muted=false,ready=false;
-  const act=new Set(),buf={},gain={},src=[];
+  // ══════════════════════════════
+  // AUDIO ENGINE
+  // ══════════════════════════════
+  const CDN = 'https://cdn.jacklarkincomposer.co.uk/Stems/';
+  const SF = {
+    solo:'Solo_Strings_Melody.wav', harp:'Harp.wav', lightperc:'Light_Percussion.wav',
+    cello:'Cello_Bass.wav', lightorc:'Light_Orchestra.wav', doublebass:'Double_Bass.wav',
+    choir:'Choir.wav', medperc:'Med_Percussion.wav', fullstring:'Full_Strings_Melody.wav',
+    fullorc:'Full_Orchestra.wav', heavyperc:'Heavy_Percussion.wav'
+  };
+  const STEMS = Object.keys(SF);
+  const LOOP = 19.2; // bars 1-16 at 150bpm 3/4
 
-  async function initAudio(){
-    if(actx)return;
-    actx=new(window.AudioContext||window.webkitAudioContext)();
-    mg=actx.createGain();mg.gain.value=0.8;mg.connect(actx.destination);
-    const btn=document.querySelector('.begin-btn');
-    if(btn){btn.textContent='Loading…';btn.disabled=true;}
-    await Promise.all(STEMS.map(async s=>{
-      try{const r=await fetch(CDN+SF[s]);buf[s]=await actx.decodeAudioData(await r.arrayBuffer());}
-      catch(e){console.warn('stem fail:',s);buf[s]=null;}
+  let actx = null, mg = null, muted = false, ready = false;
+  const act = new Set(), buf = {}, gain = {}, activeSrc = [];
+
+  async function initAudio() {
+    if (actx) return;
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    mg = actx.createGain();
+    mg.gain.value = 0.8;
+    mg.connect(actx.destination);
+
+    const btn = document.getElementById('intro-btn');
+    if (btn) { btn.textContent = 'Loading…'; btn.disabled = true; }
+
+    await Promise.all(STEMS.map(async s => {
+      try {
+        const r = await fetch(CDN + SF[s]);
+        buf[s] = await actx.decodeAudioData(await r.arrayBuffer());
+      } catch(e) {
+        console.warn('Stem failed:', s, e);
+        buf[s] = null;
+      }
     }));
-    STEMS.forEach(s=>{const g=actx.createGain();g.gain.value=0;g.connect(mg);gain[s]=g;});
-    if(btn){btn.textContent='Begin the Journey';btn.disabled=false;}
-    ready=true;
+
+    STEMS.forEach(s => {
+      const g = actx.createGain();
+      g.gain.value = 0;
+      g.connect(mg);
+      gain[s] = g;
+    });
+
+    ready = true;
+    if (btn) { btn.textContent = 'Enter the World'; btn.disabled = false; }
   }
 
-  function sched(when){
-    STEMS.forEach(s=>{if(!buf[s])return;const n=actx.createBufferSource();n.buffer=buf[s];n.connect(gain[s]);n.start(when);src.push(n);n.onended=()=>{const i=src.indexOf(n);if(i>-1)src.splice(i,1);};});
-    const nx=when+LOOP;setTimeout(()=>sched(nx),(nx-actx.currentTime)*1000-200);
+  // ── Lookahead scheduler — drift-proof ──
+  // Schedules sources up to SCHED_AHEAD seconds in advance on a short interval.
+  // Uses the Web Audio clock exclusively — immune to JS timer jitter.
+  const SCHED_AHEAD = 0.5; // seconds to schedule ahead
+  const SCHED_INTERVAL = 200; // ms between scheduler ticks
+  let schedNext = 0; // next loop start time on actx clock
+  let schedTimer = null;
+
+  function schedulerTick() {
+    while (schedNext < actx.currentTime + SCHED_AHEAD) {
+      schedGeneration(schedNext);
+      schedNext += LOOP;
+    }
+    schedTimer = setTimeout(schedulerTick, SCHED_INTERVAL);
   }
 
-  function on(s){if(act.has(s))return;act.add(s);const g=gain[s];if(!g)return;g.gain.cancelScheduledValues(actx.currentTime);g.gain.setValueAtTime(g.gain.value,actx.currentTime);g.gain.linearRampToValueAtTime(1,actx.currentTime+3);const d=document.getElementById('stem-'+s);if(d)d.classList.add('active');note('+ '+s.toUpperCase());vis();}
-  function off(s){if(!act.has(s))return;act.delete(s);const g=gain[s];if(!g)return;g.gain.cancelScheduledValues(actx.currentTime);g.gain.setValueAtTime(g.gain.value,actx.currentTime);g.gain.linearRampToValueAtTime(0,actx.currentTime+4);const d=document.getElementById('stem-'+s);if(d)d.classList.remove('active');vis();}
+  function schedGeneration(when) {
+    STEMS.forEach(s => {
+      if (!buf[s]) return;
+      const n = actx.createBufferSource();
+      n.buffer = buf[s];
+      n.connect(gain[s]);
+      n.start(when);
+      activeSrc.push(n);
+      n.onended = () => { const i = activeSrc.indexOf(n); if (i > -1) activeSrc.splice(i, 1); };
+    });
+  }
 
-  function setVol(v){if(!mg)return;mg.gain.cancelScheduledValues(actx.currentTime);mg.gain.setValueAtTime(parseFloat(v),actx.currentTime);}
-  function toggleMute(){if(!actx)return;muted=!muted;const b=document.getElementById('mute-btn');if(muted){mg.gain.linearRampToValueAtTime(0,actx.currentTime+0.5);b.textContent='✕';b.style.color='var(--text-dim)';}else{mg.gain.linearRampToValueAtTime(parseFloat(document.getElementById('vol').value),actx.currentTime+0.5);b.textContent='♪';b.style.color='var(--gold)';}}
+  function startScheduler() {
+    schedNext = actx.currentTime + 0.1;
+    schedulerTick();
+  }
 
-  // Visualiser
-  const ve=document.getElementById('visualiser');const vb=[];
-  for(let i=0;i<60;i++){const b=document.createElement('div');b.className='vb';b.style.height='2px';ve.appendChild(b);vb.push(b);}
-  function vis(){const n=act.size,mh=Math.min(n*7,34);vb.forEach((b,i)=>{b.style.height=Math.max(2,Math.random()*mh*Math.sin(i/60*Math.PI))+'px';});if(n>0&&!muted)ve.classList.add('active');else ve.classList.remove('active');}
+  function stopScheduler() {
+    clearTimeout(schedTimer);
+    schedTimer = null;
+  }
 
-  // Notify
-  let nt;const nf=document.getElementById('notification');
-  function note(m){nf.textContent=m;nf.classList.add('show');clearTimeout(nt);nt=setTimeout(()=>nf.classList.remove('show'),2200);}
+  // ── Stem activation — safe gain snapshot ──
+  function on(s) {
+    if (act.has(s)) return;
+    act.add(s);
+    const g = gain[s];
+    if (!g) return;
+    const now = actx.currentTime;
+    g.gain.cancelScheduledValues(now);
+    g.gain.setValueAtTime(g.gain.value, now); // snapshot current value
+    g.gain.linearRampToValueAtTime(1, now + 3);
+    const d = document.getElementById('stem-'+s);
+    if (d) d.classList.add('active');
+    note('+ ' + s.toUpperCase());
+    vis();
+  }
 
-  // Start
-  async function startJourney(){
-    await initAudio();sched(actx.currentTime+0.1);on('solo');on('harp');
+  function off(s) {
+    if (!act.has(s)) return;
+    act.delete(s);
+    const g = gain[s];
+    if (!g) return;
+    const now = actx.currentTime;
+    g.gain.cancelScheduledValues(now);
+    g.gain.setValueAtTime(g.gain.value, now);
+    g.gain.linearRampToValueAtTime(0, now + 4);
+    const d = document.getElementById('stem-'+s);
+    if (d) d.classList.remove('active');
+    vis();
+  }
+
+  function setVol(v) {
+    if (!mg) return;
+    const now = actx.currentTime;
+    mg.gain.cancelScheduledValues(now);
+    mg.gain.setValueAtTime(mg.gain.value, now);
+    mg.gain.linearRampToValueAtTime(parseFloat(v), now + 0.05);
+    if (parseFloat(v) > 0 && muted) {
+      muted = false;
+      const b = document.getElementById('mute-btn');
+      b.textContent = '♪'; b.style.color = 'var(--gold)';
+    }
+  }
+
+  function toggleMute() {
+    if (!actx) return;
+    muted = !muted;
+    const b = document.getElementById('mute-btn');
+    const now = actx.currentTime;
+    mg.gain.cancelScheduledValues(now);
+    mg.gain.setValueAtTime(mg.gain.value, now);
+    if (muted) {
+      mg.gain.linearRampToValueAtTime(0, now + 0.5);
+      b.textContent = '✕'; b.style.color = 'var(--text-dim)';
+    } else {
+      mg.gain.linearRampToValueAtTime(parseFloat(document.getElementById('vol').value), now + 0.5);
+      b.textContent = '♪'; b.style.color = 'var(--gold)';
+    }
+  }
+
+  // Fade out master — guards against conflict with mute
+  let fadingOut = false;
+  function fadeOut() {
+    if (!mg || !actx || fadingOut) return;
+    fadingOut = true;
+    const now = actx.currentTime;
+    mg.gain.cancelScheduledValues(now);
+    mg.gain.setValueAtTime(mg.gain.value, now);
+    mg.gain.linearRampToValueAtTime(0, now + 8);
+    setTimeout(() => { if (ve) ve.classList.remove('active'); }, 4000);
+  }
+
+  // ══════════════════════════════
+  // VISUALISER
+  // ══════════════════════════════
+  const ve = document.getElementById('visualiser');
+  const vb = [];
+  for (let i = 0; i < 60; i++) {
+    const b = document.createElement('div');
+    b.className = 'vb'; b.style.height = '2px';
+    ve.appendChild(b); vb.push(b);
+  }
+  function vis() {
+    const n = act.size, mh = Math.min(n * 7, 34);
+    vb.forEach((b, i) => { b.style.height = Math.max(2, Math.random()*mh*Math.sin(i/60*Math.PI))+'px'; });
+    if (n > 0 && !muted) ve.classList.add('active');
+    else ve.classList.remove('active');
+  }
+
+  // ══════════════════════════════
+  // NOTIFICATIONS
+  // ══════════════════════════════
+  let nt;
+  const nf = document.getElementById('notification');
+  function note(m) { nf.textContent = m; nf.classList.add('show'); clearTimeout(nt); nt = setTimeout(() => nf.classList.remove('show'), 2200); }
+
+  // ══════════════════════════════
+  // ENTRY POINT — modal button
+  // ══════════════════════════════
+  async function enterWorld() {
+    await initAudio();
+    // Close modal
+    document.getElementById('intro-modal').classList.add('hidden');
+    // Start audio
+    startScheduler();
+    on('solo'); on('harp');
     note('Journey begins');
-    document.getElementById('scene-1').scrollIntoView({behavior:'smooth'});
   }
 
-  // Arc
-  const ARC=[
-    {id:'scene-1',add:['solo','harp'],remove:[]},
-    {id:'scene-2',add:['lightperc'],remove:[]},
-    {id:'scene-3',add:['cello','lightorc'],remove:[]},
-    {id:'scene-4',add:['doublebass','choir','medperc'],remove:['harp','lightperc','lightorc']},
-    {id:'scene-5',add:['fullstring'],remove:['doublebass','medperc']},
-    {id:'outro',add:['fullorc','heavyperc','fullstring'],remove:['solo','cello','choir']}
+  // ══════════════════════════════
+  // ARC
+  // ══════════════════════════════
+  const ARC = [
+    { id:'scene-1', add:['solo','harp'],                              remove:[] },
+    { id:'scene-2', add:['lightperc'],                                remove:[] },
+    { id:'scene-3', add:['cello','lightorc'],                         remove:[] },
+    { id:'scene-4', add:['doublebass','choir'],                       remove:['harp','lightperc','lightorc','cello'] },
+    { id:'scene-5', add:['fullstring','medperc'],                     remove:['doublebass'] },
+    { id:'outro',   add:['fullorc','heavyperc'],                      remove:['solo','choir','medperc'] }
   ];
-  let ai=-1;
-  function arc(idx){
-    if(idx===ai)return;
-    if(idx>ai){for(let i=ai+1;i<=idx;i++){ARC[i].add.forEach(on);ARC[i].remove.forEach(off);}}
-    else{for(let i=ai;i>idx;i--){ARC[i].remove.forEach(on);ARC[i].add.forEach(off);}}
-    ai=idx;
+  let ai = -1;
+
+  function arc(idx) {
+    if (idx === ai) return;
+    if (idx > ai) {
+      for (let i = ai+1; i <= idx; i++) { ARC[i].add.forEach(on); ARC[i].remove.forEach(off); }
+    } else {
+      for (let i = ai; i > idx; i--) { ARC[i].remove.forEach(on); ARC[i].add.forEach(off); }
+    }
+    ai = idx;
   }
 
-  // Pace lock
-  const pl=document.getElementById('pace-lock'),pw=document.getElementById('pace-warning');
-  let locked=false,lockBot=0,lt=null,wt=null;
-  const unlk=new Set();
-  function startLock(idx){
-    locked=true;
-    const el=document.getElementById(ARC[idx].id);
-    lockBot=el?el.offsetTop+el.offsetHeight-window.innerHeight:0;
-    pl.classList.remove('show');clearTimeout(lt);
-    lt=setTimeout(()=>{
-      locked=false;unlk.add(idx);
+  // ══════════════════════════════
+  // PACE LOCK
+  // ══════════════════════════════
+  const pl = document.getElementById('pace-lock');
+  const pw = document.getElementById('pace-warning');
+  let locked = false, lockBot = 0, lt = null, wt = null;
+  const unlk = new Set();
+
+  function getLockBot(idx) {
+    // Recalculate dynamically — accounts for lazy-loaded images changing heights
+    const el = document.getElementById(ARC[idx].id);
+    return el ? el.offsetTop + el.offsetHeight - window.innerHeight : 0;
+  }
+
+  function startLock(idx) {
+    locked = true;
+    lockBot = getLockBot(idx);
+    pl.classList.remove('show');
+    clearTimeout(lt);
+    lt = setTimeout(() => {
+      locked = false;
+      unlk.add(idx);
       pl.classList.add('show');
-      setTimeout(()=>pl.classList.remove('show'),4000);
-      showArrow();
-    },10000);
+      // Only show arrow if not in outro
+      if (!outroHit) showArrow();
+      setTimeout(() => pl.classList.remove('show'), 4000);
+    }, 10000);
   }
-  function warn(){pw.classList.add('show');clearTimeout(wt);wt=setTimeout(()=>pw.classList.remove('show'),1200);}
 
-  // Outro
-  let outroHit=false,creditsDone=false,outroLock=false;
+  function cancelLock() {
+    locked = false;
+    clearTimeout(lt);
+    lt = null;
+    pl.classList.remove('show');
+  }
 
-  // Reveal
-  const rv=document.querySelectorAll('.scene,.impact');
-  function onScroll(){
-    const sy=window.scrollY,dh=document.documentElement.scrollHeight-window.innerHeight;
-    document.getElementById('progress-bar').style.width=(sy/dh*100)+'%';
-    rv.forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*0.85)el.classList.add('in-view');});
-    if(!ready)return;
-    let idx=-1;
-    ARC.forEach(({id},i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<window.innerHeight*0.5)idx=i;});
-    if(idx>ai){arc(idx);if(!unlk.has(idx)&&!asOn)startLock(idx);}
-    else arc(idx);
-    const oe=document.getElementById('outro');
-    if(oe&&!outroHit&&oe.getBoundingClientRect().top<window.innerHeight*0.5){
-      outroHit=true;outroLock=true;
-      window.scrollTo({top:oe.offsetTop,behavior:'smooth'});
+  function warn() {
+    pw.classList.add('show');
+    clearTimeout(wt);
+    wt = setTimeout(() => pw.classList.remove('show'), 1200);
+  }
+
+  // ══════════════════════════════
+  // OUTRO GATE
+  // ══════════════════════════════
+  let outroHit = false, creditsDone = false, outroLock = false;
+
+  // ══════════════════════════════
+  // SCROLL HANDLER
+  // ══════════════════════════════
+  const rv = document.querySelectorAll('.scene,.impact');
+  const pb = document.getElementById('progress-bar');
+
+  function onScroll() {
+    const sy = window.scrollY;
+    const dh = document.documentElement.scrollHeight - window.innerHeight;
+    pb.style.width = (sy / dh * 100) + '%';
+
+    // Visual in-view reveals
+    rv.forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight * 0.85) el.classList.add('in-view'); });
+
+    if (!ready) return;
+
+    // Determine active arc index
+    let idx = -1;
+    ARC.forEach(({ id }, i) => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < window.innerHeight * 0.5) idx = i;
+    });
+
+    const goingForward = idx > ai;
+
+    if (goingForward) {
+      // Cancel any existing lock for sections we're skipping through (shouldn't happen but guard)
+      arc(idx);
+      if (!unlk.has(idx) && !asOn && !outroHit) {
+        startLock(idx);
+      }
+    } else {
+      // Going backward — cancel active lock, never re-lock
+      if (idx < ai) cancelLock();
+      arc(idx);
+    }
+
+    // Outro gate
+    const oe = document.getElementById('outro');
+    if (oe && !outroHit && oe.getBoundingClientRect().top < window.innerHeight * 0.5) {
+      outroHit = true;
+      outroLock = true;
+      cancelLock(); // clear any section lock that was running
+
+      // Snap to outro and reveal text
+      window.scrollTo({ top: oe.offsetTop, behavior: 'smooth' });
       document.querySelector('.outro-title').classList.add('revealed');
       document.querySelector('.outro-sub').classList.add('revealed');
-      // Activate outro stems visual
-      const os=document.getElementById('outro-stems');
-      if(os){os.querySelectorAll('.sc-fill').forEach(f=>{f.style.width=f.style.getPropertyValue('--w')||'80%';});}
-      setTimeout(()=>{
-        if(creditsDone)return;creditsDone=true;outroLock=false;
-        // Transition to soft reprise for credits
-        ['fullorc','heavyperc','heavyperc'].forEach(off);
-        on('solo');on('harp');on('lightorc');
-        const c=document.getElementById('credits');c.classList.add('revealed');
-        c.scrollIntoView({behavior:'smooth',block:'start'});
-        // After 3 loops (~57.6s) fade everything out
-        setTimeout(()=>fadeOut(),57600);
-      },19200);
+
+      // Animate outro stem chart
+      document.getElementById('outro').classList.add('outro-in-view');
+
+      // Hold for one full loop (19.2s), then transition to credits
+      setTimeout(() => {
+        if (creditsDone) return;
+        creditsDone = true;
+        outroLock = false;
+
+        // FIX: correct stems to fade — fullstring was added in scene-5 remove array
+        // was never in outro arc, so still playing. Fade all heavy stems.
+        ['fullorc', 'heavyperc', 'fullstring', 'choir', 'medperc',
+         'doublebass', 'cello', 'lightperc'].forEach(off);
+        on('solo'); on('harp'); on('lightorc');
+
+        // Glow signal
+        pl.classList.add('show');
+        setTimeout(() => {
+          pl.classList.remove('show');
+          const c = document.getElementById('credits');
+          c.classList.add('revealed');
+          c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Fade out after 3 more loops
+          setTimeout(() => fadeOut(), 57600);
+        }, 2000);
+      }, 19200);
     }
   }
 
-  function fadeOut(){
-    if(!mg||!actx)return;
-    mg.gain.cancelScheduledValues(actx.currentTime);
-    mg.gain.setValueAtTime(mg.gain.value,actx.currentTime);
-    mg.gain.linearRampToValueAtTime(0,actx.currentTime+8);
-    // Dim visualiser
-    setTimeout(()=>ve.classList.remove('active'),4000);
-  }
-
-  window.addEventListener('scroll',()=>{
-    if(outroLock){const o=document.getElementById('outro');if(o)window.scrollTo({top:o.offsetTop,behavior:'instant'});return;}
-    if(locked&&ready&&!asOn){if(window.scrollY>lockBot){window.scrollTo({top:lockBot,behavior:'instant'});warn();return;}}
+  window.addEventListener('scroll', () => {
+    // Outro lock — hold page on climax screen
+    if (outroLock) {
+      const o = document.getElementById('outro');
+      if (o) window.scrollTo({ top: o.offsetTop, behavior: 'instant' });
+      return;
+    }
+    // Pace lock — block forward scroll past section boundary
+    if (locked && ready && !muted && !asOn) {
+      // Recalculate lockBot in case images loaded and shifted layout
+      lockBot = getLockBot(ai);
+      if (window.scrollY > lockBot) {
+        window.scrollTo({ top: lockBot, behavior: 'instant' });
+        warn();
+        return;
+      }
+      // Scrolling backward cancels the lock
+      if (window.scrollY < lockBot - 80) cancelLock();
+    }
     onScroll();
-  },{passive:false});
+  }, { passive: false });
+
   onScroll();
 
-  // Autoscroll — smooth easing, 10s per section
-  let asOn=false,asRaf=null,asTgt=0,asIdx=0,asLast=0;
-  const AS=['scene-1','scene-2','scene-3','scene-4','scene-5','outro'];
+  // ══════════════════════════════
+  // AUTO SCROLL
+  // ══════════════════════════════
+  let asOn = false, asRaf = null, asTgt = 0, asIdx = 0, asLast = 0;
+  const AS = ['scene-1','scene-2','scene-3','scene-4','scene-5','outro'];
 
-  function toggleAS(){
-    const b=document.getElementById('as-btn');
-    if(asOn){
-      asOn=false;cancelAnimationFrame(asRaf);
-      b.textContent='Auto Scroll';b.classList.remove('on');
+  function toggleAS() {
+    const b = document.getElementById('as-btn');
+    if (asOn) {
+      asOn = false;
+      cancelAnimationFrame(asRaf);
+      b.textContent = 'Auto Scroll'; b.classList.remove('on');
     } else {
-      asOn=true;locked=false;
-      b.textContent='Stop';b.classList.add('on');
-      asIdx=0;asLast=performance.now();
-      const el=document.getElementById(AS[0]);
-      asTgt=el?el.offsetTop:0;
-      asRaf=requestAnimationFrame(asStep);
+      asOn = true;
+      cancelLock(); // cancel any active pace lock when auto-scroll begins
+      b.textContent = 'Stop'; b.classList.add('on');
+      asIdx = 0; asLast = performance.now();
+      const el = document.getElementById(AS[0]);
+      asTgt = el ? el.offsetTop : 0;
+      asRaf = requestAnimationFrame(asStep);
     }
   }
 
-  function asStep(now){
-    if(!asOn)return;
-    if(now-asLast>=10000&&asIdx<AS.length-1){
-      asIdx++;asLast=now;
-      const el=document.getElementById(AS[asIdx]);
-      if(el)asTgt=el.offsetTop;
+  function asStep(now) {
+    if (!asOn) return;
+    if (now - asLast >= 10000 && asIdx < AS.length - 1) {
+      asIdx++; asLast = now;
+      const el = document.getElementById(AS[asIdx]);
+      if (el) asTgt = el.offsetTop;
     }
-    const cur=window.scrollY,diff=asTgt-cur;
-    if(Math.abs(diff)>0.5)window.scrollTo({top:cur+diff*0.04,behavior:'instant'});
+    const cur = window.scrollY, diff = asTgt - cur;
+    if (Math.abs(diff) > 0.5) window.scrollTo({ top: cur + diff * 0.04, behavior: 'instant' });
     onScroll();
-    asRaf=requestAnimationFrame(asStep);
+    asRaf = requestAnimationFrame(asStep);
   }
 
-  window.addEventListener('wheel',()=>{
-    if(asOn){asOn=false;cancelAnimationFrame(asRaf);const b=document.getElementById('as-btn');b.textContent='Auto Scroll';b.classList.remove('on');}
-  },{passive:true});
+  // Cancel auto-scroll on manual wheel input
+  window.addEventListener('wheel', () => {
+    if (asOn) {
+      asOn = false;
+      cancelAnimationFrame(asRaf);
+      const b = document.getElementById('as-btn');
+      b.textContent = 'Auto Scroll'; b.classList.remove('on');
+    }
+  }, { passive: true });
 
-  // ── Intro modal ──
-  function closeIntro(){
-    document.getElementById('intro-modal').classList.add('hidden');
-  }
+  // ══════════════════════════════
+  // SCROLL ARROW
+  // ══════════════════════════════
+  const arrowEl = document.getElementById('scroll-arrow');
+  let arrowVisible = false, arrowHideTimer = null;
 
-  // ── Scroll arrow — show when pace lock unlocks, hide when user scrolls ──
-  const arrowEl=document.getElementById('scroll-arrow');
-  let arrowVisible=false,arrowHideTimer=null;
-
-  function showArrow(){
-    if(arrowVisible)return;
-    arrowVisible=true;
+  function showArrow() {
+    if (arrowVisible || outroHit) return;
+    arrowVisible = true;
     arrowEl.classList.remove('hide');
     arrowEl.classList.add('show');
   }
-  function hideArrow(){
-    if(!arrowVisible)return;
-    arrowVisible=false;
+  function hideArrow() {
+    if (!arrowVisible) return;
+    arrowVisible = false;
     arrowEl.classList.remove('show');
     arrowEl.classList.add('hide');
     clearTimeout(arrowHideTimer);
-    arrowHideTimer=setTimeout(()=>arrowEl.classList.remove('hide'),700);
+    arrowHideTimer = setTimeout(() => arrowEl.classList.remove('hide'), 700);
   }
-
-  // Hide arrow when user actually scrolls
-  window.addEventListener('scroll',()=>{ if(arrowVisible) hideArrow(); },{passive:true});
+  window.addEventListener('scroll', () => { if (arrowVisible) hideArrow(); }, { passive: true });
 
 </script>
 </body>

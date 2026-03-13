@@ -703,7 +703,7 @@
   // ══════════════════════════════
   const pl = document.getElementById('pace-lock');
   const pw = document.getElementById('pace-warning');
-  let locked = false, lockBot = 0, lt = null, wt = null;
+  let locked = false, lockBot = 0, lt = null, wt = null, enfRaf = null;
   const unlk = new Set();
 
   function getLockBot(idx) {
@@ -712,15 +712,29 @@
     return el ? el.offsetTop + el.offsetHeight - window.innerHeight : 0;
   }
 
+  // rAF enforcement loop — runs every frame while locked to catch momentum scrolling
+  function enforceLoop() {
+    if (!locked) return;
+    lockBot = getLockBot(ai);
+    if (window.scrollY > lockBot) {
+      window.scrollTo({ top: lockBot, behavior: 'instant' });
+    }
+    enfRaf = requestAnimationFrame(enforceLoop);
+  }
+
   function startLock(idx) {
     locked = true;
     lockBot = getLockBot(idx);
     // Immediately enforce — user may already be past the boundary from fast-scrolling
     if (window.scrollY > lockBot) window.scrollTo({ top: lockBot, behavior: 'instant' });
+    // Start per-frame enforcement (handles momentum scrolling)
+    cancelAnimationFrame(enfRaf);
+    enfRaf = requestAnimationFrame(enforceLoop);
     pl.classList.remove('show');
     clearTimeout(lt);
     lt = setTimeout(() => {
       locked = false;
+      cancelAnimationFrame(enfRaf);
       unlk.add(idx);
       pl.classList.add('show');
       // Only show arrow if not in outro
@@ -731,6 +745,7 @@
 
   function cancelLock() {
     locked = false;
+    cancelAnimationFrame(enfRaf);
     clearTimeout(lt);
     lt = null;
     pl.classList.remove('show');
@@ -845,15 +860,11 @@
     }
     // Pace lock — block forward scroll past section boundary
     if (locked && ready && !muted && !asOn) {
-      // Recalculate lockBot in case images loaded and shifted layout
-      lockBot = getLockBot(ai);
       if (window.scrollY > lockBot) {
         window.scrollTo({ top: lockBot, behavior: 'instant' });
         warn();
         return;
       }
-      // Scrolling backward cancels the lock
-      if (window.scrollY < lockBot - 80) cancelLock();
     }
     onScroll();
   }, { passive: false });

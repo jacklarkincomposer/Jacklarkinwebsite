@@ -914,40 +914,42 @@
   animateCursor();
 
   // ========================
-  // AUDIO ENGINE (Web Audio API — real stems)
+  // AUDIO ENGINE — AudioBufferSource with scheduled musical looping
   // ========================
   const CDN_BASE = 'https://cdn.jacklarkincomposer.co.uk/Stems/';
 
-  // Internal stem keys → CDN filenames (spaces encoded)
   const STEM_FILES = {
-    solo:       'Solo%20melody%20string.wav',
+    solo:       'Solo_Strings_Melody.wav',
     harp:       'Harp.wav',
-    lightperc:  'Light%20Percussion.wav',
-    cello:      'Cello%20Bass.wav',
-    lightorc:   'Light%20Orchestra.wav',
-    doublebass: 'Double%20bass.wav',
+    lightperc:  'Light_Percussion.wav',
+    cello:      'Cello_Bass.wav',
+    lightorc:   'Light_Orchestra.wav',
+    doublebass: 'Double_Bass.wav',
     choir:      'Choir.wav',
-    medperc:    'Med%20percussion.wav',
-    fullstring: 'Full%20string%20melody.wav',
-    fullorc:    'Full%20Orchestra.wav',
-    heavyperc:  'Heavy%20Percussion.wav'
+    medperc:    'Med_Percussion.wav',
+    fullstring: 'Full_Strings_Melody.wav',
+    fullorc:    'Full_Orchestra.wav',
+    heavyperc:  'Heavy_Percussion.wav'
   };
 
   const STEMS = Object.keys(STEM_FILES);
 
-  let audioCtx    = null;
-  let masterGain  = null;
-  let muted       = false;
+  // Musical loop point: bar 17, beat 1 — 16 bars × 3 beats × (60/150s)
+  const LOOP_INTERVAL  = 19.2;   // seconds
+  const FADE_IN_TIME   = 0.3;    // seconds — new source ramp to avoid click/swell
+
+  let audioCtx     = null;
+  let masterGain   = null;
+  let muted        = false;
   let audioStarted = false;
   const activeStemSet = new Set();
 
-  // Per-stem nodes
-  // Per-stem nodes
-  const stemElements = {};  // <audio> element per stem
-  const stemGains    = {};  // GainNode per stem (controls volume)
+  const stemBuffers = {};          // decoded AudioBuffer per stem
+  const stemGains   = {};          // GainNode per stem — controls scroll-driven volume
+  const activeSources = [];        // all currently playing AudioBufferSourceNodes
 
-  // Wire <audio> elements into Web Audio graph — browser streams, no fetch/CORS needed
-  function initAudio() {
+  // ── Fetch and decode all stems in parallel ──
+  async function initAudio() {
     if (audioCtx) return;
 
     audioCtx   = new (window.AudioContext || window.webkitAudioContext)();
@@ -955,29 +957,69 @@
     masterGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
     masterGain.connect(audioCtx.destination);
 
-    STEMS.forEach(stem => {
-      const el      = document.createElement('audio');
-      el.src        = CDN_BASE + STEM_FILES[stem];
-      el.loop       = true;
-      el.preload    = 'auto';
-      el.crossOrigin = 'anonymous';
-      document.body.appendChild(el);
-      stemElements[stem] = el;
+    const btn = document.querySelector('.begin-btn');
+    if (btn) { btn.textContent = 'Loading…'; btn.disabled = true; }
 
-      const source   = audioCtx.createMediaElementSource(el);
+    await Promise.all(STEMS.map(async stem => {
+      try {
+        const res = await fetch(CDN_BASE + STEM_FILES[stem]);
+        const buf = await res.arrayBuffer();
+        stemBuffers[stem] = await audioCtx.decodeAudioData(buf);
+      } catch (err) {
+        console.warn('[Audio] Failed to load:', stem, err);
+        stemBuffers[stem] = null;
+      }
+    }));
+
+    // Create a GainNode per stem — all silent until activated by scroll
+    STEMS.forEach(stem => {
       const gainNode = audioCtx.createGain();
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-      source.connect(gainNode);
       gainNode.connect(masterGain);
       stemGains[stem] = gainNode;
-
-      el.play().catch(() => {});
     });
+
+    if (btn) { btn.textContent = 'Begin the Journey'; btn.disabled = false; }
 
     audioStarted = true;
   }
 
-  // ── Fade a stem in (3 s ramp) ──
+  // ── Launch one generation of sources, all starting at audioCtx time `when` ──
+  // Each stem starts at its current stemGain target (0 for inactive, 1 for active)
+  // with a short FADE_IN_TIME ramp to avoid clicks. Old sources play out naturally.
+  function scheduleGeneration(when) {
+    STEMS.forEach(stem => {
+      if (!stemBuffers[stem]) return;
+
+      const src = audioCtx.createBufferSource();
+      src.buffer = stemBuffers[stem];
+      src.loop   = false; // we handle looping manually via scheduling
+
+      // Route through the stem's gain node
+      src.connect(stemGains[stem]);
+      src.start(when);
+
+      // Track so we can clean up stale references
+      activeSources.push(src);
+      src.onended = () => {
+        const idx = activeSources.indexOf(src);
+        if (idx !== -1) activeSources.splice(idx, 1);
+      };
+    });
+
+    // Schedule the next generation at the musical loop point
+    const nextAt = when + LOOP_INTERVAL;
+    const delay  = (nextAt - audioCtx.currentTime) * 1000;
+    setTimeout(() => scheduleGeneration(nextAt), delay - 200); // 200ms early for precision
+  }
+
+  // ── Called once by startJourney after initAudio resolves ──
+  function startPlayback() {
+    const startTime = audioCtx.currentTime + 0.1;
+    scheduleGeneration(startTime);
+  }
+
+  // ── Fade a stem in over 3s (scroll-triggered) ──
   function activateStem(stem) {
     if (activeStemSet.has(stem)) return;
     activeStemSet.add(stem);
@@ -993,7 +1035,7 @@
     updateVisualiser();
   }
 
-  // ── Fade a stem out (4 s ramp) ──
+  // ── Fade a stem out over 4s (scroll-triggered) ──
   function deactivateStem(stem) {
     if (!activeStemSet.has(stem)) return;
     activeStemSet.delete(stem);
@@ -1007,8 +1049,6 @@
     if (dot) dot.classList.remove('active');
     updateVisualiser();
   }
-
-
 
   function toggleMute() {
     if (!audioCtx) return;
@@ -1076,8 +1116,9 @@
   // ========================
   // START JOURNEY
   // ========================
-  function startJourney() {
-    initAudio();
+  async function startJourney() {
+    await initAudio();
+    startPlayback();
     activateStem('solo');
     activateStem('harp');
     showNotification('Journey Begins — Solo String + Harp');

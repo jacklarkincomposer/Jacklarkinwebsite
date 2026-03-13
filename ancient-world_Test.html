@@ -1309,7 +1309,7 @@
   }
 
   // ========================
-  // SCROLL ENGINE — bi-directional, per-section pace lock, credits gate
+  // SCROLL ENGINE — bi-directional, per-section pace lock at section END
   // ========================
   const scrollIndicator = document.getElementById('scroll-indicator');
   const progressBar     = document.getElementById('progress-bar');
@@ -1329,28 +1329,34 @@
   let currentArcIndex = -1;
 
   // ── Per-section pace lock ──
-  // Each section index gets one timer. Once elapsed it is permanently unlocked.
-  // unlockedSections: Set of arc indices the user has already waited through.
+  // Timer starts when user ENTERS a section.
+  // If they try to scroll past the section's bottom boundary before 10s, block them.
+  // Once elapsed, section is permanently unlocked — no re-lock on back-scroll.
   const unlockedSections = new Set();
 
-  // locked = timer is currently running for a section
   let paceLocked       = false;
-  let lockedScrollY    = 0;
+  let sectionBottomY   = 0;   // scrollY of the current section's bottom edge
   let paceTimer        = null;
   let warnHideTimeout  = null;
 
   const MIN_SECTION_TIME = 10000; // ms
 
+  function getSectionBottomScrollY(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    // scrollY at which the section's bottom edge leaves the viewport
+    return el.offsetTop + el.offsetHeight - window.innerHeight;
+  }
+
   function startSectionTimer(idx) {
-    paceLocked    = true;
-    lockedScrollY = window.scrollY;
+    paceLocked     = true;
+    sectionBottomY = getSectionBottomScrollY(SECTION_ARC[idx].id);
     paceLock.classList.remove('unlocked');
 
     clearTimeout(paceTimer);
     paceTimer = setTimeout(() => {
       paceLocked = false;
       unlockedSections.add(idx);
-      // Golden glow — section is now open
       paceLock.classList.add('unlocked');
       setTimeout(() => paceLock.classList.remove('unlocked'), 4500);
     }, MIN_SECTION_TIME);
@@ -1362,12 +1368,11 @@
     warnHideTimeout = setTimeout(() => paceWarning.classList.remove('show'), 1200);
   }
 
-  // ── Intercept scroll to enforce pace lock (forward only) ──
+  // ── Intercept scroll — block forward past section bottom while locked ──
   window.addEventListener('scroll', () => {
-    // Only block forward scroll while locked
     if (paceLocked && audioStarted && !muted) {
-      if (window.scrollY > lockedScrollY) {
-        window.scrollTo({ top: lockedScrollY, behavior: 'instant' });
+      if (window.scrollY > sectionBottomY) {
+        window.scrollTo({ top: sectionBottomY, behavior: 'instant' });
         showPaceWarning();
         return;
       }
@@ -1375,7 +1380,7 @@
     onScroll();
   }, { passive: false });
 
-  // ── Apply arc — bi-directional, no re-triggering locks ──
+  // ── Apply arc — bi-directional ──
   function applyArcIndex(idx) {
     if (idx === currentArcIndex) return;
     const goingForward = idx > currentArcIndex;
@@ -1386,7 +1391,6 @@
         SECTION_ARC[i].remove.forEach(s => deactivateStem(s));
       }
     } else {
-      // Scrolling back — reverse transitions, no lock
       for (let i = currentArcIndex; i > idx; i--) {
         SECTION_ARC[i].remove.forEach(s => activateStem(s));
         SECTION_ARC[i].add.forEach(s => deactivateStem(s));
@@ -1399,7 +1403,6 @@
   let outroReached    = false;
   let creditsUnlocked = false;
 
-  // ── Visual reveal elements ──
   const revealEls = document.querySelectorAll(
     '.chapter-number, .chapter-title, .chapter-mood, .chapter-text, .chapter-visual, .stem-reveal, .impact-text, .impact-rule, .outro-title, .outro-credits'
   );
@@ -1410,7 +1413,6 @@
     progressBar.style.width = ((scrollY / docH) * 100) + '%';
     if (scrollY > 100) scrollIndicator.classList.add('hidden');
 
-    // Visual reveals
     revealEls.forEach(el => {
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.85) {
@@ -1422,7 +1424,7 @@
 
     if (!audioStarted) return;
 
-    // Determine which section the reader is in
+    // Determine active section
     let activeIdx = -1;
     SECTION_ARC.forEach(({ id }, i) => {
       const el = document.getElementById(id);
@@ -1433,15 +1435,15 @@
     const goingForward = activeIdx > currentArcIndex;
 
     if (goingForward && !muted) {
-      // Only lock if this section hasn't been unlocked before
+      applyArcIndex(activeIdx);
+      // Start timer only if this section hasn't been sat in before
       if (!unlockedSections.has(activeIdx)) {
-        applyArcIndex(activeIdx);
         startSectionTimer(activeIdx);
-        return;
       }
+      return;
     }
 
-    // Backward scroll or already-unlocked section — apply freely, no lock
+    // Backward or same section — always free
     applyArcIndex(activeIdx);
 
     // Credits gate

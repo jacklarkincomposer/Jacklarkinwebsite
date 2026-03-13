@@ -715,6 +715,8 @@
   function startLock(idx) {
     locked = true;
     lockBot = getLockBot(idx);
+    // Immediately enforce — user may already be past the boundary from fast-scrolling
+    if (window.scrollY > lockBot) window.scrollTo({ top: lockBot, behavior: 'instant' });
     pl.classList.remove('show');
     clearTimeout(lt);
     lt = setTimeout(() => {
@@ -771,11 +773,20 @@
     const goingForward = idx > ai;
 
     if (goingForward) {
-      // Cancel any existing lock for sections we're skipping through (shouldn't happen but guard)
-      arc(idx);
-      if (!unlk.has(idx) && !asOn && !outroHit) {
-        startLock(idx);
+      // Find the first unvisited scene we're jumping past (excluding outro which has its own gate)
+      const lastScene = ROOMS.length - 2; // idx of last non-outro scene
+      let firstUnvisited = -1;
+      for (let i = ai + 1; i <= Math.min(idx, lastScene); i++) {
+        if (!unlk.has(i) && !asOn && !outroHit) { firstUnvisited = i; break; }
       }
+      if (firstUnvisited !== -1) {
+        // Snap back to the first scene the user hasn't waited in yet and lock there
+        arc(firstUnvisited);
+        startLock(firstUnvisited); // startLock also enforces scroll position
+        checkImpactWeight();
+        return; // hold here — don't process outro gate until lock releases
+      }
+      arc(idx);
     } else {
       // Going backward — cancel active lock, never re-lock
       if (idx < ai) cancelLock();

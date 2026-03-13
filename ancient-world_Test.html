@@ -549,40 +549,7 @@
   }
   .impact-section.revealed .impact-rule { width: 80vw; }
 
-  /* ========================
-     FINAL / OUTRO
-  ======================== */
-  #outro {
-    min-height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    gap: 2rem;
-    padding: 4rem 2rem;
-  }
 
-  .outro-title {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(1rem, 2.5vw, 1.5rem);
-    letter-spacing: 0.3em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    opacity: 0;
-    transition: opacity 1.5s;
-  }
-  .outro-title.revealed { opacity: 1; }
-
-  .outro-credits {
-    font-size: 0.85rem;
-    font-style: italic;
-    color: var(--text-dim);
-    opacity: 0;
-    transition: opacity 1.5s 0.5s;
-    line-height: 2;
-  }
-  .outro-credits.revealed { opacity: 0.6; }
 
   /* ========================
      AUDIO VISUALISER (fake stems)
@@ -721,20 +688,76 @@
   }
 
   /* ========================
-     OUTRO + CREDITS PAGE
+     OUTRO — CLIMAX LOCK SCREEN
   ======================== */
   #outro {
     min-height: 100vh;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    gap: 1.5rem;
+    gap: 2.5rem;
     padding: 4rem 2rem;
     position: relative;
+    overflow: hidden;
   }
 
+  /* Radial glow behind the text */
+  #outro::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 50%,
+      rgba(201,168,76,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    animation: outro-breathe 4s ease-in-out infinite;
+  }
+  @keyframes outro-breathe {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1; }
+  }
+
+  .outro-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 2s, transform 2s;
+    position: relative;
+    z-index: 2;
+  }
+  .outro-title.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .outro-credits {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 2s 0.6s, transform 2s 0.6s;
+    position: relative;
+    z-index: 2;
+  }
+  .outro-credits.revealed {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+
+  /* ========================
+     CREDITS PAGE
+  ======================== */
   #credits-page {
     min-height: 100vh;
     display: flex;
@@ -745,7 +768,7 @@
     gap: 2rem;
     padding: 4rem 2rem;
     opacity: 0;
-    transition: opacity 2s ease;
+    transition: opacity 3s ease;
     pointer-events: none;
   }
   #credits-page.revealed {
@@ -756,12 +779,12 @@
   .credits-thankyou {
     font-family: 'Cinzel', serif;
     font-size: clamp(0.8rem, 2vw, 1.1rem);
-    letter-spacing: 0.4em;
+    letter-spacing: 0.5em;
     color: var(--gold);
     text-transform: uppercase;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 1.5s, transform 1.5s;
+    transition: opacity 2s 0.5s, transform 2s 0.5s;
   }
   #credits-page.revealed .credits-thankyou {
     opacity: 1;
@@ -771,13 +794,13 @@
     font-size: 0.85rem;
     font-style: italic;
     color: var(--text-dim);
-    line-height: 2.2;
+    line-height: 2.4;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 1.5s 0.4s, transform 1.5s 0.4s;
+    transition: opacity 2s 1s, transform 2s 1s;
   }
   #credits-page.revealed .credits-body {
-    opacity: 0.6;
+    opacity: 0.55;
     transform: translateY(0);
   }
 
@@ -1044,13 +1067,15 @@
   </div>
 </section>
 
-<!-- OUTRO -->
+<!-- OUTRO — CLIMAX -->
 <section id="outro">
-  <p class="outro-title">The Ancient Wanderer — Original Soundtrack</p>
-  <p class="outro-credits">Composed by Jack Larkin</p>
+  <div class="outro-inner">
+    <h2 class="outro-title">The Ancient Wanderer<br><em style="font-style:italic;font-weight:400;font-size:0.55em;letter-spacing:0.15em;color:var(--gold);display:block;margin-top:0.4em;">Original Soundtrack</em></h2>
+    <p class="outro-credits">Composed by Jack Larkin</p>
+  </div>
 </section>
 
-<!-- CREDITS PAGE — revealed after 10s gate -->
+<!-- CREDITS PAGE — auto-scrolled to after gate -->
 <section id="credits-page">
   <p class="credits-thankyou">Thank you for listening</p>
   <p class="credits-body">
@@ -1370,6 +1395,15 @@
 
   // ── Intercept scroll — block forward past section bottom while locked ──
   window.addEventListener('scroll', () => {
+    // Outro climax lock — hold on full-screen moment
+    if (outroScrollLocked) {
+      const outroEl = document.getElementById('outro');
+      if (outroEl) {
+        window.scrollTo({ top: outroEl.offsetTop, behavior: 'instant' });
+      }
+      return;
+    }
+
     if (paceLocked && audioStarted && !muted) {
       if (window.scrollY > sectionBottomY) {
         window.scrollTo({ top: sectionBottomY, behavior: 'instant' });
@@ -1400,8 +1434,9 @@
   }
 
   // ── Credits gate ──
-  let outroReached    = false;
-  let creditsUnlocked = false;
+  let outroReached      = false;
+  let creditsUnlocked   = false;
+  let outroScrollLocked = false;
 
   const revealEls = document.querySelectorAll(
     '.chapter-number, .chapter-title, .chapter-mood, .chapter-text, .chapter-visual, .stem-reveal, .impact-text, .impact-rule, .outro-title, .outro-credits'
@@ -1446,25 +1481,40 @@
     // Backward or same section — always free
     applyArcIndex(activeIdx);
 
-    // Credits gate
+    // Credits gate — lock on outro, hold full orchestra, then auto-scroll
     const outroEl = document.getElementById('outro');
     if (outroEl && !outroReached) {
       const rect = outroEl.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.5) {
         outroReached = true;
-        ['fullorc','heavyperc','choir','medperc','fullstring',
-         'doublebass','cello','lightperc'].forEach(s => deactivateStem(s));
-        activateStem('solo');
-        activateStem('harp');
-        activateStem('lightorc');
 
+        // Hard-lock scroll to the outro viewport — this is the climax moment
+        const outroLockY = outroEl.offsetTop;
+        window.scrollTo({ top: outroLockY, behavior: 'smooth' });
+        outroScrollLocked = true;
+
+        // After one full musical loop (19.2s) — transition to credits
         setTimeout(() => {
           if (creditsUnlocked) return;
           creditsUnlocked = true;
-          const creditsEl = document.getElementById('credits-page');
-          creditsEl.classList.add('revealed');
-          creditsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 10000);
+          outroScrollLocked = false;
+
+          // Softer music for credits
+          ['fullorc','heavyperc','choir','medperc','fullstring',
+           'doublebass','cello','lightperc'].forEach(s => deactivateStem(s));
+          activateStem('solo');
+          activateStem('harp');
+          activateStem('lightorc');
+
+          // Glow signal then smooth auto-scroll
+          paceLock.classList.add('unlocked');
+          setTimeout(() => {
+            paceLock.classList.remove('unlocked');
+            const creditsEl = document.getElementById('credits-page');
+            creditsEl.classList.add('revealed');
+            creditsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 2000);
+        }, 19200);
       }
     }
   }

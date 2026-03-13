@@ -74,7 +74,57 @@
   #pace-warning { position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%) translateY(8px); background: rgba(13,12,10,0.95); border: 1px solid var(--gold-dim); padding: 0.55rem 1.6rem; font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); z-index: 800; opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; backdrop-filter: blur(8px); }
   #pace-warning.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* ── Visualiser ── */
+  /* ── Intro modal ── */
+  #intro-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,12,10,0.96); backdrop-filter: blur(12px);
+    opacity: 1; transition: opacity 0.8s;
+  }
+  #intro-modal.hidden { opacity: 0; pointer-events: none; }
+  .intro-box {
+    max-width: 520px; width: 90%; padding: 3rem 3.5rem;
+    border: 1px solid var(--gold-dim);
+    background: rgba(26,23,16,0.95);
+    text-align: center; position: relative;
+  }
+  /* corner marks */
+  .intro-box::before, .intro-box::after {
+    content: ''; position: absolute; width: 16px; height: 16px;
+    border-color: var(--gold); border-style: solid; opacity: 0.5;
+  }
+  .intro-box::before { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+  .intro-box::after  { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+  .intro-eyebrow { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; margin-bottom: 1.2rem; }
+  .intro-title { font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 4vw, 2.2rem); font-weight: 600; color: var(--text); margin-bottom: 1.5rem; line-height: 1.2; }
+  .intro-body { font-size: 1rem; font-style: italic; color: var(--text-dim); line-height: 1.85; margin-bottom: 0.75rem; }
+  .intro-hints { display: flex; flex-direction: column; gap: 0.4rem; margin: 1.4rem 0 2rem; }
+  .intro-hint { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+  .intro-hint span.icon { color: var(--gold); font-size: 0.75rem; }
+  .intro-enter {
+    font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--gold);
+    border: 1px solid var(--gold-dim); padding: 0.9rem 2.4rem;
+    background: transparent; cursor: none; overflow: hidden;
+    position: relative; transition: color 0.4s;
+  }
+  .intro-enter::before { content:''; position:absolute; inset:0; background:var(--gold); transform:translateX(-101%); transition:transform 0.4s; z-index:-1; }
+  .intro-enter:hover::before { transform:translateX(0); }
+  .intro-enter:hover { color: var(--ash); }
+
+  /* ── Scroll arrow ── */
+  #scroll-arrow {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    z-index: 450; opacity: 0; pointer-events: none;
+    transition: opacity 0.6s, transform 0.6s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  #scroll-arrow.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #scroll-arrow.hide { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  .arrow-label { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); }
+  .arrow-chevron { width: 20px; height: 20px; border-right: 1px solid var(--gold); border-bottom: 1px solid var(--gold); transform: rotate(45deg); margin-top: -4px; animation: bounce 1.8s ease-in-out infinite; opacity: 0.7; }
+  @keyframes bounce { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(4px)} }
   #visualiser { position: fixed; bottom: 0; left: 0; right: 0; height: 36px; z-index: 400; pointer-events: none; display: flex; align-items: flex-end; justify-content: center; gap: 2px; padding-bottom: 3px; opacity: 0; transition: opacity 0.5s; }
   #visualiser.active { opacity: 0.3; }
   .vb { width: 2px; background: var(--gold); border-radius: 1px 1px 0 0; }
@@ -119,10 +169,11 @@
   ══════════════════════════════ */
   .scene { padding: 0 0 6vh; background: var(--ash); }
 
-  /* Cinematic image — 16/9 */
+  /* Cinematic image — 16/9, capped so title stays visible */
   .scene-frame {
     width: 100%;
     aspect-ratio: 16/9;
+    max-height: 72vh;
     position: relative;
     overflow: hidden;
     background: var(--stone);
@@ -229,6 +280,27 @@
 </style>
 </head>
 <body>
+
+<!-- Intro modal -->
+<div id="intro-modal">
+  <div class="intro-box">
+    <p class="intro-eyebrow">An Audiovisual Experience</p>
+    <h2 class="intro-title">The Ancient Wanderer</h2>
+    <p class="intro-body">A journey through a fictional ancient world, told entirely through music. As you scroll, new layers of the composition enter — strings, percussion, choir — building and dissolving with the landscape.</p>
+    <div class="intro-hints">
+      <div class="intro-hint"><span class="icon">↕</span> Scroll to move through the world</div>
+      <div class="intro-hint"><span class="icon">⏳</span> Each section asks you to pause and listen</div>
+      <div class="intro-hint"><span class="icon">♪</span> Use headphones for the full experience</div>
+    </div>
+    <button class="intro-enter" onclick="closeIntro()">Enter the World</button>
+  </div>
+</div>
+
+<!-- Scroll arrow -->
+<div id="scroll-arrow">
+  <span class="arrow-label">Continue</span>
+  <div class="arrow-chevron"></div>
+</div>
 
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursor-ring"></div>
@@ -375,14 +447,16 @@
       <p class="scene-mood">Dark · Reverent · Still</p>
       <h2 class="scene-title">Where the Sea Holds Its Dead</h2>
       <p class="traveller-line">"To stand here is to understand that beauty and ruin are the same thing."</p>
-      <p class="scene-text">The orchestration strips back. Double bass and choir carry the weight of what has been lost. The harp falls silent. The melody slows, turns inward. This is not sadness — it is completion. What stands here has already become something else.</p>
+      <p class="scene-text">Cello and medium percussion enter beneath the choir — grounding the sacred in something earthen and inevitable. The harp falls silent. The solo string continues, quieter now. This is not sadness — it is completion. What stands here has already become something else.</p>
     </div>
     <div class="scene-right">
       <div class="stem-chart">
         <p class="stem-chart-label">Layers Active</p>
         <div class="sc-row"><span class="sc-lbl">Solo String</span><div class="sc-track"><div class="sc-fill" style="--w:55%"></div></div><div class="sc-pip"></div></div>
+        <div class="sc-row"><span class="sc-lbl">Cello</span><div class="sc-track"><div class="sc-fill" style="--w:65%"></div></div><div class="sc-pip"></div></div>
         <div class="sc-row"><span class="sc-lbl">Double Bass</span><div class="sc-track"><div class="sc-fill" style="--w:70%"></div></div><div class="sc-pip"></div></div>
-        <div class="sc-row"><span class="sc-lbl">Choir</span><div class="sc-track"><div class="sc-fill" style="--w:65%"></div></div><div class="sc-pip"></div></div>
+        <div class="sc-row"><span class="sc-lbl">Med Perc</span><div class="sc-track"><div class="sc-fill" style="--w:60%"></div></div><div class="sc-pip"></div></div>
+        <div class="sc-row"><span class="sc-lbl">Choir</span><div class="sc-track"><div class="sc-fill" style="--w:75%"></div></div><div class="sc-pip"></div></div>
       </div>
     </div>
   </div>
@@ -415,6 +489,11 @@
 <section id="outro">
   <h2 class="outro-title">The Ancient Wanderer<br><em style="font-style:italic;font-weight:400;font-size:0.5em;letter-spacing:0.15em;color:var(--gold);display:block;margin-top:0.3em;">Original Composition</em></h2>
   <p class="outro-sub">Composed by Jack Larkin</p>
+  <div style="display:flex;flex-direction:column;gap:0.5rem;align-items:center;margin-top:0.5rem;opacity:0.6;" id="outro-stems">
+    <div class="sc-row" style="width:220px;"><span class="sc-lbl" style="width:80px;">Full Strings</span><div class="sc-track"><div class="sc-fill" style="--w:90%"></div></div><div class="sc-pip"></div></div>
+    <div class="sc-row" style="width:220px;"><span class="sc-lbl" style="width:80px;">Full Orc</span><div class="sc-track"><div class="sc-fill" style="--w:80%"></div></div><div class="sc-pip"></div></div>
+    <div class="sc-row" style="width:220px;"><span class="sc-lbl" style="width:80px;">Heavy Perc</span><div class="sc-track"><div class="sc-fill" style="--w:70%"></div></div><div class="sc-pip"></div></div>
+  </div>
 </section>
 
 <!-- CREDITS -->
@@ -494,9 +573,9 @@
     {id:'scene-1',add:['solo','harp'],remove:[]},
     {id:'scene-2',add:['lightperc'],remove:[]},
     {id:'scene-3',add:['cello','lightorc'],remove:[]},
-    {id:'scene-4',add:['doublebass','choir'],remove:['harp','lightperc','cello','lightorc']},
-    {id:'scene-5',add:['medperc','fullstring'],remove:['doublebass']},
-    {id:'outro',add:['fullorc','heavyperc'],remove:['solo','fullstring','medperc']}
+    {id:'scene-4',add:['doublebass','choir','medperc'],remove:['harp','lightperc','lightorc']},
+    {id:'scene-5',add:['fullstring'],remove:['doublebass','medperc']},
+    {id:'outro',add:['fullorc','heavyperc','fullstring'],remove:['solo','cello','choir']}
   ];
   let ai=-1;
   function arc(idx){
@@ -515,7 +594,12 @@
     const el=document.getElementById(ARC[idx].id);
     lockBot=el?el.offsetTop+el.offsetHeight-window.innerHeight:0;
     pl.classList.remove('show');clearTimeout(lt);
-    lt=setTimeout(()=>{locked=false;unlk.add(idx);pl.classList.add('show');setTimeout(()=>pl.classList.remove('show'),4000);},10000);
+    lt=setTimeout(()=>{
+      locked=false;unlk.add(idx);
+      pl.classList.add('show');
+      setTimeout(()=>pl.classList.remove('show'),4000);
+      showArrow();
+    },10000);
   }
   function warn(){pw.classList.add('show');clearTimeout(wt);wt=setTimeout(()=>pw.classList.remove('show'),1200);}
 
@@ -539,14 +623,29 @@
       window.scrollTo({top:oe.offsetTop,behavior:'smooth'});
       document.querySelector('.outro-title').classList.add('revealed');
       document.querySelector('.outro-sub').classList.add('revealed');
+      // Activate outro stems visual
+      const os=document.getElementById('outro-stems');
+      if(os){os.querySelectorAll('.sc-fill').forEach(f=>{f.style.width=f.style.getPropertyValue('--w')||'80%';});}
       setTimeout(()=>{
         if(creditsDone)return;creditsDone=true;outroLock=false;
-        ['fullorc','heavyperc','choir','medperc','fullstring','doublebass'].forEach(off);
+        // Transition to soft reprise for credits
+        ['fullorc','heavyperc','heavyperc'].forEach(off);
         on('solo');on('harp');on('lightorc');
         const c=document.getElementById('credits');c.classList.add('revealed');
         c.scrollIntoView({behavior:'smooth',block:'start'});
+        // After 3 loops (~57.6s) fade everything out
+        setTimeout(()=>fadeOut(),57600);
       },19200);
     }
+  }
+
+  function fadeOut(){
+    if(!mg||!actx)return;
+    mg.gain.cancelScheduledValues(actx.currentTime);
+    mg.gain.setValueAtTime(mg.gain.value,actx.currentTime);
+    mg.gain.linearRampToValueAtTime(0,actx.currentTime+8);
+    // Dim visualiser
+    setTimeout(()=>ve.classList.remove('active'),4000);
   }
 
   window.addEventListener('scroll',()=>{
@@ -591,6 +690,34 @@
   window.addEventListener('wheel',()=>{
     if(asOn){asOn=false;cancelAnimationFrame(asRaf);const b=document.getElementById('as-btn');b.textContent='Auto Scroll';b.classList.remove('on');}
   },{passive:true});
+
+  // ── Intro modal ──
+  function closeIntro(){
+    document.getElementById('intro-modal').classList.add('hidden');
+  }
+
+  // ── Scroll arrow — show when pace lock unlocks, hide when user scrolls ──
+  const arrowEl=document.getElementById('scroll-arrow');
+  let arrowVisible=false,arrowHideTimer=null;
+
+  function showArrow(){
+    if(arrowVisible)return;
+    arrowVisible=true;
+    arrowEl.classList.remove('hide');
+    arrowEl.classList.add('show');
+  }
+  function hideArrow(){
+    if(!arrowVisible)return;
+    arrowVisible=false;
+    arrowEl.classList.remove('show');
+    arrowEl.classList.add('hide');
+    clearTimeout(arrowHideTimer);
+    arrowHideTimer=setTimeout(()=>arrowEl.classList.remove('hide'),700);
+  }
+
+  // Hide arrow when user actually scrolls
+  window.addEventListener('scroll',()=>{ if(arrowVisible) hideArrow(); },{passive:true});
+
 </script>
 </body>
 </html>

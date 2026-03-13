@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ancient World — Soundtrack</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+  :root {
+    --gold: #c9a84c;
+    --gold-dim: #8a6b2e;
+    --stone: #1a1710;
+    --ash: #0d0c0a;
+    --fog: rgba(201,168,76,0.06);
+    --text: #d4c9a8;
+    --text-dim: #7a7060;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    background: var(--ash);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, border-color 0.3s;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ========================
+     AUDIO CONTROLS
+  ======================== */
+  #audio-hud {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+
+  #mute-btn {
+    width: 44px; height: 44px;
+    border: 1px solid var(--gold-dim);
+    background: rgba(13,12,10,0.9);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    cursor: none;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.3s, background 0.3s;
+    backdrop-filter: blur(8px);
+  }
+  #mute-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+
+  .stem-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-end;
+  }
+  .stem-dot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.3;
+    transition: opacity 0.8s ease;
+  }
+  .stem-dot.active { opacity: 1; }
+  .stem-dot span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .stem-dot.active span { color: var(--gold); }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    transition: background 0.8s, box-shadow 0.8s;
+  }
+  .stem-dot.active .dot {
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+  }
+
+  /* ========================
+     PROGRESS
+  ======================== */
+  #progress-bar {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    z-index: 500;
+    transition: width 0.1s linear;
+  }
+
+  #scroll-indicator {
+    position: fixed;
+    left: 2rem;
+    bottom: 2rem;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 1;
+    transition: opacity 1s;
+  }
+  #scroll-indicator.hidden { opacity: 0; }
+  #scroll-indicator span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    animation: pulse-line 2s ease-in-out infinite;
+  }
+  @keyframes pulse-line {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* ========================
+     SECTIONS
+  ======================== */
+  section {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========================
+     HERO
+  ======================== */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 60%, rgba(201,168,76,0.04) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 30% 20%, rgba(201,168,76,0.03) 0%, transparent 60%);
+  }
+
+  /* Animated ancient ruins silhouette */
+  .ruins-svg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0.15;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fade-up 1.5s 0.5s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 900;
+    line-height: 0.9;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: fade-up 1.5s 0.8s forwards;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-title em {
+    display: block;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold);
+    font-size: 0.6em;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-subtitle {
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    opacity: 0;
+    animation: fade-up 1.5s 1.1s forwards;
+    max-width: 400px;
+  }
+
+  .hero-divider {
+    margin-top: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    animation: fade-up 1.5s 1.4s forwards;
+  }
+  .hero-divider-line {
+    width: 60px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim));
+  }
+  .hero-divider-line.right {
+    background: linear-gradient(to left, transparent, var(--gold-dim));
+  }
+  .hero-divider-symbol {
+    font-family: 'Cinzel', serif;
+    color: var(--gold-dim);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* START button */
+  .begin-btn {
+    margin-top: 3rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    padding: 1rem 2.5rem;
+    background: transparent;
+    cursor: none;
+    transition: all 0.4s;
+    opacity: 0;
+    animation: fade-up 1.5s 1.7s forwards;
+    position: relative;
+    overflow: hidden;
+  }
+  .begin-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+  .begin-btn:hover::before { transform: translateX(0); }
+  .begin-btn:hover { color: var(--ash); }
+
+  /* ========================
+     CHAPTER SECTIONS
+  ======================== */
+  .chapter {
+    min-height: 100vh;
+    padding: 8vh 10vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 8vw;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter:nth-child(odd) .chapter-visual { order: -1; }
+
+  .chapter-number {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s, transform 1s;
+  }
+  .chapter-number.revealed { opacity: 1; transform: translateY(0); }
+
+  .chapter-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.8rem, 4vw, 3.5rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s 0.15s, transform 1s 0.15s;
+  }
+  .chapter-title.revealed { opacity: 1; transform: translateY(0); }
+
+  .chapter-mood {
+    font-size: 0.8rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s 0.25s, transform 1s 0.25s;
+  }
+  .chapter-mood.revealed { opacity: 1; transform: translateY(0); }
+
+  .chapter-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+    font-style: italic;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s 0.35s, transform 1s 0.35s;
+  }
+  .chapter-text.revealed { opacity: 1; transform: translateY(0); }
+
+  .chapter-visual {
+    aspect-ratio: 3/4;
+    position: relative;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 1.2s 0.2s, transform 1.2s 0.2s;
+  }
+  .chapter:nth-child(odd) .chapter-visual {
+    transform: translateX(-40px);
+  }
+  .chapter-visual.revealed { opacity: 1; transform: translateX(0); }
+
+  .visual-frame {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--gold-dim);
+    background: linear-gradient(135deg, rgba(201,168,76,0.03) 0%, transparent 50%);
+  }
+  .visual-frame::before, .visual-frame::after {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: var(--gold);
+    border-style: solid;
+  }
+  .visual-frame::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+  .visual-frame::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+  .visual-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .visual-icon {
+    font-size: 4rem;
+    opacity: 0.15;
+    filter: grayscale(1) sepia(1);
+  }
+
+  .visual-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* Stem activation visual within chapter */
+  .stem-reveal {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s 0.5s, transform 1s 0.5s;
+  }
+  .stem-reveal.revealed { opacity: 1; transform: translateY(0); }
+
+  .stem-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .stem-bar-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .stem-bar-track {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.05);
+    position: relative;
+  }
+  .stem-bar-fill {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    background: linear-gradient(to right, var(--gold-dim), var(--gold));
+    width: 0%;
+    transition: width 2s ease;
+  }
+  .stem-bar.active .stem-bar-fill { width: var(--fill); }
+  .stem-bar-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    flex-shrink: 0;
+    transition: background 0.5s, box-shadow 0.5s;
+  }
+  .stem-bar.active .stem-bar-dot {
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold);
+  }
+
+  /* ========================
+     BACKGROUND EFFECTS PER CHAPTER
+  ======================== */
+  .chapter-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .chapter > * { position: relative; z-index: 1; }
+
+  #chapter-1 .chapter-bg {
+    background: radial-gradient(ellipse 60% 50% at 70% 50%, rgba(100,120,160,0.05) 0%, transparent 70%);
+  }
+  #chapter-2 .chapter-bg {
+    background: radial-gradient(ellipse 60% 50% at 30% 50%, rgba(201,168,76,0.04) 0%, transparent 70%);
+  }
+  #chapter-3 .chapter-bg {
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+  }
+  #chapter-4 .chapter-bg {
+    background: radial-gradient(ellipse 60% 50% at 70% 50%, rgba(80,40,40,0.08) 0%, transparent 70%);
+  }
+  #chapter-5 .chapter-bg {
+    background: radial-gradient(ellipse 60% 50% at 30% 50%, rgba(60,80,60,0.06) 0%, transparent 70%);
+  }
+
+  /* ========================
+     IMPACT MOMENTS
+  ======================== */
+  .impact-section {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .impact-text {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.5rem, 5vw, 4rem);
+    font-weight: 600;
+    text-align: center;
+    color: var(--text);
+    max-width: 800px;
+    padding: 0 2rem;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 1.5s, transform 1.5s;
+    line-height: 1.3;
+  }
+  .impact-text.revealed { opacity: 1; transform: scale(1); }
+  .impact-text em { color: var(--gold); font-style: italic; }
+
+  .impact-rule {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+    transition: width 2s ease;
+    z-index: 0;
+  }
+  .impact-section.revealed .impact-rule { width: 80vw; }
+
+  /* ========================
+     FINAL / OUTRO
+  ======================== */
+  #outro {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+    padding: 4rem 2rem;
+  }
+
+  .outro-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 1.5s;
+  }
+  .outro-title.revealed { opacity: 1; }
+
+  .outro-credits {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-dim);
+    opacity: 0;
+    transition: opacity 1.5s 0.5s;
+    line-height: 2;
+  }
+  .outro-credits.revealed { opacity: 0.6; }
+
+  /* ========================
+     AUDIO VISUALISER (fake stems)
+  ======================== */
+  #visualiser {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 40px;
+    z-index: 400;
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    padding-bottom: 4px;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  #visualiser.active { opacity: 0.4; }
+  .vis-bar {
+    width: 2px;
+    background: var(--gold);
+    border-radius: 1px 1px 0 0;
+    animation: vis-dance 0.5s ease-in-out infinite alternate;
+    transform-origin: bottom;
+  }
+
+  /* ========================
+     NOTIFICATION
+  ======================== */
+  #notification {
+    position: fixed;
+    top: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(13,12,10,0.95);
+    border: 1px solid var(--gold-dim);
+    padding: 0.75rem 1.5rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    z-index: 600;
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
+  }
+  #notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<div id="progress-bar"></div>
+<div id="notification" id="notif"></div>
+
+<!-- Scroll indicator -->
+<div id="scroll-indicator">
+  <span>Scroll</span>
+  <div class="scroll-line"></div>
+</div>
+
+<!-- Audio HUD -->
+<div id="audio-hud">
+  <div class="stem-indicators">
+    <div class="stem-dot" id="stem-solo"><span>Solo String</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-harp"><span>Harp</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-lightperc"><span>Light Perc</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-cello"><span>Cello Bass</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-lightorc"><span>Light Orc</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-doublebass"><span>Double Bass</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-choir"><span>Choir</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-medperc"><span>Med Perc</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-fullstring"><span>Full Strings</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-fullorc"><span>Full Orc</span><div class="dot"></div></div>
+    <div class="stem-dot" id="stem-heavyperc"><span>Heavy Perc</span><div class="dot"></div></div>
+  </div>
+  <button id="mute-btn" onclick="toggleMute()">♪</button>
+</div>
+
+<!-- Fake visualiser bars -->
+<div id="visualiser"></div>
+
+<!-- ======================== HERO ======================== -->
+<section id="hero">
+  <div class="hero-bg"></div>
+
+  <!-- Ancient ruins silhouette -->
+  <svg class="ruins-svg" viewBox="0 0 1440 200" preserveAspectRatio="none">
+    <path d="M0,200 L0,160 L40,160 L40,120 L60,120 L60,80 L80,80 L80,60 L100,60 L100,80 L120,80 L120,120 L140,120 L140,160 L180,160 L180,140 L200,140 L200,100 L220,100 L220,60 L240,60 L240,40 L260,40 L260,60 L280,60 L280,100 L300,100 L300,140 L340,140 L340,160 L400,160 L400,130 L420,130 L420,90 L440,70 L460,90 L460,130 L480,130 L480,160 L560,160 L560,140 L580,140 L580,100 L600,80 L620,80 L620,50 L640,50 L640,30 L660,30 L660,50 L680,50 L680,80 L700,80 L700,100 L720,100 L720,140 L740,140 L740,160 L800,160 L800,120 L820,120 L820,80 L840,80 L840,60 L860,40 L880,60 L880,80 L900,80 L900,120 L920,120 L920,160 L980,160 L980,140 L1000,140 L1000,100 L1020,70 L1040,100 L1040,140 L1060,140 L1060,160 L1120,160 L1120,130 L1140,130 L1140,90 L1160,90 L1160,60 L1180,60 L1180,40 L1200,40 L1200,60 L1220,60 L1220,90 L1240,90 L1240,130 L1260,130 L1260,160 L1320,160 L1320,140 L1340,140 L1340,120 L1360,120 L1360,160 L1400,160 L1440,160 L1440,200 Z" fill="rgba(201,168,76,0.08)"/>
+    <!-- Columns -->
+    <rect x="640" y="30" width="4" height="30" fill="rgba(201,168,76,0.15)"/>
+    <rect x="656" y="30" width="4" height="30" fill="rgba(201,168,76,0.15)"/>
+    <rect x="860" y="40" width="4" height="20" fill="rgba(201,168,76,0.15)"/>
+    <rect x="1180" y="40" width="4" height="20" fill="rgba(201,168,76,0.15)"/>
+    <!-- Stars -->
+    <circle cx="300" cy="40" r="1" fill="rgba(201,168,76,0.6)"/>
+    <circle cx="750" cy="20" r="1.5" fill="rgba(201,168,76,0.8)"/>
+    <circle cx="1100" cy="30" r="1" fill="rgba(201,168,76,0.5)"/>
+    <circle cx="500" cy="15" r="1" fill="rgba(201,168,76,0.4)"/>
+    <circle cx="900" cy="10" r="2" fill="rgba(201,168,76,0.6)"/>
+    <circle cx="1300" cy="25" r="1" fill="rgba(201,168,76,0.5)"/>
+  </svg>
+
+  <div style="position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;">
+    <p class="hero-eyebrow">A Fictional World — Original Soundtrack</p>
+    <h1 class="hero-title">
+      The Ancient
+      <em>Wanderer</em>
+    </h1>
+    <p class="hero-subtitle">An unnamed traveller. A world without edges. A silence that remembers.</p>
+    <div class="hero-divider">
+      <div class="hero-divider-line"></div>
+      <span class="hero-divider-symbol">✦ ✦ ✦</span>
+      <div class="hero-divider-line right"></div>
+    </div>
+    <button class="begin-btn" onclick="startJourney()">Begin the Journey</button>
+  </div>
+</section>
+
+<!-- ======================== CHAPTER 1 ======================== -->
+<section class="chapter" id="chapter-1" data-stem="solo,harp">
+  <div class="chapter-bg"></div>
+  <div class="chapter-content">
+    <p class="chapter-number">Track I</p>
+    <h2 class="chapter-title">The Summit at the Edge of Memory</h2>
+    <p class="chapter-mood">Sparse · Lost · Searching</p>
+    <p class="chapter-text">The traveller arrives at a height that has no name. Cloud moves through stone. Below, a world stretches vast and indifferent — magnificent, untouched, unknowable. There is no path forward. There is only the wind, and the question it carries.</p>
+    <div class="stem-reveal">
+      <div class="stem-bar" id="bar-ambient" style="--fill: 60%">
+        <span class="stem-bar-label">Ambient</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+      <div class="stem-bar" id="bar-strings" style="--fill: 35%">
+        <span class="stem-bar-label">Strings</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+    </div>
+  </div>
+  <div class="chapter-visual">
+    <div class="visual-frame"></div>
+    <div class="visual-placeholder">
+      <div class="visual-icon">🏔</div>
+      <span class="visual-label">AI Visual — Summit</span>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT 1 -->
+<div class="impact-section" id="impact-1">
+  <div class="impact-rule"></div>
+  <p class="impact-text">A world <em>remembered</em> before it was ever known.</p>
+</div>
+
+<!-- ======================== CHAPTER 2 ======================== -->
+<section class="chapter" id="chapter-2" data-stem="solo,harp,lightperc">
+  <div class="chapter-bg"></div>
+  <div class="chapter-visual">
+    <div class="visual-frame"></div>
+    <div class="visual-placeholder">
+      <div class="visual-icon">🌾</div>
+      <span class="visual-label">AI Visual — Valley</span>
+    </div>
+  </div>
+  <div class="chapter-content">
+    <p class="chapter-number">Track II</p>
+    <h2 class="chapter-title">The Valley of Forgotten Names</h2>
+    <p class="chapter-mood">Ancient · Warm · Melancholic</p>
+    <p class="chapter-text">Descending from the heights, the traveller finds evidence of lives once lived. Stone walls half-claimed by earth. A fire pit cold for a thousand years. Folk melodies rise here — not sad, but weighted with time, carrying the ghost of people who sang them.</p>
+    <div class="stem-reveal">
+      <div class="stem-bar" id="bar-folk" style="--fill: 75%">
+        <span class="stem-bar-label">Folk</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+      <div class="stem-bar" id="bar-strings-2" style="--fill: 50%">
+        <span class="stem-bar-label">Strings</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== CHAPTER 3/4 — THE REVELATION ======================== -->
+<section class="chapter" id="chapter-3" data-stem="solo,harp,lightperc,cello,lightorc">
+  <div class="chapter-bg"></div>
+  <div class="chapter-content">
+    <p class="chapter-number">Track III — IV</p>
+    <h2 class="chapter-title">The World Revealed</h2>
+    <p class="chapter-mood">Epic · Triumphant · Ancient</p>
+    <p class="chapter-text">The full weight of the world arrives. From the main theme — rebuilt, reborn — every motif that has been quietly present now sounds in full. Brass. Choir. The percussion of a civilisation that once shook the earth. This is the heartbeat that all other tracks orbit.</p>
+    <div class="stem-reveal">
+      <div class="stem-bar" id="bar-brass" style="--fill: 90%">
+        <span class="stem-bar-label">Brass</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+      <div class="stem-bar" id="bar-choir" style="--fill: 80%">
+        <span class="stem-bar-label">Choir</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+      <div class="stem-bar" id="bar-perc" style="--fill: 85%">
+        <span class="stem-bar-label">Percussion</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+    </div>
+  </div>
+  <div class="chapter-visual" style="aspect-ratio:1/1">
+    <div class="visual-frame"></div>
+    <div class="visual-placeholder">
+      <div class="visual-icon" style="font-size:6rem">🌍</div>
+      <span class="visual-label">AI Visual — The World Revealed</span>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT 2 -->
+<div class="impact-section" id="impact-2">
+  <div class="impact-rule"></div>
+  <p class="impact-text">Every silence was simply <em>the world</em> gathering its breath.</p>
+</div>
+
+<!-- ======================== CHAPTER 5 ======================== -->
+<section class="chapter" id="chapter-4" data-stem="solo,cello,doublebass,choir">
+  <div class="chapter-bg"></div>
+  <div class="chapter-visual">
+    <div class="visual-frame"></div>
+    <div class="visual-placeholder">
+      <div class="visual-icon">🌊</div>
+      <span class="visual-label">AI Visual — Coastal Ruins</span>
+    </div>
+  </div>
+  <div class="chapter-content">
+    <p class="chapter-number">Track V</p>
+    <h2 class="chapter-title">Where the Sea Holds Its Dead</h2>
+    <p class="chapter-mood">Dark · Reverent · Still</p>
+    <p class="chapter-text">A coastline where temples crumble into black water. The traveller finds beauty in ruins — not tragedy, but completion. The themes from the world's heartbeat return here, stripped to their bones. A single voice where once a thousand sang.</p>
+    <div class="stem-reveal">
+      <div class="stem-bar" id="bar-folk-2" style="--fill: 40%">
+        <span class="stem-bar-label">Folk</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+      <div class="stem-bar" id="bar-ambient-2" style="--fill: 70%">
+        <span class="stem-bar-label">Ambient</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== CHAPTER 6 ======================== -->
+<section class="chapter" id="chapter-5" data-stem="solo,medperc,fullstring,choir">
+  <div class="chapter-bg"></div>
+  <div class="chapter-content">
+    <p class="chapter-number">Track VI</p>
+    <h2 class="chapter-title">The Road That Leads to Itself</h2>
+    <p class="chapter-mood">Resolved · Distant · Eternal</p>
+    <p class="chapter-text">The journey does not end — it becomes circular. The traveller stands again at a threshold, but now carries the weight of every place visited. The world's main theme returns one final time — transformed, quieter, older. The last sound is the first sound. The circle holds.</p>
+    <div class="stem-reveal">
+      <div class="stem-bar" id="bar-strings-3" style="--fill: 55%">
+        <span class="stem-bar-label">Strings</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+      <div class="stem-bar" id="bar-choir-2" style="--fill: 45%">
+        <span class="stem-bar-label">Choir</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+      <div class="stem-bar" id="bar-ambient-3" style="--fill: 80%">
+        <span class="stem-bar-label">Ambient</span>
+        <div class="stem-bar-track"><div class="stem-bar-fill"></div></div>
+        <div class="stem-bar-dot"></div>
+      </div>
+    </div>
+  </div>
+  <div class="chapter-visual">
+    <div class="visual-frame"></div>
+    <div class="visual-placeholder">
+      <div class="visual-icon">🌅</div>
+      <span class="visual-label">AI Visual — The Horizon</span>
+    </div>
+  </div>
+</section>
+
+<!-- OUTRO -->
+<section id="outro">
+  <p class="outro-title">The Ancient Wanderer — Original Soundtrack</p>
+  <p class="outro-credits">
+    Composed & Produced — [Your Name]<br>
+    Final Year Composition for Screen<br>
+    Logic Pro · East West Composer Cloud<br><br>
+    <em>All themes, motifs, and worlds fictional.</em>
+  </p>
+</section>
+
+<script>
+  // ========================
+  // CURSOR
+  // ========================
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateCursor() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // ========================
+  // AUDIO ENGINE (Web Audio API — real stems)
+  // ========================
+  const CDN_BASE = 'https://cdn.jacklarkincomposer.co.uk/Stems/';
+
+  // Internal stem keys → CDN filenames (spaces encoded)
+  const STEM_FILES = {
+    solo:       'Solo%20melody%20string.wav',
+    harp:       'Harp.wav',
+    lightperc:  'Light%20Percussion.wav',
+    cello:      'Cello%20Bass.wav',
+    lightorc:   'Light%20Orchestra.wav',
+    doublebass: 'Double%20bass.wav',
+    choir:      'Choir.wav',
+    medperc:    'Med%20percussion.wav',
+    fullstring: 'Full%20string%20melody.wav',
+    fullorc:    'Full%20Orchestra.wav',
+    heavyperc:  'Heavy%20Percussion.wav'
+  };
+
+  const STEMS = Object.keys(STEM_FILES);
+
+  let audioCtx    = null;
+  let masterGain  = null;
+  let muted       = false;
+  let audioStarted = false;
+  const activeStemSet = new Set();
+
+  // Per-stem nodes
+  const stemBuffers = {};   // decoded AudioBuffer per stem
+  const stemSources = {};   // currently running AudioBufferSourceNode
+  const stemGains   = {};   // GainNode per stem (controls volume)
+
+  // ── Load & decode all stems, then start them all looping at gain 0 ──
+  async function initAudio() {
+    if (audioCtx) return;
+
+    audioCtx   = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+    masterGain.connect(audioCtx.destination);
+
+    // Show loading state on the begin button
+    const btn = document.querySelector('.begin-btn');
+    if (btn) { btn.textContent = 'Loading…'; btn.disabled = true; }
+
+    // Fetch + decode all stems in parallel
+    await Promise.all(STEMS.map(async stem => {
+      const url = CDN_BASE + STEM_FILES[stem];
+      try {
+        const res    = await fetch(url);
+        const buf    = await res.arrayBuffer();
+        stemBuffers[stem] = await audioCtx.decodeAudioData(buf);
+      } catch (err) {
+        console.warn(`[Audio] Failed to load stem: ${stem}`, err);
+        stemBuffers[stem] = null; // graceful degradation
+      }
+    }));
+
+    // Create a GainNode per stem and start each looping at volume 0
+    STEMS.forEach(stem => {
+      const gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.connect(masterGain);
+      stemGains[stem] = gainNode;
+
+      if (stemBuffers[stem]) {
+        const src = audioCtx.createBufferSource();
+        src.buffer = stemBuffers[stem];
+        src.loop   = true;
+        src.connect(gainNode);
+        src.start(0);
+        stemSources[stem] = src;
+      }
+    });
+
+    audioStarted = true;
+
+    // Restore button
+    if (btn) { btn.textContent = 'Begin the Journey'; btn.disabled = false; }
+  }
+
+  // ── Fade a stem in (3 s ramp) ──
+  function activateStem(stem) {
+    if (activeStemSet.has(stem)) return;
+    activeStemSet.add(stem);
+    const gain = stemGains[stem];
+    if (!gain) return;
+    gain.gain.cancelScheduledValues(audioCtx.currentTime);
+    gain.gain.setValueAtTime(gain.gain.value, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3);
+
+    const dot = document.getElementById('stem-' + stem);
+    if (dot) dot.classList.add('active');
+    showNotification('+ ' + stem.toUpperCase() + ' LAYER ACTIVE');
+    updateVisualiser();
+  }
+
+  // ── Fade a stem out (4 s ramp) ──
+  function deactivateStem(stem) {
+    if (!activeStemSet.has(stem)) return;
+    activeStemSet.delete(stem);
+    const gain = stemGains[stem];
+    if (!gain) return;
+    gain.gain.cancelScheduledValues(audioCtx.currentTime);
+    gain.gain.setValueAtTime(gain.gain.value, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 4);
+
+    const dot = document.getElementById('stem-' + stem);
+    if (dot) dot.classList.remove('active');
+    updateVisualiser();
+  }
+
+
+
+  function toggleMute() {
+    if (!audioCtx) return;
+    muted = !muted;
+    const btn = document.getElementById('mute-btn');
+    if (muted) {
+      masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+      btn.textContent = '✕';
+      btn.style.color = 'var(--text-dim)';
+      document.getElementById('visualiser').classList.remove('active');
+    } else {
+      masterGain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.5);
+      btn.textContent = '♪';
+      btn.style.color = 'var(--gold)';
+      if (activeStemSet.size > 0) document.getElementById('visualiser').classList.add('active');
+    }
+  }
+
+  // ========================
+  // FAKE VISUALISER
+  // ========================
+  const visEl = document.getElementById('visualiser');
+  const numBars = 60;
+  const visBars = [];
+  for (let i = 0; i < numBars; i++) {
+    const b = document.createElement('div');
+    b.className = 'vis-bar';
+    b.style.height = '2px';
+    b.style.animationDelay = (i * 0.03) + 's';
+    b.style.animationDuration = (0.3 + Math.random() * 0.4) + 's';
+    visEl.appendChild(b);
+    visBars.push(b);
+  }
+
+  function updateVisualiser() {
+    const active = activeStemSet.size;
+    const maxH = Math.min(active * 8, 36);
+    visBars.forEach((b, i) => {
+      const h = Math.max(2, Math.random() * maxH * Math.sin(i / numBars * Math.PI));
+      b.style.animation = 'none';
+      b.style.height = h + 'px';
+      setTimeout(() => {
+        b.style.animation = '';
+        b.style.animationDuration = (0.2 + Math.random() * 0.5) + 's';
+        b.style.animationDelay = (i * 0.01) + 's';
+        b.style.height = h + 'px';
+      }, 10);
+    });
+    if (active > 0 && !muted) visEl.classList.add('active');
+    else visEl.classList.remove('active');
+  }
+
+  // ========================
+  // NOTIFICATIONS
+  // ========================
+  let notifTimeout;
+  const notif = document.getElementById('notification');
+  function showNotification(msg) {
+    notif.textContent = msg;
+    notif.classList.add('show');
+    clearTimeout(notifTimeout);
+    notifTimeout = setTimeout(() => notif.classList.remove('show'), 2500);
+  }
+
+  // ========================
+  // START JOURNEY
+  // ========================
+  async function startJourney() {
+    await initAudio();
+    activateStem('solo');
+    activateStem('harp');
+    showNotification('Journey Begins — Solo String + Harp');
+    document.getElementById('scroll-indicator').classList.remove('hidden');
+    document.getElementById('chapter-1').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ========================
+  // SCROLL ENGINE
+  // ========================
+  const scrollIndicator = document.getElementById('scroll-indicator');
+  const progressBar = document.getElementById('progress-bar');
+
+  // Musical arc: each section defines which stems to ADD and which to REMOVE
+  // when the section enters the viewport centre.
+  // Arc: sparse → build → peak → thin → outro
+  const SECTION_ARC = [
+    {
+      id: 'chapter-1',
+      add:    ['solo', 'harp'],
+      remove: []
+    },
+    {
+      id: 'chapter-2',
+      add:    ['lightperc'],
+      remove: []
+    },
+    {
+      id: 'chapter-3',
+      add:    ['cello', 'lightorc'],
+      remove: []
+    },
+    {
+      id: 'chapter-4',
+      add:    ['doublebass', 'choir'],
+      remove: ['harp', 'lightperc']
+    },
+    {
+      id: 'chapter-5',
+      add:    ['medperc', 'fullstring'],
+      remove: ['cello', 'lightorc', 'doublebass']
+    },
+    {
+      id: 'outro',
+      add:    ['fullorc', 'heavyperc'],
+      remove: ['solo', 'fullstring', 'medperc']
+    }
+  ];
+
+  // Outro strip — only solo string remains as the circle closes
+  const OUTRO_STRIP = ['harp','lightperc','cello','lightorc','doublebass',
+                       'choir','medperc','fullstring','fullorc','heavyperc'];
+
+  // Track which sections have already fired so we don't re-trigger
+  const firedSections = new Set();
+
+  const revealEls = document.querySelectorAll(
+    '.chapter-number, .chapter-title, .chapter-mood, .chapter-text, .chapter-visual, .stem-reveal, .impact-text, .impact-rule, .outro-title, .outro-credits'
+  );
+
+  function onScroll() {
+    const scrollY = window.scrollY;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = (scrollY / docH) * 100;
+    progressBar.style.width = pct + '%';
+
+    if (scrollY > 100) scrollIndicator.classList.add('hidden');
+
+    // Scroll-reveal visual elements
+    revealEls.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.85) {
+        el.classList.add('revealed');
+        if (el.classList.contains('stem-reveal')) {
+          el.querySelectorAll('.stem-bar').forEach(bar => bar.classList.add('active'));
+        }
+      }
+    });
+
+    if (!audioStarted) return;
+
+    // Fire arc transitions when a section crosses the 55% viewport mark
+    SECTION_ARC.forEach(({ id, add, remove }) => {
+      if (firedSections.has(id)) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.55) {
+        add.forEach(s => activateStem(s));
+        remove.forEach(s => deactivateStem(s));
+        firedSections.add(id);
+      }
+    });
+
+    // Final outro — strip everything except solo string once outro is well in view
+    const outro = document.getElementById('outro');
+    if (outro) {
+      const rect = outro.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.4) {
+        OUTRO_STRIP.forEach(s => deactivateStem(s));
+      }
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ========================
+  // HOVER CURSOR EFFECTS
+  // ========================
+  document.querySelectorAll('button, .chapter-visual, .begin-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '50px';
+      ring.style.height = '50px';
+      ring.style.borderColor = 'var(--gold)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(201,168,76,0.4)';
+    });
+  });
+</script>
+</body>
+</html>

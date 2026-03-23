@@ -2,8 +2,6 @@
 
 A custom-built static website for [jacklarkincomposer.co.uk](https://jacklarkincomposer.co.uk).
 
-- **`_standalone/`** — contains self-contained projects (e.g. The Ancient Wanderer). Do not modify anything in this folder unless explicitly asked.
-
 ---
 
 ## File Structure

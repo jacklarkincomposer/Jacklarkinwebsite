@@ -874,7 +874,7 @@ img { max-width: 100%; display: block; }
   position: relative;
   width: 100%;
   padding-bottom: 56.25%;
-  background: #111;
+  background: var(--bg-card);
   overflow: hidden;
 }
 .gal-thumb img {
@@ -1316,7 +1316,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   font-size:15px; font-family:var(--font-body);
   transition:border-color .2s, background .2s; color:var(--text);
 }
-.form-group select option { background:#141418; color:var(--text); }
+.form-group select option { background: var(--bg-card); color: var(--text); }
 .form-group input::placeholder,
 .form-group textarea::placeholder { color:var(--text-dim); }
 .form-group textarea { min-height:100px; resize:vertical; scrollbar-width:none; }
@@ -1725,6 +1725,57 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   main a:not(.btn):not([class]):hover {
     text-decoration-color: var(--gold);
   }
+}
+
+/* ── 404 page ── */
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 60px 24px;
+  text-align: center;
+}
+.error-page__label {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.error-page__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.error-page__text {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 380px;
+  margin-bottom: 36px;
+}
+.error-page__btn {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-mid);
+  padding: 12px 28px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .error-page__btn {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+.error-page__btn:hover {
+  background-color: var(--gold);
+  color: var(--black);
 }
 
 /* Scrollbar */

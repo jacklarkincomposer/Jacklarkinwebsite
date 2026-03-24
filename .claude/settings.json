@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.youtube.com)",
+      "Bash(for vid:*)",
+      "Bash(do echo:*)",
+      "Bash(curl -sI \"https://i.ytimg.com/vi/$vid/maxresdefault.jpg\")",
+      "Bash(done)",
+      "Read(//private/tmp/**)",
+      "Bash(do curl:*)",
+      "Bash(sips -g pixelWidth -g pixelHeight $vid.jpg)",
+      "Bash(python3 -c \"import json, urllib.request; data = json.loads\\(urllib.request.urlopen\\(''https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=zTgk1UZA76k&format=json''\\).read\\(\\)\\); print\\(data\\)\")",
+      "Bash(curl -s https://www.youtube.com/watch?v=zTgk1UZA76k)",
+      "Bash(curl -s https://www.youtube.com/watch?v=SgOkNH9-5zM)",
+      "Read(//tmp/**)"
+    ]
+  }
+}

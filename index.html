@@ -219,7 +219,7 @@
   /* ── Video data for this page ── */
   var VIDEOS = [
     {
-      type: 'youtube', ytId: 'zTgk1UZA76k',
+      type: 'youtube', ytId: 'zTgk1UZA76k', 
       title: 'Avatar: The Way of Water – Official Trailer | Full Rescore (2022)',
       badge: 'Rescore',
       desc: [
@@ -349,11 +349,11 @@
     }
   }
 
-  /* ── Hero buttons → open Avatar (index 0) ── */
-  /* ── Hero buttons → open Avatar (index 0) ── */
+  /* ── Hero buttons → open standalone hero clip ── */
+  var HERO_VIDEO = VIDEOS[0];
   ['heroPlayBtn', 'heroWatchBtn'].forEach(function (id) {
     var btn = document.getElementById(id);
-    if (btn) btn.addEventListener('click', function () { JLPlayer.open(VIDEOS, 0); });
+    if (btn) btn.addEventListener('click', function () { JLPlayer.open([HERO_VIDEO], 0); });
   });
 
 }());

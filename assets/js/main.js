@@ -389,6 +389,7 @@ window.JLPlayer = (function () {
 
   function _loadVideo(v) {
     _stopMedia();
+    _els.ratio.style.paddingBottom = (v.pb ? v.pb : 56.25) + '%';
     _els.barTitle.textContent = v.title || '';
     if (v.type === 'youtube') {
       _els.ratio.innerHTML = '<iframe src="https://www.youtube.com/embed/' + v.ytId +
@@ -400,7 +401,14 @@ window.JLPlayer = (function () {
     } else {
       _els.ratio.innerHTML = '<video src="' + v.src + '" controls playsinline preload="metadata"></video>';
       var vid = _els.ratio.querySelector('video');
-      if (vid) vid.play().catch(function () {});
+      if (vid) {
+        vid.addEventListener('loadedmetadata', function () {
+          if (vid.videoWidth && vid.videoHeight) {
+            _els.ratio.style.paddingBottom = (vid.videoHeight / vid.videoWidth * 100) + '%';
+          }
+        });
+        vid.play().catch(function () {});
+      }
       _els.ytLink.classList.add('hidden');
     }
   }

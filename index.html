@@ -351,7 +351,7 @@
 
   /* ── Hero buttons → open standalone hero clip ── */
   var HERO_VIDEO = VIDEOS[0];
-  ['heroPlayBtn', 'heroWatchBtn'].forEach(function (id) {
+  ['heroPlayBtn', 'heroWatchBtn', 'heroCard'].forEach(function (id) {
     var btn = document.getElementById(id);
     if (btn) btn.addEventListener('click', function () { JLPlayer.open([HERO_VIDEO], 0); });
   });

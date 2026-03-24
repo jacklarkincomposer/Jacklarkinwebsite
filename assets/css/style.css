@@ -940,7 +940,7 @@ img { max-width: 100%; display: block; }
 .gal-skel-short { width: 55%; margin-top: 5px; height: 9px; }
 
 /* Sound Design Portfolio link */
-.sd-portfolio-link { text-align: center; padding: 24px 0 10px; }
+.sd-portfolio-link { text-align: center; padding: 20px 0 24px; }
 .sd-portfolio-link a {
   font-family: var(--font-heading);
   font-size: 0.75rem;
@@ -966,13 +966,103 @@ img { max-width: 100%; display: block; }
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: clip; /* clip keeps border-radius visual but doesn't block position:sticky */
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+/* ── Audio player sticky header ── */
+.ap-sticky-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: sticky;
+  top: 56px; /* nav height */
+  z-index: 10;
+  transition: box-shadow 0.2s;
+}
+.ap-sticky-header.stuck {
+  z-index: 400;
+  background: rgba(8,8,14,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212,168,75,0.15);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  border-radius: 0;
+  padding: 8px 12px;
+  margin: 0 -12px;
+}
 
+/* ── Cog button ── */
+.ap-cog-btn {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  position: relative;
+}
+.ap-cog-btn:hover { border-color: rgba(255,255,255,0.4); color: var(--white); }
+.ap-cog-btn.on { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+/* ── Controls row: sits above filter section so cog dropdown is never obscured ── */
+.controls-row { position: relative; z-index: 2; }
+.filter-section { position: relative; z-index: 1; }
+
+/* ── Cog dropdown ── */
+.ap-cog-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: rgba(8,8,14,0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 110px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  z-index: 9999;
+}
+.ap-cog-dropdown.open { display: flex; }
+
+/* ── Back to top — inline in controls row, slides in when player is stuck ── */
+.ap-back-top {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(8,8,14,0.9);
+  border: 1px solid var(--gold-mid);
+  border-radius: 6px;
+  color: var(--gold);
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 0;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s, visibility 0.25s, max-width 0.3s ease, padding 0.3s ease;
+}
+.ap-back-top.visible {
+  opacity: 1;
+  visibility: visible;
+  max-width: 140px;
+  padding: 5px 12px;
+}
+.ap-back-top:hover { background: var(--gold-dim); }
 /* ============================================================
    TESTIMONIALS (About page)
 ============================================================ */
@@ -1357,6 +1447,57 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
 .price-preview { margin-top:10px; padding:10px 14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,0.1); border-radius:6px; font-size:.82rem; color:var(--text-muted); display:none; }
 .price-preview.show { display:block; }
 .price-preview strong { color:var(--color-warning); }
+
+/* Dual-handle budget range slider */
+.budget-slider-wrap { display:none; margin-top:14px; }
+.budget-slider-wrap.show { display:block; }
+
+.dual-range { position:relative; height:18px; display:flex; align-items:center; }
+.dual-range__track {
+  position:absolute; left:0; right:0; height:2px;
+  border-radius:2px; background:rgba(255,255,255,0.25); pointer-events:none;
+}
+.dual-range__fill {
+  position:absolute; height:100%;
+  background:var(--gold); border-radius:2px;
+  box-shadow:0 0 6px 1px rgba(212,168,75,0.55);
+}
+.dual-range__input {
+  position:absolute; left:-10px; right:-10px; width:calc(100% + 20px) !important;
+  pointer-events:none;
+  -webkit-appearance:none; appearance:none;
+  background:transparent !important; height:0 !important; margin:0; padding:0 !important;
+  border:none !important; border-radius:0 !important; box-shadow:none !important;
+  z-index:2;
+}
+.dual-range__input::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none;
+  pointer-events:all; cursor:grab;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--bg);
+  border:3px solid var(--gold);
+  box-shadow:none;
+}
+.dual-range__input::-moz-range-thumb {
+  pointer-events:all; cursor:grab;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--bg);
+  border:3px solid var(--gold);
+  box-shadow:none;
+}
+.dual-range__input:focus-visible { outline:none; }
+.dual-range__input:focus-visible::-webkit-slider-thumb { outline:2px solid var(--gold); outline-offset:3px; }
+.dual-range__input:focus-visible::-moz-range-thumb     { outline:2px solid var(--gold); outline-offset:3px; }
+.dual-range__labels {
+  display:flex; justify-content:space-between; margin-top:9px;
+  font-size:.78rem; font-weight:600; color:var(--gold); letter-spacing:.02em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dual-range__input::-webkit-slider-thumb { transition:transform .12s ease, box-shadow .12s ease; }
+  .dual-range__input::-moz-range-thumb     { transition:transform .12s ease, box-shadow .12s ease; }
+  .dual-range__input:active::-webkit-slider-thumb { transform:scale(1.25); cursor:grabbing; }
+  .dual-range__input:active::-moz-range-thumb     { transform:scale(1.25); cursor:grabbing; }
+}
 
 .submit-btn {
   background:var(--gold); color:var(--black); padding:14px 40px; border:none; border-radius:6px;

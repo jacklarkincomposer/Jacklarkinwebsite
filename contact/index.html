@@ -188,9 +188,27 @@
             <li role="option" data-value="£250-500" onclick="selectOption('selectBudget','£250-500','£250 – £500');handleBudgetChange()">£250 – £500</li>
             <li role="option" data-value="£500-1000" onclick="selectOption('selectBudget','£500-1000','£500 – £1,000');handleBudgetChange()">£500 – £1,000</li>
             <li role="option" data-value="£1000+" onclick="selectOption('selectBudget','£1000+','£1,000+');handleBudgetChange()">£1,000+</li>
-            <li role="option" data-value="Let's discuss" onclick="selectOption('selectBudget','Let\'s discuss','Let\'s discuss');handleBudgetChange()">Let's discuss</li>
+            <li role="option" data-value="Custom" onclick="selectOption('selectBudget','Custom','Custom range');handleBudgetChange()">Custom range</li>
           </ul>
           <input type="hidden" name="budget_range" id="budgetRange">
+        </div>
+        <div class="budget-slider-wrap" id="budgetSliderWrap" aria-hidden="true">
+          <div class="dual-range" role="group" aria-label="Custom budget range">
+            <div class="dual-range__track">
+              <div class="dual-range__fill" id="dualRangeFill"></div>
+            </div>
+            <input type="range" class="dual-range__input" id="budgetMin" name="budget_min"
+              min="0" max="100" step="1" value="30"
+              aria-label="Minimum budget" aria-valuemin="50" aria-valuemax="5000" aria-valuenow="200" aria-valuetext="£200">
+            <input type="range" class="dual-range__input" id="budgetMax" name="budget_max"
+              min="0" max="100" step="1" value="74"
+              aria-label="Maximum budget" aria-valuemin="50" aria-valuemax="5000" aria-valuenow="1500" aria-valuetext="£1,500">
+          </div>
+          <div class="dual-range__labels">
+            <span class="dual-range__label-min" id="budgetMinVal">£200</span>
+            <span class="dual-range__label-max" id="budgetMaxVal">£1,500</span>
+          </div>
+          <input type="hidden" name="budget_exact" id="budgetExact" value="£200 – £1,500">
         </div>
         <div class="error-message">Please select a budget</div>
       </div>
@@ -203,7 +221,7 @@
           </div>
           <ul class="custom-select__menu" role="listbox">
             <li role="option" data-value="ASAP" onclick="selectOption('selectTimeline','ASAP','ASAP (+50% rush fee)');handleTimelineChange()">ASAP (+50% rush fee)</li>
-            <li role="option" data-value="This week" onclick="selectOption('selectTimeline','This week','This week (+50% rush fee)');handleTimelineChange()">This week (+50% rush fee)</li>
+            <li role="option" data-value="This week" onclick="selectOption('selectTimeline','This week','This week (+30% rush fee)');handleTimelineChange()">This week (+30% rush fee)</li>
             <li role="option" data-value="This month" onclick="selectOption('selectTimeline','This month','This month');handleTimelineChange()">This month</li>
             <li role="option" data-value="Flexible" onclick="selectOption('selectTimeline','Flexible','Flexible');handleTimelineChange()">Flexible</li>
           </ul>
@@ -213,7 +231,7 @@
       </div>
     </div>
 
-    <div class="rush-note" id="rushNote">Rush projects include a 50% surcharge for priority handling.</div>
+    <div class="rush-note" id="rushNote">Rush projects include a 30–50% surcharge for priority handling.</div>
     <div class="price-preview" id="pricePreview"></div>
 
     <div class="form-group">
@@ -314,17 +332,76 @@
     });
   });
 
-  var RANGES = { 'Under £100': [0,100], '£100-250': [100,250], '£250-500': [250,500], '£500-1000': [500,1000], '£1000+': [1000,null] };
+  var RANGES   = { 'Under £100': [0,100], '£100-250': [100,250], '£250-500': [250,500], '£500-1000': [500,1000], '£1000+': [1000,null] };
+  var sliderWrap  = document.getElementById('budgetSliderWrap');
+  var inputMin    = document.getElementById('budgetMin');
+  var inputMax    = document.getElementById('budgetMax');
+  var fillEl      = document.getElementById('dualRangeFill');
+  var labelMin    = document.getElementById('budgetMinVal');
+  var labelMax    = document.getElementById('budgetMaxVal');
+  var budgetExact = document.getElementById('budgetExact');
+  var LOG_MIN = Math.log(50), LOG_RANGE = Math.log(5000) - Math.log(50);
+
+  function fmt(v) { return '\u00a3' + v.toLocaleString('en-GB'); }
+
+  /* Map 0-100 linear slider position → £ value on a log curve */
+  function toValue(linear) {
+    var v = Math.exp(LOG_MIN + LOG_RANGE * linear / 100);
+    if (v < 200)  return Math.round(v / 5)  * 5;
+    if (v < 1000) return Math.round(v / 25) * 25;
+    return Math.round(v / 50) * 50;
+  }
+
+  function updateDualRange() {
+    var lo = parseInt(inputMin.value, 10), hi = parseInt(inputMax.value, 10);
+    fillEl.style.left  = lo + '%';
+    fillEl.style.width = (hi - lo) + '%';
+    var loVal = toValue(lo), hiVal = toValue(hi);
+    labelMin.textContent = lo === 0   ? '< \u00a350'   : fmt(loVal);
+    labelMax.textContent = hi === 100 ? '\u00a35,000+' : fmt(hiVal);
+    inputMin.setAttribute('aria-valuenow', loVal); inputMin.setAttribute('aria-valuetext', fmt(loVal));
+    inputMax.setAttribute('aria-valuenow', hiVal); inputMax.setAttribute('aria-valuetext', fmt(hiVal));
+    budgetExact.value = (lo === 0 ? '< £50' : fmt(loVal)) + ' \u2013 ' + (hi === 100 ? '£5,000+' : fmt(hiVal));
+    updatePrice();
+  }
+
+  inputMin.addEventListener('input', function () {
+    if (+this.value > +inputMax.value - 2) this.value = +inputMax.value - 2;
+    updateDualRange();
+  });
+  inputMax.addEventListener('input', function () {
+    if (+this.value < +inputMin.value + 2) this.value = +inputMin.value + 2;
+    updateDualRange();
+  });
+
+  function rushMultiplier(t) { return t === 'ASAP' ? 1.5 : 1.3; }
+
+  function roundPrice(v) {
+    if (v < 200)  return Math.round(v / 5)  * 5;
+    if (v < 1000) return Math.round(v / 25) * 25;
+    return Math.round(v / 50) * 50;
+  }
+
   function updatePrice() {
     var b = budgetSel.value, t = timelineSel.value, rush = t === 'ASAP' || t === 'This week';
     rushNote.style.display = rush ? 'block' : 'none';
+    if (!rush) { pricePreview.classList.remove('show'); return; }
+    var m = rushMultiplier(t), pct = Math.round((m - 1) * 100);
+    if (b === 'Custom') {
+      var lo = toValue(parseInt(inputMin.value, 10)), hi = toValue(parseInt(inputMax.value, 10));
+      pricePreview.innerHTML = 'With ' + pct + '% rush fee: <strong>' + fmt(roundPrice(lo * m)) + ' \u2013 ' + fmt(roundPrice(hi * m)) + '</strong>';
+      pricePreview.classList.add('show');
+      return;
+    }
     var r = RANGES[b];
-    if (!r || !rush) { pricePreview.classList.remove('show'); return; }
+    if (!r) { pricePreview.classList.remove('show'); return; }
     pricePreview.innerHTML = r[1] === null
-      ? 'Rush fee applies — price discussed based on scope.'
-      : 'With rush fee: <strong>£' + Math.round(r[0] * 1.5) + ' – £' + Math.round(r[1] * 1.5) + '</strong>';
+      ? 'Rush fee applies — final price discussed based on scope.'
+      : 'With ' + pct + '% rush fee: <strong>' + fmt(roundPrice(r[0] * m)) + ' \u2013 ' + fmt(roundPrice(r[1] * m)) + '</strong>';
     pricePreview.classList.add('show');
   }
+
+  updateDualRange();
 
   /* Custom dropdown change handlers (called from onclick in HTML) */
   window.handleProjectTypeChange = function (val) {
@@ -333,7 +410,13 @@
     if (o) otherInput.focus(); else otherInput.value = '';
     if (val) clearErr('projectTypeGroup');
   };
-  window.handleBudgetChange = function () { clearErr('budgetGroup'); updatePrice(); };
+  window.handleBudgetChange = function () {
+    clearErr('budgetGroup');
+    var isCustom = budgetSel.value === 'Custom';
+    sliderWrap.classList.toggle('show', isCustom);
+    sliderWrap.setAttribute('aria-hidden', isCustom ? 'false' : 'true');
+    updatePrice();
+  };
   window.handleTimelineChange = function () { clearErr('timelineGroup'); updatePrice(); };
 
   var valEmail = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); };
@@ -380,6 +463,8 @@
     var sendType = projType.value === 'Other' && otherInput.value.trim() ? otherInput.value.trim() : projType.value;
     var origType = projType.value;
     projType.value = sendType;
+    var isCustomBudget = budgetSel.value === 'Custom';
+    if (isCustomBudget) budgetSel.value = budgetExact.value;
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
     btnLabel.textContent = 'Sending…';
@@ -397,6 +482,10 @@
         otherField.classList.remove('show');
         rushNote.style.display = 'none';
         pricePreview.classList.remove('show');
+        sliderWrap.classList.remove('show');
+        sliderWrap.setAttribute('aria-hidden', 'true');
+        inputMin.value = 30; inputMax.value = 74;
+        updateDualRange();
         charCounter.textContent = '0 / 1500';
         charCounter.className = 'char-counter';
       })
@@ -405,6 +494,7 @@
       })
       .finally(function () {
         projType.value = origType;
+        if (isCustomBudget) budgetSel.value = 'Custom';
         submitBtn.disabled = false;
         submitBtn.classList.remove('loading');
         btnLabel.textContent = 'Send Message';

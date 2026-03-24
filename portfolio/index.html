@@ -288,11 +288,6 @@ input[type=range]::-moz-range-thumb {
 <!-- Gallery -->
 <div class="gal-rail" id="galRail"></div>
 
-<!-- Sound Design link -->
-<div class="sd-portfolio-link">
-  <a href="/sound-design/">Sound Design Portfolio</a>
-</div>
-
 <div class="section"><div class="divider"></div></div>
 
 <!-- Tracks section -->
@@ -308,6 +303,11 @@ input[type=range]::-moz-range-thumb {
       <div id="trackList"></div>
     </div>
   </div>
+</div>
+
+<!-- Sound Design link -->
+<div class="sd-portfolio-link">
+  <a href="/sound-design/">Sound Design Portfolio</a>
 </div>
 
 <!-- Footer -->
@@ -356,6 +356,14 @@ input[type=range]::-moz-range-thumb {
   /* ── Video data ── */
   var VIDEOS = [
     {
+      type:'cloudflare', pb: 41.88,
+      src:'https://cdn.jacklarkincomposer.co.uk/Videos/Piper%20-%20Jack%20Larkin%20(%20film%20and%20videogames%20-%20assignment%202).mov',
+      thumb:'https://cdn.jacklarkincomposer.co.uk/Images/Piper%20image.webp',
+      title:'Piper (2016) – Original Rescore | Jack Larkin',
+      badge:'Rescore',
+      desc:['Piper (2016) – Original Music Rescore | University Assignment','A full rescore of the Pixar short film Piper (2016) composed and produced as part of a first-year university assignment in Film & Video Games Music.','The original score has been completely replaced with new, independently composed and produced music. Sound design and some original audio elements have been retained to preserve the emotional arc of the film.','All rights to Piper, its characters, story, and world belong to Pixar Animation Studios and The Walt Disney Company. This channel is not affiliated with, endorsed by, or sponsored by Pixar or Disney.','Copyright / Fair Use Notice: This upload contains copyrighted material used under an assertion of fair use for non-commercial, transformative, educational, and artistic purposes.','Hope you enjoy this rescore!']
+    },
+    {
       type:'youtube', ytId:'SgOkNH9-5zM',
       title:'Blood Message – Official Reveal Trailer | Full Rescore (2025)',
       badge:'Rescore',
@@ -391,14 +399,6 @@ input[type=range]::-moz-range-thumb {
       badge: null,
       desc:['The Witcher 3: Wild Hunt – Original Music | Inspired Soundtrack (unofficial)','An original piece of music I composed inspired by the soundtrack of The Witcher 3: Wild Hunt (2015). After being completely captivated by the raw, dark Slavic folk sound created by Marcin Przybyłowicz, Mikołaj Stroiński, Percival Schuttenbach, and Piotr Musiał, I wanted to create something in my own take on the style.','I focused on emulating the traditional Slavic folk vocal style and layered an intimate cello part at the opening to capture that dark, raw feeling.','All rights to The Witcher 3: Wild Hunt belong to CD Projekt Red. This is an original, fan-made composition — not a reproduction of the original music.','Hope you enjoy!']
     },
-    {
-      type:'cloudflare', pb: 41.88,
-      src:'https://cdn.jacklarkincomposer.co.uk/Videos/Piper%20-%20Jack%20Larkin%20(%20film%20and%20videogames%20-%20assignment%202).mov',
-      thumb:'https://cdn.jacklarkincomposer.co.uk/Images/Piper%20image.webp',
-      title:'Piper (2016) – Original Rescore | Jack Larkin',
-      badge:'Rescore',
-      desc:['Piper (2016) – Original Music Rescore | University Assignment','A full rescore of the Pixar short film Piper (2016) composed and produced as part of a first-year university assignment in Film & Video Games Music.','The original score has been completely replaced with new, independently composed and produced music. Sound design and some original audio elements have been retained to preserve the emotional arc of the film.','All rights to Piper, its characters, story, and world belong to Pixar Animation Studios and The Walt Disney Company. This channel is not affiliated with, endorsed by, or sponsored by Pixar or Disney.','Copyright / Fair Use Notice: This upload contains copyrighted material used under an assertion of fair use for non-commercial, transformative, educational, and artistic purposes.','Hope you enjoy this rescore!']
-    }
   ];
 
   /* ── Build gallery ── */
@@ -486,292 +486,376 @@ input[type=range]::-moz-range-thumb {
 
 <!-- ── Audio Player ── -->
 <script>
-(function () {
-  'use strict';
-
-  var LOGO     = 'https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png';
-  var SPECOPS  = 'https://cdn.jacklarkincomposer.co.uk/Images/Spec%20Ops%20Logo.png';
-  var NOESCAPE = 'https://cdn.jacklarkincomposer.co.uk/Images/No%20escape%20Album%202.png';
-  var DESERT   = 'https://cdn.jacklarkincomposer.co.uk/Images/The%20Desert.png';
-
-  var TRACKS = [
-    { title:'Under Pressure',      src:'https://cdn.jacklarkincomposer.co.uk/Audio/Canadian%20side%20vers2.mp3',                                                image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
-    { title:'Losing Signal',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Dark%20gritty%20Piano%20(Final%20Mix).mp3',                                  image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
-    { title:'Crossing the Desert', src:'https://cdn.jacklarkincomposer.co.uk/Audio/Crossing%20the%20desert%20-%20Main%20theme%20Music%20vers5%20(final).mp3',   image:DESERT,   description:'Orchestral · Epic · World',        mood:['Orchestral','Epic','World'],        album:'The Desert' },
-    { title:'The Bridge',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Polish%20side%20FinalVers%20(looped%20ending%20-%20no%20fade).mp3',           image:SPECOPS,  description:'Orchestral · Dark · Dramatic',     mood:['Orchestral','Dark','Dramatic'],     album:'Spec Ops'   },
-    { title:'Closing In',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Closing-In_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Tense',    mood:['Orchestral','Thriller','Tense'],    album:'No Escape'  },
-    { title:'Cold Trail',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Cold-Trail_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Dark',      mood:['Orchestral','Thriller','Dark'],     album:'No Escape'  },
-    { title:'Hot Pursuit',         src:'https://cdn.jacklarkincomposer.co.uk/Audio/Hot-Pursuit_001_Main-Mix_Jack-Larkin.wav',                                   image:NOESCAPE, description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:'No Escape'  },
-    { title:'Breathing Distance',  src:'https://cdn.jacklarkincomposer.co.uk/Audio/Breathing-Distance_001_Main-Mix_Jack-Larkin.wav',                            image:NOESCAPE, description:'Orchestral · Thriller · Dramatic',  mood:['Orchestral','Thriller','Dramatic'], album:'No Escape'  },
-    { title:'Burning Sands',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Burning%20sands.mp3',                                                        image:DESERT,   description:'Orchestral · World · Epic',         mood:['Orchestral','World','Epic'],        album:'The Desert' },
-    { title:'Iron Titan',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/IRON%20TITAN.mp3',                                                           image:LOGO,     description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:null         },
-    { title:'Desert Mirage',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Desert%20Mirage%20IG%20post.mp3',                                            image:DESERT,   description:'Orchestral · World · Dark',         mood:['Orchestral','World','Dark'],        album:'The Desert' }
-  ];
-
-  var PLACEHOLDER = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/></svg>';
-  var PLAY_ICON   = '<svg viewBox="0 0 24 24" width="19" height="19" fill="white"><polygon points="7,5 20,12 7,19"/></svg>';
-  var PAUSE_ICON  = '<svg viewBox="0 0 24 24" width="19" height="19" fill="white"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>';
-  var SPIN_ICON   = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10" opacity="0.9"/><path d="M12 2a10 10 0 0 0-10 10" opacity="0.25"/></svg>';
-  var VOL_ON      = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>';
-  var VOL_OFF     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0017.73 18l1.27 1.27L20.27 18 5.27 3 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
-
-  var fmt = function (s) {
-    return (s == null || isNaN(s)) ? '--:--'
-      : (s < 0 ? '-' : '') + Math.floor(Math.abs(s)/60) + ':' + String(Math.floor(Math.abs(s)%60)).padStart(2,'0');
-  };
-
-  var pool = TRACKS.map(function (t) {
-    var a = new Audio(); a.preload = 'none'; a._src = t.src; return a;
-  });
-  function ensureLoaded(i) { if (!pool[i].src) { pool[i].src = pool[i]._src; pool[i].load(); } }
-
-  var activeIdx = -1, isPlaying = false, showRemaining = false;
-  var autoAdvance = true, shuffleOn = false, loopOne = false;
-  var isMuted = false, preMuteVol = 1, currentVol = 1;
-  var activeMood = 'All', activeAlbum = 'All';
-  var rafId = null, pendingSeek = {};
-  var wraps = [], trackRefs = [];
-
-  function applyFilters() {
-    wraps.forEach(function (w, i) {
-      var t = TRACKS[i];
-      var ok = (activeMood === 'All' || (t.mood||[]).includes(activeMood))
-            && (activeAlbum === 'All' || t.album === activeAlbum);
-      w.classList.toggle('hidden', !ok);
+  (function () {
+    'use strict';
+  
+    var LOGO     = 'https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png';
+    var SPECOPS  = 'https://cdn.jacklarkincomposer.co.uk/Images/Spec%20Ops%20Logo.png';
+    var NOESCAPE = 'https://cdn.jacklarkincomposer.co.uk/Images/No%20escape%20Album%202.png';
+    var DESERT   = 'https://cdn.jacklarkincomposer.co.uk/Images/The%20Desert.png';
+  
+    var TRACKS = [
+      { title:'Under Pressure',      src:'https://cdn.jacklarkincomposer.co.uk/Audio/Canadian%20side%20vers2.mp3',                                                image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
+      { title:'Losing Signal',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Dark%20gritty%20Piano%20(Final%20Mix).mp3',                                  image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
+      { title:'Crossing the Desert', src:'https://cdn.jacklarkincomposer.co.uk/Audio/Crossing%20the%20desert%20-%20Main%20theme%20Music%20vers5%20(final).mp3',   image:DESERT,   description:'Orchestral · Epic · World',        mood:['Orchestral','Epic','World'],        album:'The Desert' },
+      { title:'The Bridge',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Polish%20side%20FinalVers%20(looped%20ending%20-%20no%20fade).mp3',           image:SPECOPS,  description:'Orchestral · Dark · Dramatic',     mood:['Orchestral','Dark','Dramatic'],     album:'Spec Ops'   },
+      { title:'Closing In',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Closing-In_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Tense',    mood:['Orchestral','Thriller','Tense'],    album:'No Escape'  },
+      { title:'Cold Trail',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Cold-Trail_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Dark',      mood:['Orchestral','Thriller','Dark'],     album:'No Escape'  },
+      { title:'Hot Pursuit',         src:'https://cdn.jacklarkincomposer.co.uk/Audio/Hot-Pursuit_001_Main-Mix_Jack-Larkin.wav',                                   image:NOESCAPE, description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:'No Escape'  },
+      { title:'Breathing Distance',  src:'https://cdn.jacklarkincomposer.co.uk/Audio/Breathing-Distance_001_Main-Mix_Jack-Larkin.wav',                            image:NOESCAPE, description:'Orchestral · Thriller · Dramatic',  mood:['Orchestral','Thriller','Dramatic'], album:'No Escape'  },
+      { title:'Burning Sands',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Burning%20sands.mp3',                                                        image:DESERT,   description:'Orchestral · World · Epic',         mood:['Orchestral','World','Epic'],        album:'The Desert' },
+      { title:'Iron Titan',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/IRON%20TITAN.mp3',                                                           image:LOGO,     description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:null         },
+      { title:'Desert Mirage',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Desert%20Mirage%20IG%20post.mp3',                                            image:DESERT,   description:'Orchestral · World · Dark',         mood:['Orchestral','World','Dark'],        album:'The Desert' }
+    ];
+  
+    var PLACEHOLDER = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/></svg>';
+    var PLAY_ICON   = '<svg viewBox="0 0 24 24" width="19" height="19" fill="white"><polygon points="7,5 20,12 7,19"/></svg>';
+    var PAUSE_ICON  = '<svg viewBox="0 0 24 24" width="19" height="19" fill="white"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>';
+    var SPIN_ICON   = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10" opacity="0.9"/><path d="M12 2a10 10 0 0 0-10 10" opacity="0.25"/></svg>';
+    var VOL_ON      = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>';
+    var VOL_OFF     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0017.73 18l1.27 1.27L20.27 18 5.27 3 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
+    var COG_ICON    = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+  
+    var fmt = function (s) {
+      return (s == null || isNaN(s)) ? '--:--'
+        : (s < 0 ? '-' : '') + Math.floor(Math.abs(s)/60) + ':' + String(Math.floor(Math.abs(s)%60)).padStart(2,'0');
+    };
+  
+    var pool = TRACKS.map(function (t) {
+      var a = new Audio(); a.preload = 'none'; a._src = t.src; return a;
     });
-  }
-  function setBtn(i, p) { trackRefs[i].btnPlay.innerHTML = p ? PAUSE_ICON : PLAY_ICON; wraps[i].classList.toggle('playing', p); }
-  function stopTicker() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
-  function resetWrap(i) {
-    stopTicker(); wraps[i].classList.remove('active','playing','loading');
-    trackRefs[i].btnPlay.innerHTML = PLAY_ICON;
-    trackRefs[i].fill.style.width = '0%';
-    trackRefs[i].dur.textContent = fmt(pool[i].duration) || '--:--';
-  }
-  function play(i) {
-    if (activeIdx === i && isPlaying) return;
-    if (activeIdx >= 0 && activeIdx !== i) { pool[activeIdx].pause(); resetWrap(activeIdx); }
-    ensureLoaded(i); activeIdx = i; isPlaying = true;
-    wraps[i].classList.add('active'); setBtn(i, true);
-    pool[i].volume = currentVol; pool[i].play().catch(function(){});
-  }
-  function pause() { if (activeIdx < 0 || !isPlaying) return; isPlaying = false; pool[activeIdx].pause(); setBtn(activeIdx, false); }
-  function toggle(i) { activeIdx === i && isPlaying ? pause() : play(i); }
-
-  function startTicker() {
-    stopTicker();
-    function tick() {
-      if (activeIdx < 0) { rafId = null; return; }
-      var a = pool[activeIdx];
-      if (a.duration) {
-        trackRefs[activeIdx].fill.style.width = (a.currentTime / a.duration * 100).toFixed(2) + '%';
-        trackRefs[activeIdx].dur.textContent = showRemaining ? fmt(a.currentTime - a.duration) : fmt(a.currentTime);
+    function ensureLoaded(i) { if (!pool[i].src) { pool[i].src = pool[i]._src; pool[i].load(); } }
+  
+    var activeIdx = -1, isPlaying = false, showRemaining = false;
+    var autoAdvance = true, shuffleOn = false, loopOne = false;
+    var isMuted = false, preMuteVol = 1, currentVol = 1;
+    var activeMood = 'All', activeAlbum = 'All';
+    var rafId = null, pendingSeek = {};
+    var wraps = [], trackRefs = [];
+  
+    function applyFilters() {
+      wraps.forEach(function (w, i) {
+        var t = TRACKS[i];
+        var ok = (activeMood === 'All' || (t.mood||[]).includes(activeMood))
+              && (activeAlbum === 'All' || t.album === activeAlbum);
+        w.classList.toggle('hidden', !ok);
+      });
+    }
+    function setBtn(i, p) { trackRefs[i].btnPlay.innerHTML = p ? PAUSE_ICON : PLAY_ICON; wraps[i].classList.toggle('playing', p); }
+    function stopTicker() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+    function resetWrap(i) {
+      stopTicker(); wraps[i].classList.remove('active','playing','loading');
+      trackRefs[i].btnPlay.innerHTML = PLAY_ICON;
+      trackRefs[i].fill.style.width = '0%';
+      trackRefs[i].dur.textContent = fmt(pool[i].duration) || '--:--';
+    }
+    function play(i) {
+      if (activeIdx === i && isPlaying) return;
+      if (activeIdx >= 0 && activeIdx !== i) { pool[activeIdx].pause(); resetWrap(activeIdx); }
+      ensureLoaded(i); activeIdx = i; isPlaying = true;
+      wraps[i].classList.add('active'); setBtn(i, true);
+      pool[i].volume = currentVol; pool[i].play().catch(function(){});
+    }
+    function pause() { if (activeIdx < 0 || !isPlaying) return; isPlaying = false; pool[activeIdx].pause(); setBtn(activeIdx, false); }
+    function toggle(i) { activeIdx === i && isPlaying ? pause() : play(i); }
+  
+    function startTicker() {
+      stopTicker();
+      function tick() {
+        if (activeIdx < 0) { rafId = null; return; }
+        var a = pool[activeIdx];
+        if (a.duration) {
+          trackRefs[activeIdx].fill.style.width = (a.currentTime / a.duration * 100).toFixed(2) + '%';
+          trackRefs[activeIdx].dur.textContent = showRemaining ? fmt(a.currentTime - a.duration) : fmt(a.currentTime);
+        }
+        rafId = requestAnimationFrame(tick);
       }
       rafId = requestAnimationFrame(tick);
     }
-    rafId = requestAnimationFrame(tick);
-  }
-
-  pool.forEach(function (a, i) {
-    a.addEventListener('waiting',        function(){ if(activeIdx===i) wraps[i].classList.add('loading'); });
-    a.addEventListener('canplay',        function(){ if(activeIdx===i) wraps[i].classList.remove('loading'); });
-    a.addEventListener('playing',        function(){ if(activeIdx!==i) return; wraps[i].classList.remove('loading'); startTicker(); });
-    a.addEventListener('pause',          function(){ if(activeIdx===i) stopTicker(); });
-    a.addEventListener('loadedmetadata', function(){
-      trackRefs[i].dur.textContent = fmt(a.duration);
-      if (pendingSeek[i] != null) { a.currentTime = pendingSeek[i] * a.duration; delete pendingSeek[i]; }
-    });
-    a.addEventListener('ended', function(){
-      if (activeIdx !== i) return;
-      stopTicker(); isPlaying = false; setBtn(i, false);
-      if (loopOne) { a.currentTime = 0; play(i); return; }
-      if (!autoAdvance) return;
-      var vis = wraps.map(function(_,j){ return j; }).filter(function(j){ return !wraps[j].classList.contains('hidden') && !wraps[j].classList.contains('track-capped'); });
-      if (!vis.length) return;
-      var next = shuffleOn
-        ? (vis.filter(function(j){ return j !== i; })[Math.floor(Math.random()*(vis.length-1))] || vis[0])
-        : vis[(vis.indexOf(i)+1) % vis.length];
-      setTimeout(function(){ play(next); }, 100);
-    });
-  });
-
-  var shell = document.getElementById('playerShell');
-  var trackList = document.getElementById('trackList');
-
-  /* Controls row */
-  var ctrlRow = document.createElement('div');
-  ctrlRow.className = 'controls-row';
-  ctrlRow.innerHTML =
-    '<div class="vol-group">' +
-      '<span class="vol-icon" id="apVolIcon">' + VOL_ON + '</span>' +
-      '<input type="range" id="apVolSlider" min="0" max="1" step="0.01" value="1">' +
-      '<span class="vol-pct" id="apVolPct">100%</span>' +
-    '</div>' +
-    '<button class="ap-ctrl-btn on" id="apBtnAuto" title="Auto-advance">Auto</button>' +
-    '<button class="ap-ctrl-btn"    id="apBtnShuf" title="Shuffle">Shuffle</button>' +
-    '<button class="ap-ctrl-btn"    id="apBtnLoop" title="Loop">Loop</button>';
-  shell.insertBefore(ctrlRow, trackList);
-
-  var volIcon   = ctrlRow.querySelector('#apVolIcon');
-  var volSlider = ctrlRow.querySelector('#apVolSlider');
-  var volPct    = ctrlRow.querySelector('#apVolPct');
-
-  function applyVol(v, updateSlider) {
-    currentVol = Math.max(0, Math.min(1, v));
-    if (activeIdx >= 0) pool[activeIdx].volume = currentVol;
-    if (updateSlider !== false) volSlider.value = currentVol;
-    volPct.textContent = Math.round(currentVol*100) + '%';
-    isMuted = currentVol === 0;
-    volIcon.innerHTML = isMuted ? VOL_OFF : VOL_ON;
-    volIcon.classList.toggle('muted', isMuted);
-  }
-  volSlider.addEventListener('input', function() { preMuteVol = parseFloat(volSlider.value)||preMuteVol; applyVol(parseFloat(volSlider.value), false); });
-  volIcon.addEventListener('click', function() { isMuted ? applyVol(preMuteVol) : (preMuteVol=currentVol, applyVol(0)); });
-
-  var btnAuto = ctrlRow.querySelector('#apBtnAuto');
-  var btnShuf = ctrlRow.querySelector('#apBtnShuf');
-  var btnLoop = ctrlRow.querySelector('#apBtnLoop');
-  btnAuto.addEventListener('click', function(){ autoAdvance=!autoAdvance; btnAuto.classList.toggle('on',autoAdvance); });
-  btnShuf.addEventListener('click', function(){ shuffleOn=!shuffleOn;     btnShuf.classList.toggle('on',shuffleOn); });
-  btnLoop.addEventListener('click', function(){ loopOne=!loopOne;         btnLoop.classList.toggle('on',loopOne); });
-
-  /* Filter section */
-  var allMoods  = ['All'].concat(Array.from(new Set(TRACKS.flatMap(function(t){ return t.mood||[]; }))));
-  var allAlbums = ['All'].concat(Array.from(new Set(TRACKS.map(function(t){ return t.album; }).filter(Boolean))));
-  var filterSection = document.createElement('div');
-  filterSection.className = 'filter-section';
-
-  function buildFilterRow(label, values, isAlbum, setActive) {
-    var lbl = document.createElement('div'); lbl.className='filter-group-label'; lbl.textContent=label;
-    filterSection.appendChild(lbl);
-    var row = document.createElement('div'); row.className='filter-row';
-    values.forEach(function(val) {
-      var pill = document.createElement('button');
-      pill.className = 'filter-pill' + (isAlbum?' album':'') + (val==='All'?' active':'');
-      pill.textContent = val;
-      pill.addEventListener('click', function(){
-        row.querySelectorAll('.filter-pill').forEach(function(p){ p.classList.remove('active'); });
-        pill.classList.add('active'); setActive(val); applyFilters();
+  
+    pool.forEach(function (a, i) {
+      a.addEventListener('waiting',        function(){ if(activeIdx===i) wraps[i].classList.add('loading'); });
+      a.addEventListener('canplay',        function(){ if(activeIdx===i) wraps[i].classList.remove('loading'); });
+      a.addEventListener('playing',        function(){ if(activeIdx!==i) return; wraps[i].classList.remove('loading'); startTicker(); });
+      a.addEventListener('pause',          function(){ if(activeIdx===i) stopTicker(); });
+      a.addEventListener('loadedmetadata', function(){
+        trackRefs[i].dur.textContent = fmt(a.duration);
+        if (pendingSeek[i] != null) { a.currentTime = pendingSeek[i] * a.duration; delete pendingSeek[i]; }
       });
-      row.appendChild(pill);
+      a.addEventListener('ended', function(){
+        if (activeIdx !== i) return;
+        stopTicker(); isPlaying = false; setBtn(i, false);
+        if (loopOne) { a.currentTime = 0; play(i); return; }
+        if (!autoAdvance) return;
+        var vis = wraps.map(function(_,j){ return j; }).filter(function(j){ return !wraps[j].classList.contains('hidden') && !wraps[j].classList.contains('track-capped'); });
+        if (!vis.length) return;
+        var next = shuffleOn
+          ? (vis.filter(function(j){ return j !== i; })[Math.floor(Math.random()*(vis.length-1))] || vis[0])
+          : vis[(vis.indexOf(i)+1) % vis.length];
+        setTimeout(function(){ play(next); }, 100);
+      });
     });
-    filterSection.appendChild(row);
-  }
-  buildFilterRow('Mood',   allMoods,  false, function(v){ activeMood=v; });
-  buildFilterRow('Albums', allAlbums, true,  function(v){ activeAlbum=v; });
-  shell.insertBefore(filterSection, trackList);
-
-  /* Track rows */
-  TRACKS.forEach(function(t, idx) {
-    var wrap = document.createElement('div'); wrap.className='track-wrap'; wraps.push(wrap);
-    var artHTML = t.image
-      ? '<img src="'+t.image+'" alt="'+t.title+'" loading="lazy" decoding="async">'
-      : '<div class="art-placeholder">'+PLACEHOLDER+'</div>';
-    var descHTML = t.description ? '<div class="track-desc">'+t.description+'</div>' : '';
-    var moodTags = (t.mood||[]).map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
-    var albumTag = t.album ? '<span class="tag album-tag">'+t.album+'</span>' : '';
-    var tagHTML  = (moodTags||albumTag) ? '<div class="tag-row">'+moodTags+albumTag+'</div>' : '';
-
-    wrap.innerHTML =
-      '<div class="track">' +
-        '<div class="art">' + artHTML +
-          '<button class="btn-play" tabindex="-1" aria-hidden="true">'+PLAY_ICON+'</button>' +
-          '<div class="spinner">'+SPIN_ICON+'</div>' +
-        '</div>' +
-        '<div class="info">' +
-          '<div class="title-row"><span class="track-num">'+String(idx+1).padStart(2,'0')+'</span><span class="track-title">'+t.title+'</span></div>' +
-          descHTML + tagHTML +
-          '<div class="progress"><div class="progress-fill"></div></div>' +
-        '</div>' +
-        '<span class="duration">--:--</span>' +
+  
+    var shell = document.getElementById('playerShell');
+    var trackList = document.getElementById('trackList');
+  
+    /* ── Sticky header wrapper ── */
+    var stickyHeader = document.createElement('div');
+    stickyHeader.id = 'apStickyHeader';
+    stickyHeader.className = 'ap-sticky-header';
+  
+    /* ── Controls row ── */
+    var ctrlRow = document.createElement('div');
+    ctrlRow.className = 'controls-row';
+    ctrlRow.innerHTML =
+      '<div class="vol-group">' +
+        '<span class="vol-icon" id="apVolIcon">' + VOL_ON + '</span>' +
+        '<input type="range" id="apVolSlider" min="0" max="1" step="0.01" value="1">' +
+        '<span class="vol-pct" id="apVolPct">100%</span>' +
       '</div>' +
-      '<div class="shortcut-drawer">' +
-        '<div class="sc-desk-row">' +
-          '<button class="sc" data-action="toggle"   tabindex="-1"><span class="sc-key">Space</span><span class="sc-label">Play / Pause</span></button>' +
-          '<div class="sc-sep"></div>' +
-          '<button class="sc" data-action="back"     tabindex="-1"><span class="sc-key">←</span><span class="sc-label">−10s</span></button>' +
-          '<button class="sc" data-action="forward"  tabindex="-1"><span class="sc-key">→</span><span class="sc-label">+10s</span></button>' +
-          '<div class="sc-sep"></div>' +
-          '<button class="sc" data-action="mute"     tabindex="-1"><span class="sc-key">M</span><span class="sc-label">Mute</span></button>' +
-          '<button class="sc" data-action="duration" tabindex="-1"><span class="sc-key">click time</span><span class="sc-label">Toggle remaining</span></button>' +
-        '</div>' +
-        '<div class="sc-mob-row">' +
-          '<button class="sc-mob" data-action="back"     tabindex="-1">−10s</button>' +
-          '<button class="sc-mob" data-action="mute"     tabindex="-1">Mute</button>' +
-          '<button class="sc-mob" data-action="forward"  tabindex="-1">+10s</button>' +
-          '<button class="sc-mob" data-action="duration" tabindex="-1">Time</button>' +
-        '</div>' +
-      '</div>';
-
-    trackRefs.push({
-      btnPlay: wrap.querySelector('.btn-play'),
-      fill:    wrap.querySelector('.progress-fill'),
-      dur:     wrap.querySelector('.duration')
-    });
-
-    var trackEl  = wrap.querySelector('.track');
-    var progress = wrap.querySelector('.progress');
-    var dur      = trackRefs[idx].dur;
-    var drawer   = wrap.querySelector('.shortcut-drawer');
-
-    drawer.addEventListener('click', function(e) {
+      '<button class="ap-cog-btn" id="apCogBtn" title="Playback settings" aria-expanded="false">' + COG_ICON + '</button>';
+  
+    /* ── Cog dropdown ── */
+    var cogDropdown = document.createElement('div');
+    cogDropdown.className = 'ap-cog-dropdown';
+    cogDropdown.id = 'apCogDropdown';
+    cogDropdown.innerHTML =
+      '<button class="ap-ctrl-btn on" id="apBtnAuto"  title="Auto-advance">Auto</button>' +
+      '<button class="ap-ctrl-btn"   id="apBtnShuf"  title="Shuffle">Shuffle</button>' +
+      '<button class="ap-ctrl-btn"   id="apBtnLoop"  title="Loop one">Loop</button>';
+    ctrlRow.appendChild(cogDropdown);
+  
+    /* ── Filter section ── */
+    var allMoods  = ['All'].concat(Array.from(new Set(TRACKS.flatMap(function(t){ return t.mood||[]; }))));
+    var allAlbums = ['All'].concat(Array.from(new Set(TRACKS.map(function(t){ return t.album; }).filter(Boolean))));
+    var filterSection = document.createElement('div');
+    filterSection.className = 'filter-section';
+  
+    function buildFilterRow(label, values, isAlbum, setActive) {
+      var lbl = document.createElement('div'); lbl.className='filter-group-label'; lbl.textContent=label;
+      filterSection.appendChild(lbl);
+      var row = document.createElement('div'); row.className='filter-row';
+      values.forEach(function(val) {
+        var pill = document.createElement('button');
+        pill.className = 'filter-pill' + (isAlbum?' album':'') + (val==='All'?' active':'');
+        pill.textContent = val;
+        pill.addEventListener('click', function(){
+          row.querySelectorAll('.filter-pill').forEach(function(p){ p.classList.remove('active'); });
+          pill.classList.add('active'); setActive(val); applyFilters();
+        });
+        row.appendChild(pill);
+      });
+      filterSection.appendChild(row);
+    }
+    buildFilterRow('Mood',   allMoods,  false, function(v){ activeMood=v; });
+    buildFilterRow('Albums', allAlbums, true,  function(v){ activeAlbum=v; });
+  
+    /* Assemble sticky header */
+    stickyHeader.appendChild(ctrlRow);
+    stickyHeader.appendChild(filterSection);
+    shell.insertBefore(stickyHeader, trackList);
+  
+    /* ── Vol controls ── */
+    var volIcon   = ctrlRow.querySelector('#apVolIcon');
+    var volSlider = ctrlRow.querySelector('#apVolSlider');
+    var volPct    = ctrlRow.querySelector('#apVolPct');
+  
+    function applyVol(v, updateSlider) {
+      currentVol = Math.max(0, Math.min(1, v));
+      if (activeIdx >= 0) pool[activeIdx].volume = currentVol;
+      if (updateSlider !== false) volSlider.value = currentVol;
+      volPct.textContent = Math.round(currentVol*100) + '%';
+      isMuted = currentVol === 0;
+      volIcon.innerHTML = isMuted ? VOL_OFF : VOL_ON;
+      volIcon.classList.toggle('muted', isMuted);
+    }
+    volSlider.addEventListener('input', function() { preMuteVol = parseFloat(volSlider.value)||preMuteVol; applyVol(parseFloat(volSlider.value), false); });
+    volIcon.addEventListener('click', function() { isMuted ? applyVol(preMuteVol) : (preMuteVol=currentVol, applyVol(0)); });
+  
+    /* ── Cog toggle ── */
+    var cogBtn = ctrlRow.querySelector('#apCogBtn');
+    var cogOpen = false;
+    cogBtn.addEventListener('click', function(e) {
       e.stopPropagation();
-      var action = e.target.closest('[data-action]') && e.target.closest('[data-action]').dataset.action;
-      if (!action) return;
-      var a = pool[idx];
-      switch(action) {
-        case 'toggle':   toggle(idx); break;
-        case 'back':     if(activeIdx===idx) a.currentTime=Math.max(0,a.currentTime-10); break;
-        case 'forward':  if(activeIdx===idx) a.currentTime=Math.min(a.duration||0,a.currentTime+10); break;
-        case 'mute':     isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
-        case 'duration': showRemaining=!showRemaining; break;
+      cogOpen = !cogOpen;
+      cogDropdown.classList.toggle('open', cogOpen);
+      cogBtn.classList.toggle('on', cogOpen);
+      cogBtn.setAttribute('aria-expanded', cogOpen);
+    });
+    document.addEventListener('click', function(e) {
+      if (cogOpen && !cogDropdown.contains(e.target) && e.target !== cogBtn) {
+        cogOpen = false;
+        cogDropdown.classList.remove('open');
+        cogBtn.classList.remove('on');
+        cogBtn.setAttribute('aria-expanded', false);
       }
     });
-
-    wrap.querySelector('.btn-play').addEventListener('click', function(e){ e.stopPropagation(); toggle(idx); });
-    trackEl.addEventListener('click', function(e){ if(progress.contains(e.target)||dur.contains(e.target)) return; toggle(idx); });
-    trackEl.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();toggle(idx);} });
-    dur.addEventListener('click', function(e){ e.stopPropagation(); showRemaining=!showRemaining; });
-    progress.addEventListener('click', function(e){
-      e.stopPropagation();
-      var a = pool[idx]; ensureLoaded(idx);
-      var rect = progress.getBoundingClientRect();
-      var ratio = Math.max(0, Math.min(1, (e.clientX-rect.left)/rect.width));
-      if (a.duration) { a.currentTime=ratio*a.duration; if(activeIdx!==idx||!isPlaying) play(idx); }
-      else { pendingSeek[idx]=ratio; play(idx); }
+  
+    /* ── Playback buttons with mutual exclusivity ── */
+    var btnAuto = cogDropdown.querySelector('#apBtnAuto');
+    var btnShuf = cogDropdown.querySelector('#apBtnShuf');
+    var btnLoop = cogDropdown.querySelector('#apBtnLoop');
+  
+    btnAuto.addEventListener('click', function(){
+      autoAdvance = !autoAdvance;
+      if (autoAdvance) { loopOne = false; btnLoop.classList.remove('on'); }
+      btnAuto.classList.toggle('on', autoAdvance);
     });
-    trackList.appendChild(wrap);
-  });
-
-  /* ── Audio player cap at 8 ── */
-  var TRACK_CAP = 8;
-  if (TRACKS.length > TRACK_CAP) {
-    wraps.forEach(function(w, i) { if (i >= TRACK_CAP) w.classList.add('track-capped'); });
-    var apMoreRow = document.createElement('div');
-    apMoreRow.className = 'show-more-row';
-    apMoreRow.innerHTML = '<button class="show-more-btn" id="apMoreBtn"><span>Show More</span><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>';
-    shell.appendChild(apMoreRow);
-    var apExpanded = false;
-    apMoreRow.querySelector('#apMoreBtn').addEventListener('click', function() {
-      apExpanded = !apExpanded;
-      wraps.forEach(function(w, i) { if (i >= TRACK_CAP) w.classList.toggle('track-capped', !apExpanded); });
-      this.querySelector('span').textContent = apExpanded ? 'Show Less' : 'Show More';
-      this.classList.toggle('expanded', apExpanded);
+    btnShuf.addEventListener('click', function(){
+      shuffleOn = !shuffleOn;
+      if (shuffleOn) { loopOne = false; btnLoop.classList.remove('on'); }
+      btnShuf.classList.toggle('on', shuffleOn);
     });
-  }
+    btnLoop.addEventListener('click', function(){
+      loopOne = !loopOne;
+      if (loopOne) {
+        autoAdvance = false; shuffleOn = false;
+        btnAuto.classList.remove('on'); btnShuf.classList.remove('on');
+      }
+      btnLoop.classList.toggle('on', loopOne);
+    });
+  
+    /* ── Sticky behaviour + back to top ── */
+    var tracksSection = document.getElementById('tracks');
+    var backToTop = document.createElement('button');
+    backToTop.className = 'ap-back-top';
+    backToTop.id = 'apBackTop';
+    backToTop.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg> Back to top';
+    /* Place inline in controls row, to the left of the cog button */
+    ctrlRow.insertBefore(backToTop, cogBtn);
 
-  document.addEventListener('keydown', function(e) {
-    var tag = document.activeElement.tagName;
-    if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
-    switch(e.key) {
-      case ' ':          e.preventDefault(); if(activeIdx>=0) toggle(activeIdx); break;
-      case 'ArrowRight': e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.min(pool[activeIdx].duration||0,pool[activeIdx].currentTime+10); break;
-      case 'ArrowLeft':  e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.max(0,pool[activeIdx].currentTime-10); break;
-      case 'm': case 'M': isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
+    backToTop.addEventListener('click', function() {
+      tracksSection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    var mainNav = document.getElementById('mainNav');
+    var headerHeight = (mainNav ? mainNav.offsetHeight : 0) || 56;
+    var isSticky = false;
+
+    window.addEventListener('scroll', function() {
+      if (!tracksSection) return;
+      var rect = tracksSection.getBoundingClientRect();
+      var shouldStick = rect.top < headerHeight;
+      if (shouldStick !== isSticky) {
+        isSticky = shouldStick;
+        stickyHeader.classList.toggle('stuck', isSticky);
+        shell.classList.toggle('header-stuck', isSticky);
+      }
+      /* Show back to top as soon as the player header is stuck */
+      backToTop.classList.toggle('visible', isSticky);
+    }, { passive: true });
+  
+    /* ── Track rows ── */
+    TRACKS.forEach(function(t, idx) {
+      var wrap = document.createElement('div'); wrap.className='track-wrap'; wraps.push(wrap);
+      var artHTML = t.image
+        ? '<img src="'+t.image+'" alt="'+t.title+'" loading="lazy" decoding="async">'
+        : '<div class="art-placeholder">'+PLACEHOLDER+'</div>';
+      var descHTML = t.description ? '<div class="track-desc">'+t.description+'</div>' : '';
+      var moodTags = (t.mood||[]).map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
+      var albumTag = t.album ? '<span class="tag album-tag">'+t.album+'</span>' : '';
+      var tagHTML  = (moodTags||albumTag) ? '<div class="tag-row">'+moodTags+albumTag+'</div>' : '';
+  
+      wrap.innerHTML =
+        '<div class="track">' +
+          '<div class="art">' + artHTML +
+            '<button class="btn-play" tabindex="-1" aria-hidden="true">'+PLAY_ICON+'</button>' +
+            '<div class="spinner">'+SPIN_ICON+'</div>' +
+          '</div>' +
+          '<div class="info">' +
+            '<div class="title-row"><span class="track-num">'+String(idx+1).padStart(2,'0')+'</span><span class="track-title">'+t.title+'</span></div>' +
+            descHTML + tagHTML +
+            '<div class="progress"><div class="progress-fill"></div></div>' +
+          '</div>' +
+          '<span class="duration">--:--</span>' +
+        '</div>' +
+        '<div class="shortcut-drawer">' +
+          '<div class="sc-desk-row">' +
+            '<button class="sc" data-action="toggle"   tabindex="-1"><span class="sc-key">Space</span><span class="sc-label">Play / Pause</span></button>' +
+            '<div class="sc-sep"></div>' +
+            '<button class="sc" data-action="back"     tabindex="-1"><span class="sc-key">←</span><span class="sc-label">−10s</span></button>' +
+            '<button class="sc" data-action="forward"  tabindex="-1"><span class="sc-key">→</span><span class="sc-label">+10s</span></button>' +
+            '<div class="sc-sep"></div>' +
+            '<button class="sc" data-action="mute"     tabindex="-1"><span class="sc-key">M</span><span class="sc-label">Mute</span></button>' +
+            '<button class="sc" data-action="duration" tabindex="-1"><span class="sc-key">click time</span><span class="sc-label">Toggle remaining</span></button>' +
+          '</div>' +
+          '<div class="sc-mob-row">' +
+            '<button class="sc-mob" data-action="back"     tabindex="-1">−10s</button>' +
+            '<button class="sc-mob" data-action="mute"     tabindex="-1">Mute</button>' +
+            '<button class="sc-mob" data-action="forward"  tabindex="-1">+10s</button>' +
+            '<button class="sc-mob" data-action="duration" tabindex="-1">Time</button>' +
+          '</div>' +
+        '</div>';
+  
+      trackRefs.push({
+        btnPlay: wrap.querySelector('.btn-play'),
+        fill:    wrap.querySelector('.progress-fill'),
+        dur:     wrap.querySelector('.duration')
+      });
+  
+      var trackEl  = wrap.querySelector('.track');
+      var progress = wrap.querySelector('.progress');
+      var dur      = trackRefs[idx].dur;
+      var drawer   = wrap.querySelector('.shortcut-drawer');
+  
+      drawer.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var action = e.target.closest('[data-action]') && e.target.closest('[data-action]').dataset.action;
+        if (!action) return;
+        var a = pool[idx];
+        switch(action) {
+          case 'toggle':   toggle(idx); break;
+          case 'back':     if(activeIdx===idx) a.currentTime=Math.max(0,a.currentTime-10); break;
+          case 'forward':  if(activeIdx===idx) a.currentTime=Math.min(a.duration||0,a.currentTime+10); break;
+          case 'mute':     isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
+          case 'duration': showRemaining=!showRemaining; break;
+        }
+      });
+  
+      wrap.querySelector('.btn-play').addEventListener('click', function(e){ e.stopPropagation(); toggle(idx); });
+      trackEl.addEventListener('click', function(e){ if(progress.contains(e.target)||dur.contains(e.target)) return; toggle(idx); });
+      trackEl.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();toggle(idx);} });
+      dur.addEventListener('click', function(e){ e.stopPropagation(); showRemaining=!showRemaining; });
+      progress.addEventListener('click', function(e){
+        e.stopPropagation();
+        var a = pool[idx]; ensureLoaded(idx);
+        var rect = progress.getBoundingClientRect();
+        var ratio = Math.max(0, Math.min(1, (e.clientX-rect.left)/rect.width));
+        if (a.duration) { a.currentTime=ratio*a.duration; if(activeIdx!==idx||!isPlaying) play(idx); }
+        else { pendingSeek[idx]=ratio; play(idx); }
+      });
+      trackList.appendChild(wrap);
+    });
+  
+    /* ── Track cap at 8 ── */
+    var TRACK_CAP = 8;
+    if (TRACKS.length > TRACK_CAP) {
+      wraps.forEach(function(w, i) { if (i >= TRACK_CAP) w.classList.add('track-capped'); });
+      var apMoreRow = document.createElement('div');
+      apMoreRow.className = 'show-more-row';
+      apMoreRow.innerHTML = '<button class="show-more-btn" id="apMoreBtn"><span>Show More</span><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>';
+      shell.appendChild(apMoreRow);
+      var apExpanded = false;
+      apMoreRow.querySelector('#apMoreBtn').addEventListener('click', function() {
+        apExpanded = !apExpanded;
+        wraps.forEach(function(w, i) { if (i >= TRACK_CAP) w.classList.toggle('track-capped', !apExpanded); });
+        this.querySelector('span').textContent = apExpanded ? 'Show Less' : 'Show More';
+        this.classList.toggle('expanded', apExpanded);
+      });
     }
-  });
-
-}());
-</script>
+  
+    document.addEventListener('keydown', function(e) {
+      var tag = document.activeElement.tagName;
+      if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+      switch(e.key) {
+        case ' ':          e.preventDefault(); if(activeIdx>=0) toggle(activeIdx); break;
+        case 'ArrowRight': e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.min(pool[activeIdx].duration||0,pool[activeIdx].currentTime+10); break;
+        case 'ArrowLeft':  e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.max(0,pool[activeIdx].currentTime-10); break;
+        case 'm': case 'M': isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
+      }
+    });
+  
+  }());
+  </script>
 </body>
 </html>

@@ -350,6 +350,17 @@
     }
   }
 
+  /* ── Hero iframe: reload on bfcache restore so autoplay resumes ── */
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    var heroIframe = document.querySelector('.hero-autoplay-iframe');
+    if (heroIframe) {
+      var src = heroIframe.src;
+      heroIframe.src = '';
+      heroIframe.src = src;
+    }
+  });
+
   /* ── Hero buttons → open standalone hero clip ── */
   var HERO_VIDEO = VIDEOS[0];
   ['heroPlayBtn', 'heroWatchBtn', 'heroCard'].forEach(function (id) {

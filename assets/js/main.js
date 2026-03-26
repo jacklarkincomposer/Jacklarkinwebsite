@@ -149,7 +149,9 @@ rAF.start();
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.4s ease';
     window.addEventListener('pageshow', function () {
-      document.body.style.opacity = '1';
+      requestAnimationFrame(function () {
+        document.body.style.opacity = '1';
+      });
     });
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href]');

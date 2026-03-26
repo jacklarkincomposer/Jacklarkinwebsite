@@ -148,11 +148,8 @@ rAF.start();
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.4s ease';
-    window.addEventListener('load', function () {
+    window.addEventListener('pageshow', function () {
       document.body.style.opacity = '1';
-    });
-    window.addEventListener('pageshow', function (e) {
-      if (e.persisted) document.body.style.opacity = '1';
     });
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href]');

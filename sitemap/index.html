@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark">
+<title>Sitemap — Jack Larkin Composer</title>
+<meta name="description" content="Sitemap for Jack Larkin Composer — browse all pages on the site.">
+<meta property="og:title" content="Sitemap — Jack Larkin Composer">
+<meta property="og:description" content="Sitemap for Jack Larkin Composer — browse all pages on the site.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jacklarkincomposer.co.uk/sitemap/">
+<meta property="og:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
+<link rel="icon" href="../assets/images/logo.png" type="image/png">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&family=Lora:ital,wght@1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div id="aurora">
+  <div class="aurora-band aurora-band--1"></div>
+  <div class="aurora-band aurora-band--2"></div>
+  <div class="aurora-band aurora-band--3"></div>
+</div>
+<div class="site-bg"></div>
+
+<!-- Announcement bar -->
+<div class="announce-bar" id="announceBar">
+  <span class="announce-bar__text">Commissions Open!</span>
+  <a href="/contact/" class="announce-bar__link shimmer-hover">Get in Touch</a>
+</div>
+
+<!-- Nav -->
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav__brand">
+    <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="nav__logo" width="28" height="28">
+    <span class="nav__brand-text">Jack Larkin Composer</span>
+  </a>
+  <ul class="nav__links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/portfolio/">Portfolio</a></li>
+    <li><a href="/services/">Services</a></li>
+    <li><a href="/contact/">Contact</a></li>
+    <li class="nav__dropdown">
+      <a href="#" class="nav__dropdown-toggle">
+        Links
+        <span class="nav__dropdown-chevron">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </a>
+      <ul class="nav__dropdown-menu">
+        <li><a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a></li>
+      </ul>
+    </li>
+  </ul>
+  <a href="/contact/" class="nav__cta">Get in Touch</a>
+  <button class="nav__toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobilePanel">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav__mobile-panel" id="mobilePanel">
+  <button class="nav__mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
+  <nav class="mobile-nav-links">
+    <a href="/">Home</a>
+    <a href="/about/">About</a>
+    <a href="/portfolio/">Portfolio</a>
+    <a href="/services/">Services</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+  <span class="mobile-links-label">Links</span>
+  <div class="mobile-links-group">
+    <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener">SoundCloud</a>
+  </div>
+</div>
+
+<!-- Page title -->
+<div class="page-hero reveal">
+  <div class="page-title"><h1>Sitemap</h1></div>
+</div>
+
+<!-- Sitemap links -->
+<div class="section section--narrow">
+  <h2 class="section-heading">All Pages</h2>
+</div>
+
+<div class="section section--narrow">
+  <style>
+    .sitemap-tree {
+      list-style: disc;
+      padding-left: 1.5rem;
+      margin: 0 0 3rem;
+    }
+    .sitemap-tree li {
+      margin-bottom: 0.6rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+    }
+    .sitemap-tree a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .sitemap-tree a:hover,
+    .sitemap-tree a:focus-visible {
+      text-decoration: underline;
+    }
+    .sitemap-tree__desc {
+      color: var(--text);
+      opacity: 0.65;
+      margin-left: 0.4rem;
+    }
+  </style>
+  <ul class="sitemap-tree" aria-label="Site pages">
+    <li><a href="/">Home</a> <span class="sitemap-tree__desc">— Welcome page and overview</span></li>
+    <li><a href="/about/">About</a> <span class="sitemap-tree__desc">— Biography and testimonials</span></li>
+    <li><a href="/portfolio/">Portfolio</a> <span class="sitemap-tree__desc">— Selected works for games, film, TV, and online content</span></li>
+    <li><a href="/services/">Services</a> <span class="sitemap-tree__desc">— Composition and sound design services</span></li>
+    <li><a href="/contact/">Contact</a> <span class="sitemap-tree__desc">— Get in touch or enquire about a commission</span></li>
+    <li><a href="/sound-design/">Sound Design</a> <span class="sitemap-tree__desc">— SFX, ambiences, and audio post-production</span></li>
+  </ul>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__col footer__col--brand">
+      <a href="/" class="footer__logo-link">
+        <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
+        <span class="footer__logo-name">Jack Larkin</span>
+      </a>
+      <p class="footer__tagline">Composer for Games, TV &amp; Film</p>
+      <div class="footer__socials">
+        <a href="https://www.instagram.com/jacklarkincomposer/" target="_blank" rel="noopener" aria-label="Instagram" class="shimmer-hover">
+          <svg width="24" height="24" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        </a>
+        <a href="https://soundcloud.com/jacklarkincomposer" target="_blank" rel="noopener" aria-label="SoundCloud" class="shimmer-hover">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@Jacklarkincomposer" target="_blank" rel="noopener" aria-label="YouTube" class="shimmer-hover">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" fill="none" stroke="currentColor" stroke-width="1.5"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bar">
+    <p class="footer__copy">&copy; 2026 Jack Larkin. All rights reserved.</p>
+    <details class="footer__sitemap" open>
+      <summary>Sitemap</summary>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/portfolio/">Portfolio</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/sound-design/">Sound Design</a></li>
+      </ul>
+    </details>
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

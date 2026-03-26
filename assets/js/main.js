@@ -151,6 +151,9 @@ rAF.start();
     window.addEventListener('load', function () {
       document.body.style.opacity = '1';
     });
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) document.body.style.opacity = '1';
+    });
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href]');
       if (!link) return;

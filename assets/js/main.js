@@ -3,6 +3,32 @@
    Navigation, mobile menu, scroll effects, JLPlayer
 ============================================================ */
 
+/* Audiovisual experience banner: slides in after 400ms, stays expanded 9s, then collapses to tab.
+   If already seen this session, slides in directly in collapsed state. */
+(function () {
+  var banner = document.getElementById('avBanner');
+  if (!banner) return;
+  var KEY = 'avBannerSeen4';
+  var alreadySeen = false;
+  try { alreadySeen = !!sessionStorage.getItem(KEY); } catch (e) {}
+
+  if (alreadySeen) {
+    /* Slide in already-collapsed */
+    setTimeout(function () {
+      banner.classList.add('is-visible');
+      banner.classList.add('is-subtle');
+    }, 600);
+    return;
+  }
+
+  /* First visit: slide in expanded, then collapse after 9s */
+  setTimeout(function () { banner.classList.add('is-visible'); }, 400);
+  setTimeout(function () {
+    banner.classList.add('is-subtle');
+    try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+  }, 9400);
+}());
+
 /* ── Master rAF loop — single requestAnimationFrame driving all callbacks ── */
 const rAF = {
   callbacks: new Map(),
@@ -491,3 +517,4 @@ window.JLPlayer = (function () {
   return { open: _open, close: _close };
 
 }());
+

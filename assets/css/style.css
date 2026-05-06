@@ -87,79 +87,77 @@ img { max-width: 100%; display: block; }
 ============================================================ */
 .av-banner {
   position: fixed;
-  right: -300px; /* off-screen until .is-visible */
+  right: -280px; /* off-screen until .is-visible */
   top: 50%;
   transform: translateY(-50%);
   z-index: 1010;
   display: block;
-  width: 270px;
-  padding: 32px 26px 28px;
-  border-radius: 12px 0 0 12px;
-  background: rgba(6,6,10,0.96);
+  width: 240px;
+  padding: 26px 22px 22px;
+  border-radius: 10px 0 0 10px;
+  background: var(--glass-bg-deep);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(212,168,75,0.55);
+  border: 1px solid var(--glass-border-gold);
   border-right: none;
   color: var(--gold);
   text-decoration: none;
   overflow: hidden;
-  transition: right 0.7s cubic-bezier(.34,1.3,.64,1),
-              width 0.55s cubic-bezier(.4,0,.2,1),
-              padding 0.55s cubic-bezier(.4,0,.2,1),
-              background 0.6s ease,
-              border-color 0.6s ease,
-              box-shadow 0.6s ease;
+  transition: right 0.6s cubic-bezier(.4,0,.2,1),
+              width 0.5s cubic-bezier(.4,0,.2,1),
+              padding 0.5s cubic-bezier(.4,0,.2,1),
+              background 0.5s ease,
+              border-color 0.5s ease,
+              box-shadow 0.5s ease;
 }
 .av-banner.is-visible {
   right: 0;
 }
-/* Bright diagonal shimmer sweep */
+/* Subtle diagonal shimmer sweep */
 .av-banner::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, transparent 25%, rgba(228,199,107,0.28) 50%, transparent 75%);
+  background: linear-gradient(115deg, transparent 30%, rgba(212,168,75,0.10) 50%, transparent 70%);
   transform: translateX(-150%);
   pointer-events: none;
   z-index: 0;
 }
-/* Gold left-edge accent line */
+/* Thin gold left-edge accent */
 .av-banner::after {
   content: "";
   position: absolute;
   left: 0;
-  top: 16px;
-  bottom: 16px;
-  width: 3px;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
   background: var(--gold);
   border-radius: 0 2px 2px 0;
-  opacity: 0.9;
+  opacity: 0.5;
   z-index: 3;
   transition: opacity 0.5s ease;
 }
 @media (prefers-reduced-motion: no-preference) {
   .av-banner:not(.is-subtle)::before {
-    animation: avSweep 3.2s ease-in-out infinite;
+    animation: avSweep 5s ease-in-out infinite;
   }
   .av-banner:not(.is-subtle) {
-    animation: avGlow 2.4s ease-in-out infinite;
+    animation: avGlow 4s ease-in-out infinite;
   }
 }
 @keyframes avSweep {
   0%   { transform: translateX(-150%); }
-  55%  { transform: translateX(150%); }
+  60%  { transform: translateX(150%); }
   100% { transform: translateX(150%); }
 }
 @keyframes avGlow {
   0%, 100% {
-    box-shadow: -6px 0 40px rgba(212,168,75,0.25),
-                -12px 0 80px rgba(212,168,75,0.12),
-                inset 0 0 20px rgba(212,168,75,0.04);
+    box-shadow: -4px 0 24px rgba(212,168,75,0.10),
+                inset 0 0 0 rgba(212,168,75,0);
   }
   50% {
-    box-shadow: -6px 0 60px rgba(212,168,75,0.55),
-                -20px 0 120px rgba(212,168,75,0.28),
-                inset 0 0 30px rgba(212,168,75,0.10);
+    box-shadow: -4px 0 36px rgba(212,168,75,0.22),
+                inset 0 0 16px rgba(212,168,75,0.04);
   }
 }
 
@@ -177,51 +175,49 @@ img { max-width: 100%; display: block; }
   display: inline-block;
   align-self: flex-start;
   font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 0.6rem;
-  letter-spacing: 0.28em;
+  font-weight: 600;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  background: var(--gold);
-  color: var(--bg);
-  padding: 4px 10px;
-  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  padding: 3px 8px;
+  border: 1px solid var(--gold-mid);
   transition: background 0.3s ease, color 0.3s ease;
 }
 .av-banner__title {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  line-height: 1.15;
-  color: #fff;
+  line-height: 1.2;
+  color: var(--gold);
   font-style: italic;
-  text-shadow: 0 0 24px rgba(212,168,75,0.6), 0 0 6px rgba(212,168,75,0.3);
 }
 .av-banner__sub {
   display: block;
   font-family: var(--font-body);
-  font-size: 0.65rem;
-  letter-spacing: 0.14em;
-  color: var(--gold);
+  font-size: 0.63rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
   text-transform: uppercase;
-  opacity: 0.85;
 }
 .av-banner__cta {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-top: 6px;
   font-family: var(--font-body);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--bg);
-  background: var(--gold);
-  padding: 8px 16px;
+  color: var(--gold);
+  border: 1px solid var(--gold-mid);
+  padding: 6px 14px;
   align-self: flex-start;
-  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 .av-banner__arrow {
   display: inline-block;
@@ -230,15 +226,15 @@ img { max-width: 100%; display: block; }
 
 /* ── Collapsed / subtle state ── */
 .av-banner.is-subtle {
-  width: 34px;
+  width: 32px;
   padding: 56px 0;
-  background: rgba(6,6,10,0.88);
-  border-color: rgba(212,168,75,0.2);
-  box-shadow: -2px 0 14px rgba(212,168,75,0.08) !important;
+  background: var(--glass-bg-mid);
+  border-color: rgba(212,168,75,0.12);
+  box-shadow: -2px 0 10px rgba(212,168,75,0.05) !important;
   animation: none !important;
 }
 .av-banner.is-subtle::before { animation: none !important; opacity: 0; }
-.av-banner.is-subtle::after { opacity: 0.35; }
+.av-banner.is-subtle::after { opacity: 0.2; }
 .av-banner.is-subtle .av-banner__inner {
   opacity: 0;
   pointer-events: none;
@@ -281,13 +277,13 @@ img { max-width: 100%; display: block; }
 }
 .av-banner.is-subtle:hover,
 .av-banner.is-subtle:focus-visible {
-  background: rgba(8,8,14,0.95);
-  border-color: rgba(212,168,75,0.45);
-  box-shadow: -4px 0 24px rgba(212,168,75,0.22) !important;
+  background: var(--glass-bg-deep);
+  border-color: var(--glass-border-gold);
+  box-shadow: -3px 0 18px rgba(212,168,75,0.14) !important;
 }
 .av-banner.is-subtle:hover .av-banner__tab,
 .av-banner.is-subtle:focus-visible .av-banner__tab {
-  color: var(--gold-bright);
+  color: var(--gold);
 }
 
 /* ── Mobile: small floating pill bottom-right ── */
@@ -1165,6 +1161,145 @@ img { max-width: 100%; display: block; }
   .gal-skel { animation: galShimmer 1.4s infinite linear; }
 }
 .gal-skel-short { width: 55%; margin-top: 5px; height: 9px; }
+
+/* ============================================================
+   ANCIENT WANDERER — FEATURED PORTFOLIO ENTRY
+============================================================ */
+.aw-feature {
+  max-width: 980px;
+  margin: 0 auto 16px;
+  padding: 0 24px;
+}
+.aw-feature__card {
+  display: grid;
+  grid-template-columns: 42% 1fr;
+  gap: 0;
+  background: var(--glass-bg-mid);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--glass-border-gold);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.aw-feature__img-wrap {
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+}
+.aw-feature__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: brightness(0.82) saturate(0.85);
+  transition: filter 0.4s ease;
+}
+.aw-feature__card:hover .aw-feature__img {
+  filter: brightness(0.9) saturate(0.95);
+}
+.aw-feature__img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 60%, var(--glass-bg-mid) 100%);
+  pointer-events: none;
+}
+.aw-feature__body {
+  padding: 32px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+.aw-feature__eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.8;
+}
+.aw-feature__title {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: var(--text-bright);
+}
+.aw-feature__desc {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--text-muted);
+  max-width: 38ch;
+}
+.aw-feature__chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 1px solid var(--glass-border-gold);
+  padding-left: 14px;
+  margin-top: 2px;
+}
+.aw-feature__chapter {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.aw-feature__chapter em {
+  font-family: var(--font-quote);
+  color: var(--gold);
+  font-style: italic;
+}
+.aw-feature__meta {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.aw-feature__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  margin-top: 6px;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-mid);
+  padding: 8px 20px;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.aw-feature__cta:hover {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+.aw-feature__cta-arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.aw-feature__cta:hover .aw-feature__cta-arrow { transform: translateX(4px); }
+
+@media (max-width: 700px) {
+  .aw-feature { padding: 0 16px; }
+  .aw-feature__card { grid-template-columns: 1fr; }
+  .aw-feature__img-wrap { min-height: 200px; max-height: 220px; }
+  .aw-feature__img-overlay { background: linear-gradient(0deg, var(--glass-bg-mid) 0%, transparent 60%); }
+  .aw-feature__body { padding: 22px 20px 20px; }
+  .aw-feature__title { font-size: 1.35rem; }
+  .aw-feature__desc { max-width: none; }
+}
 
 /* Sound Design Portfolio link */
 .sd-portfolio-link { text-align: center; padding: 20px 0 24px; }

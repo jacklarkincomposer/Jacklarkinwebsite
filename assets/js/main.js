@@ -8,7 +8,7 @@
 (function () {
   var banner = document.getElementById('avBanner');
   if (!banner) return;
-  var KEY = 'avBannerSeen4';
+  var KEY = 'avBannerSeen5';
   var alreadySeen = false;
   try { alreadySeen = !!sessionStorage.getItem(KEY); } catch (e) {}
 

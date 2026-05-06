@@ -1264,12 +1264,17 @@ img { max-width: 100%; display: block; }
   color: var(--text-dim);
   margin-top: 2px;
 }
+.aw-feature__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
 .aw-feature__cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  align-self: flex-start;
-  margin-top: 6px;
   font-family: var(--font-heading);
   font-size: 0.72rem;
   font-weight: 600;
@@ -1284,6 +1289,15 @@ img { max-width: 100%; display: block; }
   background: var(--gold);
   color: var(--bg);
   border-color: var(--gold);
+}
+.aw-feature__cta--secondary {
+  color: var(--text-muted);
+  border-color: var(--border-light);
+}
+.aw-feature__cta--secondary:hover {
+  background: transparent;
+  color: var(--gold);
+  border-color: var(--gold-mid);
 }
 .aw-feature__cta-arrow {
   display: inline-block;

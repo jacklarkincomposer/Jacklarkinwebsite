@@ -1421,13 +1421,11 @@ img { max-width: 100%; display: block; }
    AUDIO PLAYER (Tracks section)
 ============================================================ */
 .audio-player-shell {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  overflow: clip; /* clip keeps border-radius visual but doesn't block position:sticky */
-  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1444,14 +1442,12 @@ img { max-width: 100%; display: block; }
 }
 .ap-sticky-header.stuck {
   z-index: 400;
-  background: rgba(8,8,14,0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(212,168,75,0.15);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  background: var(--bg);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.6);
   border-radius: 0;
-  padding: 8px 12px;
-  margin: 0 -12px;
+  padding: 8px 0;
+  margin: 0;
 }
 
 /* ── Cog button ── */

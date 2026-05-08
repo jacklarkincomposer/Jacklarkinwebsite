@@ -32,9 +32,9 @@ gtag('config','G-SB5J4T9S4R');
 <style>
 /* ── Audio player — player-specific tokens (uses global --gold, --gold-dim, --white etc.) ── */
 :root {
-  --bg-track:       rgba(8,8,14,0.35);
-  --bg-hover:       rgba(8,8,14,0.50);
-  --bg-active:      rgba(8,8,14,0.60);
+  --bg-track:       transparent;
+  --bg-hover:       rgba(255,255,255,0.03);
+  --bg-active:      rgba(8,8,14,0.25);
   --border-active:  rgba(212,168,75,0.50);
   --bar-track:      rgba(255,255,255,0.12);
   --bar-filled:     rgba(255,255,255,0.85);
@@ -114,19 +114,16 @@ input[type=range]::-moz-range-thumb {
   font-family:var(--font-heading);
 }
 .filter-pill:hover  { border-color:rgba(255,255,255,0.35); color:var(--white); }
-.filter-pill.active { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); }
-.filter-pill.album        { border-color:rgba(180,120,255,0.3); color:rgba(200,160,255,0.6); }
-.filter-pill.album:hover  { border-color:rgba(200,160,255,0.6); color:rgba(220,190,255,0.9); }
-.filter-pill.album.active { border-color:rgba(200,160,255,0.8); color:rgba(220,190,255,1); background:rgba(180,120,255,0.15); }
+.filter-pill.active { border-color:rgba(255,255,255,0.55); color:var(--white); background:rgba(255,255,255,0.08); }
+.filter-pill.album.active { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); }
 
 .track-wrap {
   display:flex; flex-direction:column;
-  border-radius:var(--radius-card); overflow:hidden;
-  border:1px solid transparent; transition:border-color 0.2s;
+  border-bottom:1px solid rgba(255,255,255,0.07); transition:border-color 0.2s;
 }
-.track-wrap.active  { border-color:var(--border-active); }
+.track-wrap.active  { border-bottom-color:var(--border-active); }
 .track-wrap.hidden  { display:none; }
-@keyframes borderPulse { 0%,100%{border-color:rgba(212,168,75,0.50)} 50%{border-color:rgba(212,168,75,0.18)} }
+@keyframes borderPulse { 0%,100%{border-bottom-color:rgba(212,168,75,0.50)} 50%{border-bottom-color:rgba(212,168,75,0.18)} }
 @media (prefers-reduced-motion: no-preference) {
   .track-wrap.active.playing { animation:borderPulse 2.2s ease-in-out infinite; }
 }
@@ -136,14 +133,14 @@ input[type=range]::-moz-range-thumb {
   align-items:center; gap:14px; padding:13px 15px;
   background:var(--bg-track); cursor:pointer; user-select:none;
   -webkit-tap-highlight-color:transparent;
-  transition:background 0.2s, transform 0.15s;
+  transition:background 0.2s;
 }
-.track:hover              { background:var(--bg-hover); transform:translateY(-1px); }
-.track-wrap.active .track { background:var(--bg-active); transform:none; }
+.track:hover              { background:var(--bg-hover); }
+.track-wrap.active .track { background:var(--bg-active); }
 
 .shortcut-drawer {
   display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap;
-  background:rgba(8,8,14,0.35); padding:0 15px;
+  background:transparent; border-top:1px solid rgba(255,255,255,0.06); padding:0 15px;
   max-height:0; overflow:hidden; transition:max-height 0.28s ease, padding 0.28s ease;
 }
 .track-wrap.active .shortcut-drawer { max-height:52px; padding:9px 15px; }
@@ -183,9 +180,9 @@ input[type=range]::-moz-range-thumb {
 .track-desc { font-size:0.72rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tag-row { display:flex; flex-wrap:wrap; gap:4px; }
 .tag { font-size:0.62rem; font-weight:600; letter-spacing:0.06em; padding:2px 7px; border-radius:99px; border:1px solid rgba(255,255,255,0.14); color:var(--text-secondary); }
-.tag.album-tag { border-color:rgba(180,120,255,0.25); color:rgba(200,160,255,0.6); }
+.tag.album-tag { border-color:var(--gold-mid); color:var(--gold); }
 .track-wrap.active .tag           { border-color:var(--glass-border-gold); color:rgba(212,168,75,0.75); }
-.track-wrap.active .tag.album-tag { border-color:rgba(200,160,255,0.5); color:rgba(220,190,255,0.9); }
+.track-wrap.active .tag.album-tag { border-color:var(--gold); color:var(--gold-bright); }
 
 .progress { position:relative; display:flex; align-items:center; height:18px; cursor:pointer; }
 .progress::before { content:''; position:absolute; left:0; right:0; height:2px; background:var(--bar-track); border-radius:99px; pointer-events:none; }
@@ -552,12 +549,20 @@ input[type=range]::-moz-range-thumb {
   galFilterBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
       var filter = this.getAttribute('data-gal-filter');
+      var filtering = filter !== 'all';
       galFilterBtns.forEach(function(b) { b.classList.remove('active'); });
       this.classList.add('active');
-      Array.from(rail.querySelectorAll('.gal-card')).forEach(function(c) {
-        var match = filter === 'all' || c.getAttribute('data-gal-type') === filter;
+      Array.from(rail.querySelectorAll('.gal-card')).forEach(function(c, i) {
+        var match = !filtering || c.getAttribute('data-gal-type') === filter;
         c.style.display = match ? '' : 'none';
+        if (i >= GALLERY_CAP) {
+          c.classList.toggle('gal-capped', !filtering && !galExpanded);
+        }
       });
+      if (galMoreRow) {
+        var hasCapped = galCards.some(function(c) { return c.classList.contains('gal-capped'); });
+        galMoreRow.style.display = hasCapped ? '' : 'none';
+      }
     });
   });
 
@@ -612,14 +617,23 @@ input[type=range]::-moz-range-thumb {
     var activeMood = 'All', activeAlbum = 'All';
     var rafId = null, pendingSeek = {};
     var wraps = [], trackRefs = [];
-  
+    var TRACK_CAP = 8, apExpanded = false, apMoreRow = null;
+
     function applyFilters() {
+      var filtering = activeMood !== 'All' || activeAlbum !== 'All';
       wraps.forEach(function (w, i) {
         var t = TRACKS[i];
         var ok = (activeMood === 'All' || (t.mood||[]).includes(activeMood))
               && (activeAlbum === 'All' || t.album === activeAlbum);
         w.classList.toggle('hidden', !ok);
+        if (i >= TRACK_CAP) {
+          w.classList.toggle('track-capped', !filtering && !apExpanded);
+        }
       });
+      if (apMoreRow) {
+        var hasCapped = wraps.some(function(w) { return w.classList.contains('track-capped'); });
+        apMoreRow.style.display = hasCapped ? '' : 'none';
+      }
     }
     function setBtn(i, p) { trackRefs[i].btnPlay.innerHTML = p ? PAUSE_ICON : PLAY_ICON; wraps[i].classList.toggle('playing', p); }
     function stopTicker() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
@@ -908,14 +922,12 @@ input[type=range]::-moz-range-thumb {
     });
   
     /* ── Track cap at 8 ── */
-    var TRACK_CAP = 8;
     if (TRACKS.length > TRACK_CAP) {
       wraps.forEach(function(w, i) { if (i >= TRACK_CAP) w.classList.add('track-capped'); });
-      var apMoreRow = document.createElement('div');
+      apMoreRow = document.createElement('div');
       apMoreRow.className = 'show-more-row';
       apMoreRow.innerHTML = '<button class="show-more-btn" id="apMoreBtn"><span>Show More</span><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></button>';
       shell.appendChild(apMoreRow);
-      var apExpanded = false;
       apMoreRow.querySelector('#apMoreBtn').addEventListener('click', function() {
         apExpanded = !apExpanded;
         wraps.forEach(function(w, i) { if (i >= TRACK_CAP) w.classList.toggle('track-capped', !apExpanded); });

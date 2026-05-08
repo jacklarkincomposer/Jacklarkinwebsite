@@ -2392,6 +2392,42 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   color: var(--black);
 }
 
+/* Copy-email tooltip */
+.copy-email-tip {
+  position: fixed;
+  background: var(--glass-bg-deep);
+  color: rgba(212,168,75,0.55);
+  border: 1px solid rgba(212,168,75,0.18);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,168,75,0.05);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.4em 0.9em;
+  border-radius: 100px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%) translateY(-2px) scale(0.92);
+  z-index: 9999;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .copy-email-tip {
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .copy-email-tip.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .copy-email-tip { transform: translateX(-50%); }
+  .copy-email-tip.is-visible { opacity: 1; }
+}
+
 /* Scrollbar */
 html {
   scrollbar-width: thin;

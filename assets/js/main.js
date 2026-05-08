@@ -3,6 +3,65 @@
    Navigation, mobile menu, scroll effects, JLPlayer
 ============================================================ */
 
+/* Copy email address to clipboard when mailto links are clicked */
+(function () {
+  var tip, timer, scrollRaf, currentAnchor;
+
+  function positionTip() {
+    if (!currentAnchor || !tip) return;
+    var r = currentAnchor.getBoundingClientRect();
+    tip.style.left = (r.left + r.width / 2) + 'px';
+    tip.style.top  = (r.bottom + 10) + 'px';
+  }
+
+  function onScroll() {
+    cancelAnimationFrame(scrollRaf);
+    scrollRaf = requestAnimationFrame(positionTip);
+  }
+
+  function hideTip() {
+    tip.classList.remove('is-visible');
+    window.removeEventListener('scroll', onScroll, true);
+    currentAnchor = null;
+  }
+
+  function showTip(anchor, text) {
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.className = 'copy-email-tip';
+      tip.setAttribute('role', 'status');
+      tip.setAttribute('aria-live', 'polite');
+      document.body.appendChild(tip);
+    }
+    currentAnchor = anchor;
+    tip.textContent = text;
+    positionTip();
+    clearTimeout(timer);
+    tip.classList.remove('is-visible');
+    void tip.offsetWidth;
+    tip.classList.add('is-visible');
+    window.addEventListener('scroll', onScroll, true);
+    timer = setTimeout(hideTip, 1800);
+  }
+
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('[data-copy-email]');
+    if (!link) return;
+    var email = link.getAttribute('data-copy-email');
+    if (!email) return;
+    e.preventDefault();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(function () {
+        showTip(link, '✓ Copied');
+      }).catch(function () {
+        showTip(link, email);
+      });
+    } else {
+      showTip(link, email);
+    }
+  });
+}());
+
 /* Audiovisual experience banner: slides in after 400ms, stays expanded 9s, then collapses to tab.
    If already seen this session, slides in directly in collapsed state. */
 (function () {

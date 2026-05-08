@@ -286,23 +286,75 @@ img { max-width: 100%; display: block; }
   color: var(--gold);
 }
 
-/* ── Mobile: small floating pill bottom-right ── */
+/* ── Mobile: bottom bar → small pill ── */
 @media (max-width: 700px) {
   .av-banner {
     top: auto;
-    bottom: 80px;
+    bottom: -120px; /* off-screen until .is-visible */
     right: 0;
+    left: 0;
+    width: 100%;
     transform: none;
-    width: 200px;
-    padding: 20px 16px 18px;
-    border-radius: 8px 0 0 8px;
+    padding: 14px 20px 16px;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--glass-border-gold);
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    transition: bottom 0.55s cubic-bezier(.4,0,.2,1),
+                height 0.45s cubic-bezier(.4,0,.2,1),
+                background 0.5s ease,
+                border-color 0.5s ease,
+                box-shadow 0.5s ease;
   }
+  .av-banner::after { display: none; }
+  .av-banner.is-visible { bottom: 0; }
+
+  .av-banner__inner {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  .av-banner__label { flex-shrink: 0; }
+  .av-banner__title {
+    font-size: 1rem;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .av-banner__sub { display: none; }
+  .av-banner__cta {
+    flex-shrink: 0;
+    margin-top: 0;
+    padding: 6px 14px;
+    font-size: 0.62rem;
+  }
+
+  /* Collapsed: shrinks to a slim strip at the very bottom */
   .av-banner.is-subtle {
-    width: 28px;
-    padding: 44px 0;
+    width: 100%;
+    padding: 8px 20px;
+    border-radius: 0;
   }
-  .av-banner__title { font-size: 1rem; }
-  .av-banner__tab { font-size: 0.52rem; }
+  .av-banner.is-subtle .av-banner__tab {
+    transform: translate(-50%, -50%) rotate(0deg);
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    font-style: italic;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .av-banner:not(.is-subtle) {
+      animation: avGlowMobile 4s ease-in-out infinite;
+    }
+  }
+  @keyframes avGlowMobile {
+    0%, 100% { box-shadow: 0 -4px 24px rgba(212,168,75,0.10); }
+    50%       { box-shadow: 0 -4px 36px rgba(212,168,75,0.22); }
+  }
 }
 
 /* ============================================================
@@ -445,6 +497,26 @@ img { max-width: 100%; display: block; }
 }
 .nav__dropdown:hover .nav__dropdown-chevron { transform: rotate(180deg); }
 
+/* ── Nav inline social icons (home page trial) ── */
+.nav__social-icons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+}
+.nav__social-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 56px;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  padding: 0;
+}
+.nav__social-icons a::after { display: none; }
+.nav__social-icons a:hover { color: var(--gold); }
+
 /* ── Nav CTA (hidden until announce bar scrolls away) ── */
 .nav__cta {
   font-family: var(--font-heading);
@@ -525,6 +597,18 @@ img { max-width: 100%; display: block; }
   font-size: 1rem;
   padding: 4px 0;
 }
+.nav__mobile-panel .mobile-links-group--icons { gap: 20px; }
+.nav__mobile-panel .mobile-links-group--icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+.nav__mobile-panel .mobile-links-group--icons a:hover { color: var(--gold); }
 .nav__mobile-close {
   position: absolute;
   top: 16px; right: 20px;
@@ -554,19 +638,19 @@ img { max-width: 100%; display: block; }
 }
 .page-title h1 {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-size: clamp(2.2rem, 5vw, 4rem);
   font-weight: 700;
   color: var(--white);
   letter-spacing: 0.01em;
   line-height: 1.2;
 }
 .page-hero--home .page-title { padding: 28px 80px; }
-.page-hero--home .page-title h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); }
+.page-hero--home .page-title h1 { font-size: clamp(2.8rem, 6vw, 5.5rem); }
 
 /* ============================================================
    CONTENT SECTIONS
 ============================================================ */
-.section { max-width: 980px; margin: 0 auto; padding: 30px 24px; }
+.section { max-width: 1100px; margin: 0 auto; padding: 30px 24px; }
 .section--narrow  { max-width: 720px; }
 .section-heading {
   font-family: var(--font-heading);
@@ -607,7 +691,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: flex-start;
   gap: 36px;
-  max-width: 980px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 10px 24px 30px;
 }
@@ -650,7 +734,7 @@ img { max-width: 100%; display: block; }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-  max-width: 980px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -1075,7 +1159,7 @@ img { max-width: 100%; display: block; }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-  max-width: 980px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -1166,7 +1250,7 @@ img { max-width: 100%; display: block; }
    ANCIENT WANDERER — FEATURED PORTFOLIO ENTRY
 ============================================================ */
 .aw-feature {
-  max-width: 980px;
+  max-width: 1100px;
   margin: 0 auto 16px;
   padding: 0 24px;
 }
@@ -1331,7 +1415,7 @@ img { max-width: 100%; display: block; }
 .sd-portfolio-link a:hover { border-color: var(--gold-mid); color: var(--gold); }
 
 /* Tracks section */
-.tracks-section { max-width: 980px; margin: 0 auto; padding: 0 24px 30px; }
+.tracks-section { max-width: 1100px; margin: 0 auto; padding: 0 24px 30px; }
 
 /* ============================================================
    AUDIO PLAYER (Tracks section)
@@ -1683,7 +1767,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ── Show More / Less ── */
-.show-more-row { max-width: 980px; margin: 0 auto; padding: 12px 24px 0; text-align: center; }
+.show-more-row { max-width: 1100px; margin: 0 auto; padding: 12px 24px 0; text-align: center; }
 .show-more-btn {
   display: inline-flex;
   align-items: center;

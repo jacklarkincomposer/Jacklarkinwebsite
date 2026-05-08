@@ -208,10 +208,16 @@ input[type=range]::-moz-range-thumb {
 }
 .sc-mob:hover, .sc-mob:active { background:rgba(255,255,255,0.09); border-color:rgba(255,255,255,0.38); color:var(--white); }
 
+@media (max-width:600px) {
+  .filter-group-label { display:none; }
+  .filter-section { gap:3px; padding:6px 10px; }
+}
 @media (max-width:480px) {
-  :root { --art-size:52px; }
-  .track { padding:11px 12px; gap:11px; }
+  :root { --art-size:48px; }
+  .track { padding:10px 12px; gap:10px; }
   .track-desc { display:none; }
+  .tag-row { display:none; }
+  .vol-pct { display:none; }
   .ap-ctrl-btn { padding:4px 7px; }
   .sc-sep { display:none; }
   .sc-desk-row { display:none; }

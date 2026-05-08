@@ -1416,6 +1416,9 @@ img { max-width: 100%; display: block; }
 
 /* Tracks section */
 .tracks-section { max-width: 1100px; margin: 0 auto; padding: 0 24px 30px; }
+@media (max-width: 600px) {
+  .tracks-section { padding: 0 16px 20px; }
+}
 
 /* ============================================================
    AUDIO PLAYER (Tracks section)
@@ -1772,14 +1775,20 @@ img { max-width: 100%; display: block; }
   .work-grid { grid-template-columns: repeat(2,1fr); }
 }
 @media (min-width: 541px) and (max-width: 750px) {
-  .gal-rail { grid-template-columns: repeat(2,1fr); }
+  .gal-rail { grid-template-columns: repeat(2,1fr); gap: 12px; }
 }
 @media (max-width: 540px) {
-  .gal-rail { grid-template-columns: 1fr; gap: 10px; padding: 0 16px; }
+  .gal-rail { grid-template-columns: repeat(2,1fr); gap: 10px; padding: 0 16px; }
+}
+@media (max-width: 360px) {
+  .gal-rail { grid-template-columns: 1fr; }
 }
 
 /* ── Show More / Less ── */
 .show-more-row { max-width: 1100px; margin: 0 auto; padding: 12px 24px 0; text-align: center; }
+@media (max-width: 600px) {
+  .show-more-row { padding: 12px 16px 0; }
+}
 .show-more-btn {
   display: inline-flex;
   align-items: center;

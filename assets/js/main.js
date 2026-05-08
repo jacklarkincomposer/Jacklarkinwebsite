@@ -206,6 +206,7 @@ function selectOption(id, value, label) {
   el.querySelector('.custom-select__value').textContent = label;
   el.querySelector('input[type="hidden"]').value = value;
   el.classList.remove('open');
+  el.classList.add('has-value');
   el.querySelectorAll('li').forEach(function (li) {
     li.classList.toggle('selected', li.dataset.value === value);
   });

@@ -1541,7 +1541,6 @@ img { max-width: 100%; display: block; }
 .testimonials-section { max-width: 720px; margin: 0 auto; padding: 10px 24px 30px; }
 .test-cards-container {
   position: relative; width: 100%;
-  transition: height 0.5s cubic-bezier(0.4,0,0.2,1);
   overflow: visible;
 }
 .test-card {
@@ -1560,7 +1559,6 @@ img { max-width: 100%; display: block; }
 .test-card.active {
   opacity: 1; pointer-events: auto; visibility: visible;
   transition: opacity 1.2s ease, visibility 0s linear 0s;
-  position: relative;
 }
 .test-logo {
   flex-shrink: 0; width: 64px; height: 64px;

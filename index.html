@@ -485,6 +485,13 @@ gtag('config','G-SB5J4T9S4R');
 
   var allCards = Array.from(cardsEl.querySelectorAll('.test-card'));
 
+  function sizeContainer() {
+    var maxH = Math.max.apply(null, allCards.map(function(c){ return c.offsetHeight; }));
+    if (maxH > 0) cardsEl.style.minHeight = maxH + 'px';
+  }
+  requestAnimationFrame(sizeContainer);
+  window.addEventListener('resize', sizeContainer);
+
   TESTIMONIALS.forEach(function (t, i) {
     var wrap = document.createElement('div');
     wrap.className = 'test-bar-wrap' + (i === 0 ? ' active' : '');
@@ -511,19 +518,13 @@ gtag('config','G-SB5J4T9S4R');
     });
   }
   function showCard(index) {
-    allCards[current].style.position = 'absolute';
     allCards[current].classList.remove('active');
     allWraps[current].classList.remove('active');
     allFills[current].style.transition = 'none';
     allFills[current].style.width = index > current ? '100%' : '0%';
     current = index;
-    allCards[current].style.position = 'relative';
     allCards[current].classList.add('active');
     allWraps[current].classList.add('active');
-    requestAnimationFrame(function(){
-      cardsEl.style.height = allCards[current].offsetHeight + 'px';
-      setTimeout(function(){ cardsEl.style.height=''; }, 550);
-    });
     startFill(current);
   }
   function startAuto() { clearInterval(autoTimer); autoTimer=setInterval(function(){ showCard((current+1)%TESTIMONIALS.length); },CONFIG.autoInterval); startFill(current); }

@@ -41,16 +41,6 @@ gtag('config','G-SB5J4T9S4R');
 
 <div class="site-bg"></div>
 
-<!-- Audiovisual experience banner -->
-<a class="av-banner" id="avBanner" href="https://ancientwanderer.jacklarkincomposer.co.uk/" target="_blank" rel="noopener" aria-label="Ancient Wanderer — open the new audiovisual experience in a new tab">
-  <span class="av-banner__inner">
-    <span class="av-banner__label">New</span>
-    <span class="av-banner__title">Ancient Wanderer</span>
-    <span class="av-banner__sub">An audiovisual experience</span>
-    <span class="av-banner__cta">Enter <span class="av-banner__arrow" aria-hidden="true">→</span></span>
-  </span>
-  <span class="av-banner__tab" aria-hidden="true">Ancient Wanderer</span>
-</a>
 
 <!-- Announcement bar -->
 <div class="announce-bar" id="announceBar">
@@ -206,13 +196,20 @@ gtag('config','G-SB5J4T9S4R');
           </div>
           <ul class="custom-select__menu" role="listbox">
             <li role="option" data-value="Under £100" onclick="selectOption('selectBudget','Under £100','Under £100');handleBudgetChange()">Under £100</li>
-            <li role="option" data-value="£100-250" onclick="selectOption('selectBudget','£100-250','£100 – £250');handleBudgetChange()">£100 – £250</li>
-            <li role="option" data-value="£250-500" onclick="selectOption('selectBudget','£250-500','£250 – £500');handleBudgetChange()">£250 – £500</li>
-            <li role="option" data-value="£500-1000" onclick="selectOption('selectBudget','£500-1000','£500 – £1,000');handleBudgetChange()">£500 – £1,000</li>
-            <li role="option" data-value="£1000+" onclick="selectOption('selectBudget','£1000+','£1,000+');handleBudgetChange()">£1,000+</li>
+            <li role="option" data-value="£100-300" onclick="selectOption('selectBudget','£100-300','£100 – £300');handleBudgetChange()">£100 – £300</li>
+            <li role="option" data-value="£300-750" onclick="selectOption('selectBudget','£300-750','£300 – £750');handleBudgetChange()">£300 – £750</li>
+            <li role="option" data-value="£750-2000" onclick="selectOption('selectBudget','£750-2000','£750 – £2,000');handleBudgetChange()">£750 – £2,000</li>
+            <li role="option" data-value="£2000-5000" onclick="selectOption('selectBudget','£2000-5000','£2,000 – £5,000');handleBudgetChange()">£2,000 – £5,000</li>
+            <li role="option" data-value="£5000+" onclick="selectOption('selectBudget','£5000+','£5,000+');handleBudgetChange()">£5,000+</li>
             <li role="option" data-value="Custom" onclick="selectOption('selectBudget','Custom','Custom — I\'ll describe below');handleBudgetChange()">Custom — I'll describe below</li>
           </ul>
           <input type="hidden" name="budget_range" id="budgetRange">
+        </div>
+        <div class="other-project-field" id="customBudgetField">
+          <div class="input-currency-wrap">
+            <span class="input-currency-symbol" aria-hidden="true">£</span>
+            <input type="text" id="customBudgetInput" name="custom_budget" placeholder="Describe your budget or situation…" maxlength="200">
+          </div>
         </div>
         <div class="error-message">Please select a budget</div>
       </div>
@@ -317,13 +314,15 @@ gtag('config','G-SB5J4T9S4R');
   var notif           = document.getElementById('notification');
   var charCounter     = document.getElementById('charCounter');
   var textarea        = document.getElementById('additionalInfo');
-  var budgetSel       = document.getElementById('budgetRange');
-  var timelineSel     = document.getElementById('timeline');
-  var projType        = document.getElementById('projectType');
-  var otherProjField  = document.getElementById('otherProjectField');
-  var otherProjInput  = document.getElementById('otherProjectType');
-  var otherGenreField = document.getElementById('otherGenreField');
-  var otherGenreInput = document.getElementById('otherGenre');
+  var budgetSel         = document.getElementById('budgetRange');
+  var timelineSel       = document.getElementById('timeline');
+  var projType          = document.getElementById('projectType');
+  var otherProjField    = document.getElementById('otherProjectField');
+  var otherProjInput    = document.getElementById('otherProjectType');
+  var otherGenreField   = document.getElementById('otherGenreField');
+  var otherGenreInput   = document.getElementById('otherGenre');
+  var customBudgetField = document.getElementById('customBudgetField');
+  var customBudgetInput = document.getElementById('customBudgetInput');
 
   textarea.addEventListener('input', function () {
     var len = this.value.length, max = +this.maxLength;
@@ -350,10 +349,15 @@ gtag('config','G-SB5J4T9S4R');
     if (o) otherProjInput.focus(); else otherProjInput.value = '';
     if (val) clearErr('projectTypeGroup');
   };
-  window.handleBudgetChange   = function () { clearErr('budgetGroup'); };
+  window.handleBudgetChange = function () {
+    clearErr('budgetGroup');
+    var isCustom = budgetSel.value === 'Custom';
+    customBudgetField.classList.toggle('show', isCustom);
+    if (isCustom) customBudgetInput.focus(); else customBudgetInput.value = '';
+  };
   window.handleTimelineChange = function () { clearErr('timelineGroup'); };
 
-  var valEmail = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); };
+  var valEmail = function (v) { var el = document.getElementById('clientEmail'); return el.validity ? el.validity.valid && v.length > 0 : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); };
   var showErr  = function (id) { document.getElementById(id).classList.add('error'); };
   var clearErr = function (id) { document.getElementById(id).classList.remove('error'); };
 
@@ -366,6 +370,7 @@ gtag('config','G-SB5J4T9S4R');
     else if (projType.value === 'Other' && !otherProjInput.value.trim()) { showErr('projectTypeGroup'); ok = false; }
     if (!selectedGenres.length)                                           { showErr('genreSection');     ok = false; }
     if (!budgetSel.value)                                                 { showErr('budgetGroup');      ok = false; }
+    else if (budgetSel.value === 'Custom' && !customBudgetInput.value.trim()) { showErr('budgetGroup'); ok = false; }
     if (!timelineSel.value)                                               { showErr('timelineGroup');    ok = false; }
     return ok;
   }
@@ -381,6 +386,7 @@ gtag('config','G-SB5J4T9S4R');
   document.getElementById('clientName').addEventListener('input',  function () { if (this.value.trim()) clearErr('nameGroup'); });
   document.getElementById('clientEmail').addEventListener('input', function () { if (valEmail(this.value.trim())) clearErr('emailGroup'); });
   otherProjInput.addEventListener('input', function () { if (this.value.trim()) clearErr('projectTypeGroup'); });
+  customBudgetInput.addEventListener('input', function () { if (this.value.trim()) clearErr('budgetGroup'); });
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -412,6 +418,8 @@ gtag('config','G-SB5J4T9S4R');
         document.getElementById('selectedGenres').value = '';
         otherGenreField.classList.remove('show');
         otherGenreInput.value = '';
+        customBudgetField.classList.remove('show');
+        customBudgetInput.value = '';
         charCounter.textContent = '0 / 1500';
         charCounter.className = 'char-counter';
         [['selectProjectType','Select project type'],['selectBudget','Select budget'],['selectTimeline','When do you need it?']].forEach(function(s) {

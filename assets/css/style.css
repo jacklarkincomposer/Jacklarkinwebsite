@@ -1965,7 +1965,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   .success-message.show { animation:slideIn .3s ease; }
 }
 
-.form-note { text-align:center; font-size:.7rem; color:var(--text-dim); margin-top:18px; letter-spacing:.08em; text-transform:uppercase; }
+.form-note { text-align:center; font-size:.8rem; color:var(--text); margin-top:18px; opacity:.6; }
 
 @media (max-width: 520px) {
   .form-row { grid-template-columns: 1fr; gap:0; margin-bottom:0; }

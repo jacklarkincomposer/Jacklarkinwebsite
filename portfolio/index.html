@@ -177,7 +177,7 @@ input[type=range]::-moz-range-thumb {
 .track:hover .btn-share,.track-wrap.active .btn-share { opacity:1; }
 .btn-share:hover { color:var(--gold); }
 .btn-share.copied { color:var(--gold); }
-.btn-share .share-tip { position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%); background:var(--gold); color:#000; font-size:0.62rem; font-weight:700; letter-spacing:0.04em; padding:2px 7px; border-radius:3px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.15s; }
+.btn-share .share-tip { position:absolute; top:50%; left:calc(100% + 8px); transform:translateY(-50%); background:none; color:var(--gold); font-family:'Lora',serif; font-style:italic; font-size:13px; font-weight:400; letter-spacing:0.03em; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.15s; z-index:10; }
 .btn-share.copied .share-tip { opacity:1; }
 @media (prefers-reduced-motion: reduce) { .btn-share,.btn-share .share-tip { transition:none; } }
 .track-num { font-size:0.68rem; font-weight:600; letter-spacing:0.08em; color:var(--text-secondary); flex-shrink:0; transition:color 0.2s; }
@@ -974,20 +974,41 @@ input[type=range]::-moz-range-thumb {
       });
     }
   
-    /* ── Deep-link: ?track=slug auto-starts the matching track ── */
+    /* ── Deep-link: ?track=slug scrolls to and plays the matching track ── */
     (function() {
       var param = new URLSearchParams(location.search).get('track');
       if (!param) return;
       var idx = TRACKS.findIndex(function(t){ return slug(t.title) === param; });
       if (idx < 0) return;
-      /* Expand cap if needed so the track is visible */
       if (idx >= TRACK_CAP && !apExpanded) {
         apExpanded = true;
         wraps.forEach(function(w, i){ if (i >= TRACK_CAP) w.classList.remove('track-capped'); });
         if (apMoreRow) { apMoreRow.querySelector('span').textContent = 'Show Less'; apMoreRow.querySelector('button').classList.add('expanded'); }
       }
       wraps[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(function(){ play(idx); }, 400);
+      setTimeout(function() {
+        ensureLoaded(idx);
+        activeIdx = idx;
+        wraps[idx].classList.add('active');
+        setBtn(idx, true);
+        pool[idx].volume = currentVol;
+        pool[idx].play().then(function() {
+          isPlaying = true;
+        }).catch(function() {
+          /* Autoplay blocked — highlight track and play on first user gesture */
+          setBtn(idx, false);
+          var fired = false;
+          function onGesture(e) {
+            if (fired || (e.target && e.target.closest && e.target.closest('.btn-share'))) return;
+            fired = true;
+            document.removeEventListener('click', onGesture, true);
+            document.removeEventListener('keydown', onGesture, true);
+            if (activeIdx === idx && !isPlaying) play(idx);
+          }
+          document.addEventListener('click', onGesture, true);
+          document.addEventListener('keydown', onGesture, true);
+        });
+      }, 300);
     }());
 
     document.addEventListener('keydown', function(e) {

@@ -172,7 +172,14 @@ input[type=range]::-moz-range-thumb {
 }
 
 .info { display:flex; flex-direction:column; gap:6px; min-width:0; }
-.title-row { display:flex; align-items:baseline; gap:9px; min-width:0; }
+.title-row { display:flex; align-items:center; gap:9px; min-width:0; }
+.btn-share { background:none; border:none; cursor:pointer; color:var(--text-secondary); padding:2px 3px; border-radius:4px; flex-shrink:0; position:relative; opacity:0; transition:opacity 0.2s,color 0.2s; line-height:0; }
+.track:hover .btn-share,.track-wrap.active .btn-share { opacity:1; }
+.btn-share:hover { color:var(--gold); }
+.btn-share.copied { color:var(--gold); }
+.btn-share .share-tip { position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%); background:var(--gold); color:#000; font-size:0.62rem; font-weight:700; letter-spacing:0.04em; padding:2px 7px; border-radius:3px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.15s; }
+.btn-share.copied .share-tip { opacity:1; }
+@media (prefers-reduced-motion: reduce) { .btn-share,.btn-share .share-tip { transition:none; } }
 .track-num { font-size:0.68rem; font-weight:600; letter-spacing:0.08em; color:var(--text-secondary); flex-shrink:0; transition:color 0.2s; }
 .track-wrap.active .track-num { color:var(--gold); }
 .track-title { font-size:0.88rem; font-weight:500; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -583,23 +590,33 @@ input[type=range]::-moz-range-thumb {
   (function () {
     'use strict';
   
-    var LOGO     = 'https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png';
-    var SPECOPS  = 'https://cdn.jacklarkincomposer.co.uk/Images/Spec%20Ops%20Logo.png';
-    var NOESCAPE = 'https://cdn.jacklarkincomposer.co.uk/Images/No%20escape%20Album%202.png';
-    var DESERT   = 'https://cdn.jacklarkincomposer.co.uk/Images/The%20Desert.png';
+    var LOGO      = 'https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png';
+    var SPECOPS   = 'https://cdn.jacklarkincomposer.co.uk/Images/Spec%20Ops%20Logo.png';
+    var NOESCAPE  = 'https://cdn.jacklarkincomposer.co.uk/Images/No%20escape%20Album%202.png';
+    var DESERT    = 'https://cdn.jacklarkincomposer.co.uk/Images/The%20Desert.png';
+    var KARTRUSH  = 'https://cdn.jacklarkincomposer.co.uk/Images/Kart%20Rush.png';
   
     var TRACKS = [
-      { title:'Under Pressure',      src:'https://cdn.jacklarkincomposer.co.uk/Audio/Canadian%20side%20vers2.mp3',                                                image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
-      { title:'Losing Signal',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Dark%20gritty%20Piano%20(Final%20Mix).mp3',                                  image:SPECOPS,  description:'Orchestral · Dark · Tense',        mood:['Orchestral','Dark','Tense'],        album:'Spec Ops'   },
-      { title:'Crossing the Desert', src:'https://cdn.jacklarkincomposer.co.uk/Audio/Crossing%20the%20desert%20-%20Main%20theme%20Music%20vers5%20(final).mp3',   image:DESERT,   description:'Orchestral · Epic · World',        mood:['Orchestral','Epic','World'],        album:'The Desert' },
-      { title:'The Bridge',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Polish%20side%20FinalVers%20(looped%20ending%20-%20no%20fade).mp3',           image:SPECOPS,  description:'Orchestral · Dark · Dramatic',     mood:['Orchestral','Dark','Dramatic'],     album:'Spec Ops'   },
-      { title:'Closing In',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Closing-In_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Tense',    mood:['Orchestral','Thriller','Tense'],    album:'No Escape'  },
-      { title:'Cold Trail',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Cold-Trail_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE, description:'Orchestral · Thriller · Dark',      mood:['Orchestral','Thriller','Dark'],     album:'No Escape'  },
-      { title:'Hot Pursuit',         src:'https://cdn.jacklarkincomposer.co.uk/Audio/Hot-Pursuit_001_Main-Mix_Jack-Larkin.wav',                                   image:NOESCAPE, description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:'No Escape'  },
-      { title:'Breathing Distance',  src:'https://cdn.jacklarkincomposer.co.uk/Audio/Breathing-Distance_001_Main-Mix_Jack-Larkin.wav',                            image:NOESCAPE, description:'Orchestral · Thriller · Dramatic',  mood:['Orchestral','Thriller','Dramatic'], album:'No Escape'  },
-      { title:'Burning Sands',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Burning%20sands.mp3',                                                        image:DESERT,   description:'Orchestral · World · Epic',         mood:['Orchestral','World','Epic'],        album:'The Desert' },
-      { title:'Iron Titan',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/IRON%20TITAN.mp3',                                                           image:LOGO,     description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],       album:null         },
-      { title:'Desert Mirage',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Desert%20Mirage%20IG%20post.mp3',                                            image:DESERT,   description:'Orchestral · World · Dark',         mood:['Orchestral','World','Dark'],        album:'The Desert' }
+      { title:'Under Pressure',      src:'https://cdn.jacklarkincomposer.co.uk/Audio/Canadian%20side%20vers2.mp3',                                                image:SPECOPS,   description:'Orchestral · Dark · Tense',         mood:['Orchestral','Dark','Tense'],         album:'Spec Ops'   },
+      { title:'Losing Signal',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Dark%20gritty%20Piano%20(Final%20Mix).mp3',                                  image:SPECOPS,   description:'Orchestral · Dark · Tense',         mood:['Orchestral','Dark','Tense'],         album:'Spec Ops'   },
+      { title:'The Bridge',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Polish%20side%20FinalVers%20(looped%20ending%20-%20no%20fade).mp3',           image:SPECOPS,   description:'Orchestral · Dark · Dramatic',      mood:['Orchestral','Dark','Dramatic'],      album:'Spec Ops'   },
+      { title:'Dark Days Ahead',     src:'https://cdn.jacklarkincomposer.co.uk/Audio/Dark%20days%20ahead.wav',                                                     image:SPECOPS,   description:'Orchestral · Dark · Tense',         mood:['Orchestral','Dark','Tense'],         album:'Spec Ops'   },
+      { title:"It's Over",           src:'https://cdn.jacklarkincomposer.co.uk/Audio/It%27s%20Over.wav',                                                           image:SPECOPS,   description:'Orchestral · Dark · Dramatic',      mood:['Orchestral','Dark','Dramatic'],      album:'Spec Ops'   },
+      { title:'The Beacon',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/The%20Beacon.mp3',                                                            image:SPECOPS,   description:'Orchestral · Dark · Tense',         mood:['Orchestral','Dark','Tense'],         album:'Spec Ops'   },
+      { title:'Closing In',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Closing-In_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE,  description:'Orchestral · Thriller · Tense',     mood:['Orchestral','Thriller','Tense'],     album:'No Escape'  },
+      { title:'Cold Trail',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Cold-Trail_001_Main-Mix_Jack-Larkin.wav',                                    image:NOESCAPE,  description:'Orchestral · Thriller · Dark',      mood:['Orchestral','Thriller','Dark'],      album:'No Escape'  },
+      { title:'Hot Pursuit',         src:'https://cdn.jacklarkincomposer.co.uk/Audio/Hot-Pursuit_001_Main-Mix_Jack-Larkin.wav',                                   image:NOESCAPE,  description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],        album:'No Escape'  },
+      { title:'Breathing Distance',  src:'https://cdn.jacklarkincomposer.co.uk/Audio/Breathing-Distance_001_Main-Mix_Jack-Larkin.wav',                            image:NOESCAPE,  description:'Orchestral · Thriller · Dramatic',  mood:['Orchestral','Thriller','Dramatic'],  album:'No Escape'  },
+      { title:'Crossing the Desert', src:'https://cdn.jacklarkincomposer.co.uk/Audio/Crossing%20the%20desert%20-%20Main%20theme%20Music%20vers5%20(final).mp3',   image:DESERT,    description:'Orchestral · Epic · World',         mood:['Orchestral','Epic','World'],         album:'The Desert' },
+      { title:'Burning Sands',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Burning%20sands.mp3',                                                        image:DESERT,    description:'Orchestral · World · Epic',         mood:['Orchestral','World','Epic'],         album:'The Desert' },
+      { title:'Desert Mirage',       src:'https://cdn.jacklarkincomposer.co.uk/Audio/Desert%20Mirage%20IG%20post.mp3',                                            image:DESERT,    description:'Orchestral · World · Dark',         mood:['Orchestral','World','Dark'],         album:'The Desert' },
+      { title:'Arctic Frost',        src:'https://cdn.jacklarkincomposer.co.uk/Audio/Arctic%20Frost.mp3',                                                          image:KARTRUSH,  description:'Electronic · Jazz · Chill',         mood:['Electronic','Jazz','Chill'],         album:'Kart Rush'  },
+      { title:'Demon Dorm',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Demon%20Dorm.mp3',                                                            image:KARTRUSH,  description:'Electronic · Jazz · Dark',          mood:['Electronic','Jazz','Dark'],          album:'Kart Rush'  },
+      { title:'Dolphin Dive',        src:'https://cdn.jacklarkincomposer.co.uk/Audio/Dolphin%20Dive.mp3',                                                          image:KARTRUSH,  description:'Electronic · Jazz · Upbeat',        mood:['Electronic','Jazz','Upbeat'],        album:'Kart Rush'  },
+      { title:'Kart Rush Circuit',   src:'https://cdn.jacklarkincomposer.co.uk/Audio/Kart%20Rush%20Circuit.mp3',                                                   image:KARTRUSH,  description:'Electronic · Jazz · Action',        mood:['Electronic','Jazz','Action'],        album:'Kart Rush'  },
+      { title:'Lobby Music',         src:'https://cdn.jacklarkincomposer.co.uk/Audio/Lobby%20Music.mp3',                                                           image:KARTRUSH,  description:'Electronic · Jazz · Ambient',       mood:['Electronic','Jazz','Ambient'],       album:'Kart Rush'  },
+      { title:'Sugar Rush',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Sugar%20Rush.mp3',                                                            image:KARTRUSH,  description:'Electronic · Jazz · Upbeat',        mood:['Electronic','Jazz','Upbeat'],        album:'Kart Rush'  },
+      { title:'Iron Titan',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/IRON%20TITAN.mp3',                                                            image:LOGO,      description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],        album:null         }
     ];
   
     var PLACEHOLDER = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/></svg>';
@@ -610,6 +627,9 @@ input[type=range]::-moz-range-thumb {
     var VOL_OFF     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0017.73 18l1.27 1.27L20.27 18 5.27 3 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
     var COG_ICON    = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
   
+    var slug = function (s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/, ''); };
+    var SHARE_ICON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+
     var fmt = function (s) {
       return (s == null || isNaN(s)) ? '--:--'
         : (s < 0 ? '-' : '') + Math.floor(Math.abs(s)/60) + ':' + String(Math.floor(Math.abs(s)%60)).padStart(2,'0');
@@ -866,7 +886,7 @@ input[type=range]::-moz-range-thumb {
             '<div class="spinner">'+SPIN_ICON+'</div>' +
           '</div>' +
           '<div class="info">' +
-            '<div class="title-row"><span class="track-num">'+String(idx+1).padStart(2,'0')+'</span><span class="track-title">'+t.title+'</span></div>' +
+            '<div class="title-row"><span class="track-num">'+String(idx+1).padStart(2,'0')+'</span><span class="track-title">'+t.title+'</span><button class="btn-share" aria-label="Copy link to '+t.title+'" tabindex="-1">'+SHARE_ICON+'<span class="share-tip">Copied!</span></button></div>' +
             descHTML + tagHTML +
             '<div class="progress"><div class="progress-fill"></div></div>' +
           '</div>' +
@@ -916,6 +936,15 @@ input[type=range]::-moz-range-thumb {
       });
   
       wrap.querySelector('.btn-play').addEventListener('click', function(e){ e.stopPropagation(); toggle(idx); });
+      wrap.querySelector('.btn-share').addEventListener('click', function(e){
+        e.stopPropagation();
+        var url = location.origin + location.pathname + '?track=' + slug(t.title);
+        var btn = e.currentTarget;
+        navigator.clipboard.writeText(url).then(function(){
+          btn.classList.add('copied');
+          setTimeout(function(){ btn.classList.remove('copied'); }, 2000);
+        }).catch(function(){});
+      });
       trackEl.addEventListener('click', function(e){ if(progress.contains(e.target)||dur.contains(e.target)) return; toggle(idx); });
       trackEl.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();toggle(idx);} });
       dur.addEventListener('click', function(e){ e.stopPropagation(); showRemaining=!showRemaining; });
@@ -945,6 +974,22 @@ input[type=range]::-moz-range-thumb {
       });
     }
   
+    /* ── Deep-link: ?track=slug auto-starts the matching track ── */
+    (function() {
+      var param = new URLSearchParams(location.search).get('track');
+      if (!param) return;
+      var idx = TRACKS.findIndex(function(t){ return slug(t.title) === param; });
+      if (idx < 0) return;
+      /* Expand cap if needed so the track is visible */
+      if (idx >= TRACK_CAP && !apExpanded) {
+        apExpanded = true;
+        wraps.forEach(function(w, i){ if (i >= TRACK_CAP) w.classList.remove('track-capped'); });
+        if (apMoreRow) { apMoreRow.querySelector('span').textContent = 'Show Less'; apMoreRow.querySelector('button').classList.add('expanded'); }
+      }
+      wraps[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function(){ play(idx); }, 400);
+    }());
+
     document.addEventListener('keydown', function(e) {
       var tag = document.activeElement.tagName;
       if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;

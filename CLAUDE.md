@@ -17,3 +17,5 @@ Every new animation or transition must be wrapped in or conditional on @media (p
 Any change to shared components (nav, footer, scroll-to-top, announcement bar) must be applied to all six pages: index.html, about/index.html, portfolio/index.html, services/index.html, contact/index.html, sound-design/index.html.
 9. Before finishing any task
 Confirm: no new <script src=""> tags pointing to unknown third parties, no inline style="" attributes that override custom properties, no !important added except where it already exists in the codebase.
+10. Audio playlist track ordering
+Tracks in the TRACKS array (portfolio/index.html) must always be grouped by album. Current order: Spec Ops → No Escape → The Desert → Kart Rush → no album (standalone tracks last). When adding new tracks, insert them at the end of their album group. When adding a brand new album, add it before standalone tracks (album:null). Never interleave albums.

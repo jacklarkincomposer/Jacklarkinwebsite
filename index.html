@@ -146,6 +146,10 @@ gtag('config','G-SB5J4T9S4R');
           <span class="hero-label-badge">Rescore</span>
           <span class="hero-label-title">Avatar: The Way of Water – Official Trailer | Full Rescore (2022)</span>
         </div>
+        <button class="work-vid-share" id="heroShareBtn" aria-label="Copy link to hero video">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span class="share-tip">Copied!</span>
+        </button>
       </div>
     </div>
     <button class="hero-watch-btn shimmer-hover" id="heroWatchBtn" aria-label="Watch Avatar: The Way of Water – Full Rescore">
@@ -162,7 +166,11 @@ gtag('config','G-SB5J4T9S4R');
       of Huddersfield, Jack is passionate about storytelling through music across all forms of
       media, from smaller ambient cues to huge cinematic scores.
     </p>
-    <a href="/portfolio/#tracks" class="listen-btn shimmer-hover">Listen</a>
+    <div class="intro-btn-row">
+      <a href="/portfolio/#tracks" class="listen-btn shimmer-hover">Listen</a>
+      <span class="intro-btn-divider" aria-hidden="true"></span>
+      <a href="/sound-design/" class="sound-design-btn">Sound Design →</a>
+    </div>
   </div>
 </div>
 
@@ -176,7 +184,7 @@ gtag('config','G-SB5J4T9S4R');
 </div>
 
 <div class="see-all">
-  <a href="/portfolio/" class="shimmer-hover">See full portfolio…</a>
+  <a href="/portfolio/" class="shimmer-hover">See Full Portfolio</a>
 </div>
 
 <!-- Testimonials -->
@@ -333,6 +341,9 @@ gtag('config','G-SB5J4T9S4R');
     }
   ];
 
+  var vslug = function(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); };
+  var V_SHARE = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+
   /* ── Build work grid ── */
   var grid = document.getElementById('workGrid');
   VIDEOS.forEach(function (v, i) {
@@ -346,11 +357,21 @@ gtag('config','G-SB5J4T9S4R');
       '<div class="work-card__overlay">' +
         '<div class="work-card__play"><svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="32" r="32" fill="rgba(0,0,0,0.55)"/><polygon points="26,20 50,32 26,44" fill="white"/></svg></div>' +
         '<span class="work-card__title">' + v.title + '</span>' +
-      '</div>';
+      '</div>' +
+      '<button class="work-vid-share" aria-label="Copy link to ' + v.title + '" tabindex="-1">' + V_SHARE + '<span class="share-tip">Copied!</span></button>';
     function go() { JLPlayer.open(VIDEOS, i); }
     card.addEventListener('click', go);
     card.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+    });
+    card.querySelector('.work-vid-share').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var url = location.origin + '/?video=' + vslug(v.title);
+      var btn = e.currentTarget;
+      navigator.clipboard.writeText(url).then(function() {
+        btn.classList.add('copied');
+        setTimeout(function() { btn.classList.remove('copied'); }, 2000);
+      }).catch(function(){});
     });
     grid.appendChild(card);
   });
@@ -408,6 +429,28 @@ gtag('config','G-SB5J4T9S4R');
     var btn = document.getElementById(id);
     if (btn) btn.addEventListener('click', function () { JLPlayer.open([HERO_VIDEO], 0); });
   });
+
+  /* ── Hero share button ── */
+  var heroShareBtn = document.getElementById('heroShareBtn');
+  if (heroShareBtn) {
+    heroShareBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var url = location.origin + '/?video=' + vslug(HERO_VIDEO.title);
+      navigator.clipboard.writeText(url).then(function() {
+        heroShareBtn.classList.add('copied');
+        setTimeout(function() { heroShareBtn.classList.remove('copied'); }, 2000);
+      }).catch(function(){});
+    });
+  }
+
+  /* ── Deep-link: ?video=slug opens the matching video ── */
+  (function() {
+    var param = new URLSearchParams(location.search).get('video');
+    if (!param) return;
+    var idx = VIDEOS.findIndex(function(v) { return vslug(v.title) === param; });
+    if (idx < 0) return;
+    setTimeout(function() { JLPlayer.open(VIDEOS, idx); }, 300);
+  }());
 
 }());
 </script>

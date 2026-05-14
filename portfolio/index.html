@@ -180,6 +180,7 @@ input[type=range]::-moz-range-thumb {
 .btn-share .share-tip { position:absolute; top:50%; left:calc(100% + 8px); transform:translateY(-50%); background:none; color:var(--gold); font-family:'Lora',serif; font-style:italic; font-size:13px; font-weight:400; letter-spacing:0.03em; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.15s; z-index:10; }
 .btn-share.copied .share-tip { opacity:1; }
 @media (prefers-reduced-motion: reduce) { .btn-share,.btn-share .share-tip { transition:none; } }
+@media (hover: none) { .btn-share { opacity:0.45; } }
 .track-num { font-size:0.68rem; font-weight:600; letter-spacing:0.08em; color:var(--text-secondary); flex-shrink:0; transition:color 0.2s; }
 .track-wrap.active .track-num { color:var(--gold); }
 .track-title { font-size:0.88rem; font-weight:500; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -376,9 +377,19 @@ input[type=range]::-moz-range-thumb {
   </div>
 </div>
 
-<!-- Sound Design link -->
-<div class="sd-portfolio-link">
-  <a href="/sound-design/">Sound Design Portfolio</a>
+<!-- Sound Design feature banner -->
+<hr class="section-divider">
+<div class="sd-feature reveal">
+  <a class="sd-feature__card" href="/sound-design/" aria-label="View Sound Design Portfolio">
+    <img class="sd-feature__img" src="https://cdn.jacklarkincomposer.co.uk/Images/AMP.png" alt="Sound Design Portfolio — Jack Larkin" loading="lazy">
+    <div class="sd-feature__overlay" aria-hidden="true"></div>
+    <div class="sd-feature__body">
+      <span class="sd-feature__eyebrow">Also in my portfolio</span>
+      <h3 class="sd-feature__title">Sound Design</h3>
+      <p class="sd-feature__desc">Audio redesigns, Foley, and original Dolby Atmos mixes for games and short film.</p>
+      <span class="sd-feature__cta">View Sound Design Portfolio <span class="sd-feature__cta-arrow" aria-hidden="true">→</span></span>
+    </div>
+  </a>
 </div>
 
 <!-- Footer -->
@@ -483,6 +494,8 @@ input[type=range]::-moz-range-thumb {
   var rail = document.getElementById('galRail');
 
   function safe(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var vslug = function(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); };
+  var V_SHARE = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
 
   VIDEOS.forEach(function (v, i) {
     var card = document.createElement('div');
@@ -512,7 +525,9 @@ input[type=range]::-moz-range-thumb {
         (v.type === 'youtube'
           ? '<div class="gal-skel"></div><div class="gal-skel gal-skel-short"></div>'
           : safe(v.title)) +
-      '</div></div>';
+      '</div>' +
+      '<button class="vid-share-btn" aria-label="Copy link to ' + safe(v.title) + '" tabindex="-1">' + V_SHARE + '<span class="share-tip">Copied!</span></button>' +
+      '</div>';
 
     var img = card.querySelector('img');
     img.addEventListener('load',  function () { img.classList.add('loaded'); });
@@ -539,8 +554,26 @@ input[type=range]::-moz-range-thumb {
     card.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
     });
+    card.querySelector('.vid-share-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var url = location.origin + location.pathname + '?video=' + vslug(v.title);
+      var btn = e.currentTarget;
+      navigator.clipboard.writeText(url).then(function() {
+        btn.classList.add('copied');
+        setTimeout(function() { btn.classList.remove('copied'); }, 2000);
+      }).catch(function(){});
+    });
     rail.appendChild(card);
   });
+
+  /* ── Deep-link: ?video=slug opens the matching video ── */
+  (function() {
+    var param = new URLSearchParams(location.search).get('video');
+    if (!param) return;
+    var idx = VIDEOS.findIndex(function(v) { return vslug(v.title) === param; });
+    if (idx < 0) return;
+    setTimeout(function() { JLPlayer.open(VIDEOS, idx); }, 300);
+  }());
 
   /* ── Gallery cap at 6 ── */
   var GALLERY_CAP = 6;

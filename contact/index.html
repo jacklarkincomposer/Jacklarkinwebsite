@@ -159,12 +159,12 @@ gtag('config','G-SB5J4T9S4R');
           <li role="option" data-value="Podcast" onclick="selectOption('selectProjectType','Podcast','Podcast Music');handleProjectTypeChange('Podcast')">Podcast Music</li>
           <li role="option" data-value="Commercial" onclick="selectOption('selectProjectType','Commercial','Commercial / Ad');handleProjectTypeChange('Commercial')">Commercial / Ad</li>
           <li role="option" data-value="Trailer" onclick="selectOption('selectProjectType','Trailer','Trailer Music');handleProjectTypeChange('Trailer')">Trailer Music</li>
-          <li role="option" data-value="Other" onclick="selectOption('selectProjectType','Other','Other (please specify below)');handleProjectTypeChange('Other')">Other (please specify below)</li>
+          <li role="option" data-value="Other" onclick="selectOption('selectProjectType','Other','Other…');handleProjectTypeChange('Other')">Other…</li>
         </ul>
         <input type="hidden" name="project_type" id="projectType">
       </div>
       <div class="other-project-field" id="otherProjectField">
-        <input type="text" id="otherProjectType" name="other_project_type" placeholder="Please describe your project type" maxlength="120">
+        <div><input type="text" id="otherProjectType" name="other_project_type" placeholder="Please describe your project type" maxlength="120"></div>
       </div>
       <div class="error-message">Please select a project type</div>
     </div>
@@ -180,7 +180,7 @@ gtag('config','G-SB5J4T9S4R');
         <div class="genre-btn" data-genre="Other">Other</div>
       </div>
       <div class="other-project-field" id="otherGenreField">
-        <input type="text" id="otherGenre" name="other_genre" placeholder="Describe your preferred style..." maxlength="150">
+        <div><input type="text" id="otherGenre" name="other_genre" placeholder="Describe your preferred style..." maxlength="150"></div>
       </div>
       <input type="hidden" id="selectedGenres" name="selected_genres">
       <div class="error-message">Please select at least one style</div>

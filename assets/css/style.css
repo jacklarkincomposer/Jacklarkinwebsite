@@ -2074,8 +2074,15 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
 .char-counter { position:absolute; bottom:-20px; right:0; font-size:.68rem; color:var(--text-muted); transition:color .2s; letter-spacing:.04em; }
 .char-counter.warning { color:var(--color-warning); }
 .char-counter.limit { color:var(--color-error); }
-.other-project-field { margin-top:14px; display:none; }
-.other-project-field.show { display:block; }
+.other-project-field {
+  display:grid; grid-template-rows:0fr;
+  margin-top:0; opacity:0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .other-project-field { transition:grid-template-rows .28s ease, margin-top .28s ease, opacity .22s ease; }
+}
+.other-project-field > * { overflow:hidden; }
+.other-project-field.show { grid-template-rows:1fr; margin-top:14px; opacity:1; }
 .other-project-field input {
   width:100%; padding:9px 0;
   background:transparent;
@@ -2371,7 +2378,8 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   pointer-events: none;
 }
 .custom-select.open .custom-select__menu {
-  max-height: 300px;
+  max-height: 360px;
+  overflow-y: auto;
   opacity: 1;
   pointer-events: auto;
 }

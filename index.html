@@ -162,7 +162,7 @@ gtag('config','G-SB5J4T9S4R');
     <p class="intro-row__body">
       Jack Larkin is a UK-based composer for games, TV, and film, with over five years of
       composing original scores and working alongside developers and directors to complement
-      their projects. Currently studying Screen Composition and Sound Design at the University
+      their projects. A First Class graduate in Music and Sound for Screen from the University
       of Huddersfield, Jack is passionate about storytelling through music across all forms of
       media, from smaller ambient cues to huge cinematic scores.
     </p>
@@ -581,6 +581,7 @@ gtag('config','G-SB5J4T9S4R');
   var mCardsEl = document.getElementById('testMCards');
   var mCounter = document.getElementById('testMCounter');
   var mCurrent = 0;
+  mCounter.textContent = '1 / ' + TESTIMONIALS.length;
 
   TESTIMONIALS.forEach(function (t, i) {
     var logoInner = t.logo ? '<img src="' + t.logo + '" alt="' + t.author + '" loading="lazy">' : '';

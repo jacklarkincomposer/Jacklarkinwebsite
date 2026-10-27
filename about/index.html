@@ -122,7 +122,7 @@ gtag('config','G-SB5J4T9S4R');
 <div class="about-text">
   <p>I've been writing original scores for film, games, and TV for over five years, across productions including <em>Comet Madness</em> (2025, dir. Amir Leo Elharrif) and the web-based adaptive experience <em>Ancient Wanderer</em>. My writing spans ambient, world/folk, and hybrid orchestral-electronic styles, with a particular strength in cinematic music and interactive audio.</p>
   <p>I believe that good music for a project begins with a genuine understanding of what a project actually needs, not guessing, generalising or defaulting to what I've done before. Every project is different and I work closely with directors and developers from the start to ensure I understand what their emotional goals are. I take reference material on fully to make sure the first draft I send is already pointing in the right direction. I've scored everything from quiet folk-influenced pieces to large hybrid orchestral cues, and I'm more interested in serving the project than staying in one lane.</p>
-  <p>Alongside composition I have a background in sound design, so music and audio work together in the final mix rather than against each other. I'm currently finishing my BMus in Screen Composition and Sound Design at the University of Huddersfield (graduating 2026), and available for commissions now.</p>
+  <p>Alongside composition I have a background in sound design, so music and audio work together in the final mix rather than against each other. I graduated from the University of Huddersfield in 2026 with a First Class BA (Hons) in Music and Sound for Screen, where I was awarded the Truscott Prize for All-Round Achievement and the departmental prize for Audio-Visual. I'm available for commissions now.</p>
 </div>
 <div class="about-cta">
   <a href="/services/">What I Offer</a>
@@ -328,6 +328,7 @@ gtag('config','G-SB5J4T9S4R');
   var mCardsEl = document.getElementById('testMCards');
   var mCounter = document.getElementById('testMCounter');
   var mCurrent = 0;
+  mCounter.textContent = '1 / ' + TESTIMONIALS.length;
 
   TESTIMONIALS.forEach(function (t, i) {
     var logoInner = t.logo ? '<img src="' + t.logo + '" alt="' + t.author + '" loading="lazy">' : '';

@@ -402,9 +402,9 @@
   }
 
   /* ── Hero video ──
-     Desktop: plays muted in the card, with small play/pause + unmute buttons.
+     Plays muted in the card (desktop and phones), with small play/pause + unmute buttons.
      Clicking the video goes full screen, restarts it and turns the sound on.
-     Phones / reduced motion: shows the still; tapping it opens the full-screen video with sound.
+     Reduced motion: shows the still; clicking it opens the full-screen video with sound.
      Controlled through YouTube's embed messages (enablejsapi), so no extra script is loaded. */
   var HERO_VIDEO = VIDEOS[0];
   var heroThumb = document.getElementById('heroThumb');
@@ -419,8 +419,7 @@
     var ICON_PAUSE = '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
     var ICON_MUTED = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     var ICON_SOUND = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
-    var wantsPreview = window.matchMedia('(min-width: 769px)').matches &&
-                       !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var wantsPreview = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var iframe = null, muted = true, playing = false, isFull = false, usingFallback = false;
 
     function send(func, args) {
@@ -529,7 +528,15 @@
       send(muted ? 'unMute' : 'mute'); muted = !muted; sync();
     });
 
-    if (wantsPreview) addIframe(true);
+    if (wantsPreview) {
+      addIframe(true);
+      /* Touch screens can't hover, so briefly show "Watch in full screen" as a hint,
+         after YouTube's own start-up overlay has faded */
+      if (window.matchMedia('(hover: none)').matches) {
+        setTimeout(function () { heroThumb.classList.add('show-hint'); }, 2500);
+        setTimeout(function () { heroThumb.classList.remove('show-hint'); }, 6000);
+      }
+    }
     sync();
 
     /* Reload on bfcache restore so the muted preview resumes */

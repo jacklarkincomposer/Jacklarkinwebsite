@@ -2231,10 +2231,9 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
     aspect-ratio: 16/9;
     object-fit: cover;
   }
-  /* Hide the other children of hero-thumb on mobile (the video only appears in full screen) */
+  /* Hide the old mobile-only overlay; the still gives the card its height and the video sits on top */
   .hero-thumb .hero-play-btn,
-  .hero-thumb .hero-thumb-label,
-  .hero-thumb:not(.is-fullscreen) .hero-autoplay-iframe {
+  .hero-thumb .hero-thumb-label {
     display: none !important;
   }
 }
@@ -2293,7 +2292,8 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
 .hero-card:hover .hero-fs-label,
 .hero-fs-btn:focus-visible .hero-fs-label,
 .hero-thumb:not(.has-video) .hero-fs-label { opacity: 1; }
-@media (hover: none) { .hero-fs-label { opacity: 1; } }
+/* Touch screens have no hover: show the label briefly when the video starts, then let it fade */
+@media (hover: none) { .hero-thumb.show-hint .hero-fs-label { opacity: 1; } }
 
 /* Small play/pause + unmute buttons, bottom-left of the video */
 .hero-controls {

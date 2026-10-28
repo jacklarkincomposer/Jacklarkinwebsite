@@ -137,10 +137,20 @@ gtag('config','G-SB5J4T9S4R');
     <div class="hero-card" id="heroCard">
       <div class="hero-thumb" id="heroThumb" data-ytid="zTgk1UZA76k">
         <img class="hero-mobile-thumb" src="https://i.ytimg.com/vi/zTgk1UZA76k/maxresdefault.jpg" alt="Avatar: The Way of Water – Full Rescore" fetchpriority="high" loading="eager">
-        <button class="hero-play-btn" id="heroPlayBtn" aria-label="Play: Avatar: The Way of Water – Full Rescore">
-          <div class="hero-play-circle">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><polygon points="7,5 20,12 7,19"/></svg>
-          </div>
+        <!-- Whole video is the "watch in full screen" button; the label shows on hover -->
+        <button type="button" class="hero-fs-btn" id="heroFsBtn" aria-label="Watch Avatar: The Way of Water – Full Rescore in full screen, with sound">
+          <span class="hero-fs-label" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            Watch in full screen
+          </span>
+        </button>
+        <div class="hero-controls">
+          <button type="button" class="hero-ctrl" id="heroPlayPause" aria-label="Pause video"></button>
+          <button type="button" class="hero-ctrl" id="heroMute" aria-label="Unmute video" aria-pressed="false"></button>
+        </div>
+        <button type="button" class="hero-exit" id="heroExit">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Exit full screen <kbd>Esc</kbd>
         </button>
         <div class="hero-thumb-label">
           <span class="hero-label-badge">Rescore</span>
@@ -152,10 +162,6 @@ gtag('config','G-SB5J4T9S4R');
         </button>
       </div>
     </div>
-    <button class="hero-watch-btn shimmer-hover" id="heroWatchBtn" aria-label="Watch Avatar: The Way of Water – Full Rescore">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="7,5 20,12 7,19"/></svg>
-      Watch in Player
-    </button>
   </div>
   <div class="intro-row__text">
     <h2 class="intro-row__heading">Composer for Games · TV · Film</h2>
@@ -395,40 +401,129 @@ gtag('config','G-SB5J4T9S4R');
     });
   }
 
-  /* ── Hero: inject autoplay iframe on desktop only ── */
-  if (window.matchMedia('(min-width: 769px)').matches) {
-    var heroThumb = document.getElementById('heroThumb');
-    if (heroThumb) {
-      var ytId = heroThumb.dataset.ytid;
-      var iframe = document.createElement('iframe');
+  /* ── Hero video ──
+     Desktop: plays muted in the card, with small play/pause + unmute buttons.
+     Clicking the video goes full screen, restarts it and turns the sound on.
+     Phones / reduced motion: shows the still; tapping it opens the full-screen video with sound.
+     Controlled through YouTube's embed messages (enablejsapi), so no extra script is loaded. */
+  var HERO_VIDEO = VIDEOS[0];
+  var heroThumb = document.getElementById('heroThumb');
+  if (heroThumb) {
+    var heroCard  = document.getElementById('heroCard');
+    var fsBtn     = document.getElementById('heroFsBtn');
+    var playBtn   = document.getElementById('heroPlayPause');
+    var muteBtn   = document.getElementById('heroMute');
+    var exitBtn   = document.getElementById('heroExit');
+    var ytId      = heroThumb.dataset.ytid;
+    var ICON_PLAY  = '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="7,5 20,12 7,19"/></svg>';
+    var ICON_PAUSE = '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+    var ICON_MUTED = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    var ICON_SOUND = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+    var wantsPreview = window.matchMedia('(min-width: 769px)').matches &&
+                       !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var iframe = null, muted = true, playing = false, isFull = false, usingFallback = false;
+
+    function send(func, args) {
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), 'https://www.youtube.com');
+      }
+    }
+    function sync() {
+      playBtn.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+      playBtn.setAttribute('aria-label', playing ? 'Pause video' : 'Play video');
+      muteBtn.innerHTML = muted ? ICON_MUTED : ICON_SOUND;
+      muteBtn.setAttribute('aria-label', muted ? 'Unmute video' : 'Mute video');
+      muteBtn.setAttribute('aria-pressed', muted ? 'false' : 'true');
+    }
+    function addIframe(startMuted) {
+      iframe = document.createElement('iframe');
       iframe.className = 'hero-autoplay-iframe';
       iframe.src = 'https://www.youtube.com/embed/' + ytId +
-        '?autoplay=1&mute=1&loop=1&playlist=' + ytId + '&controls=0&rel=0&playsinline=1&modestbranding=1';
+        '?autoplay=1&mute=' + (startMuted ? 1 : 0) + '&loop=1&playlist=' + ytId +
+        '&controls=0&rel=0&playsinline=1&modestbranding=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin);
       iframe.setAttribute('frameborder', '0');
       iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-      iframe.setAttribute('allowfullscreen', '');
-      iframe.title = 'Avatar: The Way of Water – Full Rescore';
-      heroThumb.insertBefore(iframe, heroThumb.querySelector('.hero-play-btn'));
+      iframe.setAttribute('tabindex', '-1');
+      iframe.title = HERO_VIDEO.title;
+      heroThumb.insertBefore(iframe, fsBtn);
+      heroThumb.classList.add('has-video');
+      muted = startMuted; playing = true; sync();
     }
+    function removeIframe() {
+      if (iframe) iframe.remove();
+      iframe = null; playing = false;
+      heroThumb.classList.remove('has-video');
+    }
+
+    function enterFull() {
+      if (iframe) { send('seekTo', [0, true]); send('unMute'); send('playVideo'); muted = false; playing = true; sync(); }
+      else addIframe(false);
+      var req = heroThumb.requestFullscreen || heroThumb.webkitRequestFullscreen;
+      var fallback = function () {
+        /* iPhone and some browsers can't make a div full screen: cover the window instead */
+        usingFallback = true;
+        heroCard.classList.add('is-fs-host');
+        heroThumb.classList.add('is-fs-fallback');
+        document.body.style.overflow = 'hidden';
+        setFull(true);
+      };
+      if (!req) { fallback(); return; }
+      try {
+        var p = req.call(heroThumb);
+        if (p && p.catch) p.catch(fallback);
+      } catch (err) { fallback(); }
+    }
+    function exitFull() {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      } else if (usingFallback) {
+        usingFallback = false;
+        heroCard.classList.remove('is-fs-host');
+        heroThumb.classList.remove('is-fs-fallback');
+        document.body.style.overflow = '';
+        setFull(false);
+      }
+    }
+    function setFull(on) {
+      isFull = on;
+      heroThumb.classList.toggle('is-fullscreen', on);
+      if (on) { exitBtn.focus(); return; }
+      /* Back in the page: the preview goes quiet again (or back to the still on phones) */
+      if (wantsPreview) { send('mute'); muted = true; sync(); }
+      else removeIframe();
+      fsBtn.focus();
+    }
+    ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) {
+      document.addEventListener(ev, function () {
+        var nowFull = (document.fullscreenElement || document.webkitFullscreenElement) === heroThumb;
+        if (nowFull !== isFull) setFull(nowFull);
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && usingFallback) exitFull();
+    });
+
+    fsBtn.addEventListener('click', enterFull);
+    exitBtn.addEventListener('click', exitFull);
+    playBtn.addEventListener('click', function () {
+      send(playing ? 'pauseVideo' : 'playVideo'); playing = !playing; sync();
+    });
+    muteBtn.addEventListener('click', function () {
+      send(muted ? 'unMute' : 'mute'); muted = !muted; sync();
+    });
+
+    if (wantsPreview) addIframe(true);
+    sync();
+
+    /* Reload on bfcache restore so the muted preview resumes */
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted || !iframe || isFull) return;
+      var src = iframe.src.replace('mute=0', 'mute=1');
+      iframe.src = '';
+      iframe.src = src;
+      muted = true; playing = true; sync();
+    });
   }
-
-  /* ── Hero iframe: reload on bfcache restore so autoplay resumes ── */
-  window.addEventListener('pageshow', function (e) {
-    if (!e.persisted) return;
-    var heroIframe = document.querySelector('.hero-autoplay-iframe');
-    if (heroIframe) {
-      var src = heroIframe.src;
-      heroIframe.src = '';
-      heroIframe.src = src;
-    }
-  });
-
-  /* ── Hero buttons → open standalone hero clip ── */
-  var HERO_VIDEO = VIDEOS[0];
-  ['heroPlayBtn', 'heroWatchBtn', 'heroCard'].forEach(function (id) {
-    var btn = document.getElementById(id);
-    if (btn) btn.addEventListener('click', function () { JLPlayer.open([HERO_VIDEO], 0); });
-  });
 
   /* ── Hero share button ── */
   var heroShareBtn = document.getElementById('heroShareBtn');

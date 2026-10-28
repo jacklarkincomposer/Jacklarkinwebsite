@@ -882,13 +882,14 @@ img { max-width: 100%; display: block; }
   outline: none;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .hero-card { animation: heroCardIn 0.4s ease both; }
+  /* 'backwards' (not 'both') so the finished animation doesn't block the hover lift */
+  .hero-card { animation: heroCardIn 0.4s ease backwards; }
 }
+/* Hover: lifts and grows slightly, no gold edge */
 .hero-card:hover,
 .hero-card:focus-visible {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,168,75,0.35);
-  border-color: rgba(212,168,75,0.45);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.65);
 }
 .hero-thumb {
   position: relative;
@@ -2345,6 +2346,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   cursor: pointer;
 }
 .hero-exit:hover { background: var(--gold-dim); border-color: var(--gold); }
+.hero-thumb .hero-exit { position: absolute; }
 .hero-exit kbd {
   font-family: var(--font-body);
   font-size: 0.62rem;
@@ -2383,6 +2385,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
 .hero-thumb.is-fullscreen .hero-controls { left: 50%; bottom: 24px; transform: translateX(-50%); }
 
 @media (prefers-reduced-motion: no-preference) {
+  .hero-card:hover .hero-fs-label::before { transform: translateX(150%); }
   .hero-fs-label { transition: opacity 0.2s ease; }
   .hero-ctrl, .hero-exit { transition: background 0.2s ease, border-color 0.2s ease; }
 }

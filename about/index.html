@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
-<link rel="icon" href="../assets/images/logo.png" type="image/png">
+<link rel="icon" href="../assets/images/logo-small.jpg" type="image/jpeg">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link rel="canonical" href="https://jacklarkincomposer.co.uk/about/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,7 +48,7 @@ gtag('config','G-SB5J4T9S4R');
 <!-- Nav -->
 <nav class="nav" id="mainNav">
   <a href="/" class="nav__brand">
-    <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="nav__logo" width="28" height="28">
+    <img src="../assets/images/logo-small.jpg" alt="Jack Larkin Composer" class="nav__logo" width="28" height="28">
     <span class="nav__brand-text">Jack Larkin Composer</span>
   </a>
   <ul class="nav__links">
@@ -138,16 +138,16 @@ gtag('config','G-SB5J4T9S4R');
 <div class="testimonials-section" id="testWidget">
   <!-- Desktop -->
   <div class="test-nav-bars" id="testNavBars" role="tablist" aria-label="Testimonial navigation"></div>
-  <div class="test-cards-container" id="testCards" role="region" aria-label="Testimonials" aria-live="polite"></div>
+  <div class="test-cards-container" id="testCards" role="region" aria-label="Testimonials" aria-live="off"></div>
   <!-- Mobile -->
   <div class="test-mobile" id="testMobile">
     <div id="testMCards"></div>
     <div class="m-test-nav">
-      <button class="m-test-arrow" id="testMPrev" aria-label="Previous">
+      <button class="m-test-arrow" id="testMPrev" aria-label="Previous testimonial">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <span class="m-test-counter" id="testMCounter">1 / 2</span>
-      <button class="m-test-arrow" id="testMNext" aria-label="Next">
+      <button class="m-test-arrow" id="testMNext" aria-label="Next testimonial">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
       </button>
     </div>
@@ -159,7 +159,7 @@ gtag('config','G-SB5J4T9S4R');
   <div class="footer__inner">
     <div class="footer__col footer__col--brand">
       <a href="/" class="footer__logo-link">
-        <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
+        <img src="../assets/images/logo-small.jpg" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
         <span class="footer__logo-name">Jack Larkin</span>
       </a>
       <p class="footer__tagline">Composer for Games, TV &amp; Film</p>
@@ -199,16 +199,16 @@ gtag('config','G-SB5J4T9S4R');
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../assets/js/main.js"></script>
+<script src="../assets/js/main.js"></script>
 <script>
 (function () {
   'use strict';
 
   var CONFIG = { autoInterval: 8000, resumeDelay: 15000 };
-  var COMET_IMG = 'https://cdn.jacklarkincomposer.co.uk/Images/518198685_17868898722405210_3481227417446351479_n.jpg';
-  var JOE_IMG     = 'https://cdn.jacklarkincomposer.co.uk/Images/Joewoodcockmusiclogo.png';
-  var KERESLEY_IMG = 'https://cdn.jacklarkincomposer.co.uk/Images/Keresley-Grange.webp';
-  var CALVIN_IMG ='https://cdn.jacklarkincomposer.co.uk/Images/CalvinThomas.jpeg';
+  var COMET_IMG = '../assets/images/testimonial-comet-madness.jpg';
+  var JOE_IMG     = '../assets/images/testimonial-joe-woodcock.png';
+  var KERESLEY_IMG = '../assets/images/testimonial-keresley-grange.jpg';
+  var CALVIN_IMG ='../assets/images/testimonial-calvin-thomas.jpg';
 
   var TESTIMONIALS = [
   {
@@ -285,9 +285,22 @@ gtag('config','G-SB5J4T9S4R');
     var wrap = document.createElement('div');
     wrap.className = 'test-bar-wrap' + (i === 0 ? ' active' : '');
     wrap.setAttribute('role', 'tab');
+    wrap.setAttribute('tabindex', i === 0 ? '0' : '-1');
+    wrap.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    wrap.setAttribute('aria-label', 'Testimonial ' + (i + 1) + ': ' + t.author);
     wrap.dataset.label = t.author;
     wrap.innerHTML = '<div class="test-bar-track"><div class="test-bar-fill"></div></div>';
     wrap.addEventListener('click', function () { onBarClick(i); });
+    wrap.addEventListener('keydown', function (e) {
+      var n = TESTIMONIALS.length, to = null;
+      if (e.key === 'Enter' || e.key === ' ') to = i;
+      else if (e.key === 'ArrowRight') to = (i + 1) % n;
+      else if (e.key === 'ArrowLeft') to = (i - 1 + n) % n;
+      if (to === null) return;
+      e.preventDefault();
+      onBarClick(to);
+      allWraps[to].focus();
+    });
     navEl.appendChild(wrap);
   });
 
@@ -310,11 +323,15 @@ gtag('config','G-SB5J4T9S4R');
   function showCard(index) {
     allCards[current].classList.remove('active');
     allWraps[current].classList.remove('active');
+    allWraps[current].setAttribute('aria-selected', 'false');
+    allWraps[current].setAttribute('tabindex', '-1');
     allFills[current].style.transition = 'none';
     allFills[current].style.width = index > current ? '100%' : '0%';
     current = index;
     allCards[current].classList.add('active');
     allWraps[current].classList.add('active');
+    allWraps[current].setAttribute('aria-selected', 'true');
+    allWraps[current].setAttribute('tabindex', '0');
     startFill(current);
   }
   function startAuto() { clearInterval(autoTimer); autoTimer=setInterval(function(){ showCard((current+1)%TESTIMONIALS.length); },CONFIG.autoInterval); startFill(current); }
@@ -322,6 +339,14 @@ gtag('config','G-SB5J4T9S4R');
   function onBarClick(i) { stopAuto(); clearTimeout(resumeTimer); showCard(i); resumeTimer=setTimeout(startAuto,CONFIG.resumeDelay); }
 
   document.addEventListener('visibilitychange', function(){ document.hidden?stopAuto():startAuto(); });
+  /* Pause rotation while someone is hovering over or tabbing through the testimonials */
+  var widget = document.getElementById('testWidget'), held = false;
+  function hold()    { if (held) return; held = true; stopAuto(); clearTimeout(resumeTimer); }
+  function release() { if (!held || widget.matches(':hover') || widget.contains(document.activeElement)) return; held = false; startAuto(); }
+  widget.addEventListener('mouseenter', hold);
+  widget.addEventListener('focusin', hold);
+  widget.addEventListener('mouseleave', release);
+  widget.addEventListener('focusout', function () { setTimeout(release, 0); });
   startAuto();
 
   /* Mobile */

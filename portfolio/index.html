@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
-<link rel="icon" href="../assets/images/logo.png" type="image/png">
+<link rel="icon" href="../assets/images/logo-small.jpg" type="image/jpeg">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link rel="canonical" href="https://jacklarkincomposer.co.uk/portfolio/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -177,6 +177,7 @@ input[type=range]::-moz-range-thumb {
 .track:hover .btn-share,.track-wrap.active .btn-share { opacity:1; }
 .btn-share:hover { color:var(--gold); }
 .btn-share.copied { color:var(--gold); }
+.btn-share:focus-visible { opacity:1; }
 .btn-share .share-tip { position:absolute; top:50%; left:calc(100% + 8px); transform:translateY(-50%); background:none; color:var(--gold); font-family:'Lora',serif; font-style:italic; font-size:13px; font-weight:400; letter-spacing:0.03em; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.15s; z-index:10; }
 .btn-share.copied .share-tip { opacity:1; }
 @media (prefers-reduced-motion: reduce) { .btn-share,.btn-share .share-tip { transition:none; } }
@@ -251,7 +252,7 @@ input[type=range]::-moz-range-thumb {
 <!-- Navigation -->
 <nav class="nav" id="mainNav">
   <a href="/" class="nav__brand">
-    <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="nav__logo" width="28" height="28">
+    <img src="../assets/images/logo-small.jpg" alt="Jack Larkin Composer" class="nav__logo" width="28" height="28">
     <span class="nav__brand-text">Jack Larkin Composer</span>
   </a>
   <ul class="nav__links">
@@ -325,7 +326,7 @@ input[type=range]::-moz-range-thumb {
 <div class="aw-feature reveal" id="ancient-wanderer">
   <div class="aw-feature__card">
     <div class="aw-feature__img-wrap">
-      <img class="aw-feature__img" src="https://cdn.jacklarkincomposer.co.uk/Ancient-Wanderer-Full-Experience-Stems/Images/Ch1/S3.png" alt="The Ancient Wanderer — A Curse Doesn't Announce Itself" loading="lazy">
+      <img class="aw-feature__img" src="../assets/images/feature-ancient-wanderer.jpg" alt="The Ancient Wanderer — A Curse Doesn't Announce Itself" loading="lazy">
       <div class="aw-feature__img-overlay" aria-hidden="true"></div>
     </div>
     <div class="aw-feature__body">
@@ -381,7 +382,7 @@ input[type=range]::-moz-range-thumb {
 <hr class="section-divider">
 <div class="sd-feature reveal">
   <a class="sd-feature__card" href="/sound-design/" aria-label="View Sound Design Portfolio">
-    <img class="sd-feature__img" src="https://cdn.jacklarkincomposer.co.uk/Images/AMP.png" alt="Sound Design Portfolio — Jack Larkin" loading="lazy">
+    <img class="sd-feature__img" src="../assets/images/feature-amp.jpg" alt="Sound Design Portfolio — Jack Larkin" loading="lazy">
     <div class="sd-feature__overlay" aria-hidden="true"></div>
     <div class="sd-feature__body">
       <span class="sd-feature__eyebrow">Also in my portfolio</span>
@@ -397,7 +398,7 @@ input[type=range]::-moz-range-thumb {
   <div class="footer__inner">
     <div class="footer__col footer__col--brand">
       <a href="/" class="footer__logo-link">
-        <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
+        <img src="../assets/images/logo-small.jpg" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
         <span class="footer__logo-name">Jack Larkin</span>
       </a>
       <p class="footer__tagline">Composer for Games, TV &amp; Film</p>
@@ -437,7 +438,7 @@ input[type=range]::-moz-range-thumb {
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../assets/js/main.js"></script>
+<script src="../assets/js/main.js"></script>
 <script>
 (function () {
   'use strict';
@@ -521,33 +522,13 @@ input[type=range]::-moz-range-thumb {
         '</div>' +
         badgeHTML +
       '</div>' +
-      '<div class="gal-card-meta"><div class="gal-card-title">' +
-        (v.type === 'youtube'
-          ? '<div class="gal-skel"></div><div class="gal-skel gal-skel-short"></div>'
-          : safe(v.title)) +
-      '</div>' +
+      '<div class="gal-card-meta"><div class="gal-card-title">' + safe(v.title) + '</div>' +
       '<button class="vid-share-btn" aria-label="Copy link to ' + safe(v.title) + '" tabindex="-1">' + V_SHARE + '<span class="share-tip">Copied!</span></button>' +
       '</div>';
 
     var img = card.querySelector('img');
     img.addEventListener('load',  function () { img.classList.add('loaded'); });
     img.addEventListener('error', function () { img.style.opacity = '0.15'; });
-
-    /* Fetch title for YT cards */
-    if (v.type === 'youtube') {
-      (function (card, v) {
-        fetch('https://noembed.com/embed?url=https://www.youtube.com/watch?v=' + v.ytId)
-          .then(function (r) { return r.ok ? r.json() : {}; })
-          .then(function (d) {
-            var t = d.title || v.title;
-            card.querySelector('.gal-card-title').textContent = t;
-            img.alt = t;
-          })
-          .catch(function () {
-            card.querySelector('.gal-card-title').textContent = v.title;
-          });
-      }(card, v));
-    }
 
     function go() { JLPlayer.open(VIDEOS, i); }
     card.addEventListener('click', go);
@@ -624,10 +605,11 @@ input[type=range]::-moz-range-thumb {
     'use strict';
   
     var LOGO      = 'https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png';
-    var SPECOPS   = 'https://cdn.jacklarkincomposer.co.uk/Images/Spec%20Ops%20Logo.png';
-    var NOESCAPE  = 'https://cdn.jacklarkincomposer.co.uk/Images/No%20escape%20Album%202.png';
-    var DESERT    = 'https://cdn.jacklarkincomposer.co.uk/Images/The%20Desert.png';
-    var KARTRUSH  = 'https://cdn.jacklarkincomposer.co.uk/Images/Kart%20Rush.png';
+    /* Album art: small copies in assets/images (originals on the CDN are 0.8–2.7 MB each) */
+    var SPECOPS   = '../assets/images/album-spec-ops.jpg';
+    var NOESCAPE  = '../assets/images/album-no-escape.jpg';
+    var DESERT    = '../assets/images/album-the-desert.jpg';
+    var KARTRUSH  = '../assets/images/album-kart-rush.jpg';
   
     var TRACKS = [
       { title:'Under Pressure',      src:'https://cdn.jacklarkincomposer.co.uk/Audio/Canadian%20side%20vers2.mp3',                                                image:SPECOPS,   description:'Orchestral · Dark · Tense',         mood:['Orchestral','Dark','Tense'],         album:'Spec Ops'   },
@@ -650,7 +632,7 @@ input[type=range]::-moz-range-thumb {
       { title:'Lobby Music',         src:'https://cdn.jacklarkincomposer.co.uk/Audio/Lobby%20Music.mp3',                                                           image:KARTRUSH,  description:'Electronic · Jazz · Ambient',       mood:['Electronic','Jazz','Ambient'],       album:'Kart Rush'  },
       { title:'Sugar Rush',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/Sugar%20Rush.mp3',                                                            image:KARTRUSH,  description:'Electronic · Jazz · Upbeat',        mood:['Electronic','Jazz','Upbeat'],        album:'Kart Rush'  },
       { title:'Toy Room',            src:'https://cdn.jacklarkincomposer.co.uk/Audio/Toy%20Room.mp3',                                                               image:KARTRUSH,  description:'Electronic · Jazz · Upbeat',        mood:['Electronic','Jazz','Upbeat'],        album:'Kart Rush'  },
-      { title:'Iron Titan',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/IRON%20TITAN.mp3',                                                            image:'https://cdn.jacklarkincomposer.co.uk/Audio/Bot%20Battle.png', description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],        album:null         }
+      { title:'Iron Titan',          src:'https://cdn.jacklarkincomposer.co.uk/Audio/IRON%20TITAN.mp3',                                                            image:'../assets/images/album-iron-titan.jpg', description:'Orchestral · Action · Epic',        mood:['Orchestral','Action','Epic'],        album:null         }
     ];
   
     var PLACEHOLDER = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9 3v10.55A4 4 0 1 0 11 17V7h4V3H9z"/></svg>';
@@ -679,7 +661,7 @@ input[type=range]::-moz-range-thumb {
     var isMuted = false, preMuteVol = 1, currentVol = 1;
     var activeMood = 'All', activeAlbum = 'All';
     var rafId = null, pendingSeek = {};
-    var wraps = [], trackRefs = [];
+    var wraps = [], trackRefs = [], durs = [];
     var TRACK_CAP = 8, apExpanded = false, apMoreRow = null;
 
     function applyFilters() {
@@ -698,13 +680,18 @@ input[type=range]::-moz-range-thumb {
         apMoreRow.style.display = hasCapped ? '' : 'none';
       }
     }
-    function setBtn(i, p) { trackRefs[i].btnPlay.innerHTML = p ? PAUSE_ICON : PLAY_ICON; wraps[i].classList.toggle('playing', p); }
+    function setBtn(i, p) {
+      trackRefs[i].btnPlay.innerHTML = p ? PAUSE_ICON : PLAY_ICON;
+      trackRefs[i].btnPlay.setAttribute('aria-label', (p ? 'Pause ' : 'Play ') + TRACKS[i].title);
+      wraps[i].classList.toggle('playing', p);
+    }
     function stopTicker() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
     function resetWrap(i) {
       stopTicker(); wraps[i].classList.remove('active','playing','loading');
       trackRefs[i].btnPlay.innerHTML = PLAY_ICON;
+      trackRefs[i].btnPlay.setAttribute('aria-label', 'Play ' + TRACKS[i].title);
       trackRefs[i].fill.style.width = '0%';
-      trackRefs[i].dur.textContent = fmt(pool[i].duration) || '--:--';
+      trackRefs[i].dur.textContent = fmt(pool[i].duration || durs[i]);
     }
     function play(i) {
       if (activeIdx === i && isPlaying) return;
@@ -767,10 +754,10 @@ input[type=range]::-moz-range-thumb {
     ctrlRow.innerHTML =
       '<div class="vol-group">' +
         '<span class="vol-icon" id="apVolIcon">' + VOL_ON + '</span>' +
-        '<input type="range" id="apVolSlider" min="0" max="1" step="0.01" value="1">' +
+        '<input type="range" id="apVolSlider" min="0" max="1" step="0.01" value="1" aria-label="Volume">' +
         '<span class="vol-pct" id="apVolPct">100%</span>' +
       '</div>' +
-      '<button class="ap-cog-btn" id="apCogBtn" title="Playback settings" aria-expanded="false">' + COG_ICON + '</button>';
+      '<button class="ap-cog-btn" id="apCogBtn" title="Playback settings" aria-label="Playback settings" aria-expanded="false" aria-controls="apCogDropdown">' + COG_ICON + '</button>';
   
     /* ── Cog dropdown ── */
     var cogDropdown = document.createElement('div');
@@ -916,11 +903,11 @@ input[type=range]::-moz-range-thumb {
       wrap.innerHTML =
         '<div class="track">' +
           '<div class="art">' + artHTML +
-            '<button class="btn-play" tabindex="-1" aria-hidden="true">'+PLAY_ICON+'</button>' +
+            '<button class="btn-play" aria-label="Play '+t.title+'">'+PLAY_ICON+'</button>' +
             '<div class="spinner">'+SPIN_ICON+'</div>' +
           '</div>' +
           '<div class="info">' +
-            '<div class="title-row"><span class="track-num">'+String(idx+1).padStart(2,'0')+'</span><span class="track-title">'+t.title+'</span><button class="btn-share" aria-label="Copy link to '+t.title+'" tabindex="-1">'+SHARE_ICON+'<span class="share-tip">Copied!</span></button></div>' +
+            '<div class="title-row"><span class="track-num">'+String(idx+1).padStart(2,'0')+'</span><span class="track-title">'+t.title+'</span><button class="btn-share" aria-label="Copy link to '+t.title+'">'+SHARE_ICON+'<span class="share-tip">Copied!</span></button></div>' +
             descHTML + tagHTML +
             '<div class="progress"><div class="progress-fill"></div></div>' +
           '</div>' +
@@ -993,6 +980,26 @@ input[type=range]::-moz-range-thumb {
       trackList.appendChild(wrap);
     });
   
+    /* ── Durations: fetch just the metadata for rows as they come into view ── */
+    if ('IntersectionObserver' in window) {
+      var durObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          var i = wraps.indexOf(en.target);
+          durObs.unobserve(en.target);
+          var probe = new Audio();
+          probe.preload = 'metadata';
+          probe.addEventListener('loadedmetadata', function () {
+            durs[i] = probe.duration;
+            if (activeIdx !== i) trackRefs[i].dur.textContent = fmt(durs[i]);
+            probe.removeAttribute('src'); probe.load();
+          });
+          probe.src = TRACKS[i].src;
+        });
+      }, { rootMargin: '200px' });
+      wraps.forEach(function (w) { durObs.observe(w); });
+    }
+
     /* ── Track cap at 8 ── */
     if (TRACKS.length > TRACK_CAP) {
       wraps.forEach(function(w, i) { if (i >= TRACK_CAP) w.classList.add('track-capped'); });
@@ -1046,12 +1053,15 @@ input[type=range]::-moz-range-thumb {
     }());
 
     document.addEventListener('keydown', function(e) {
-      var tag = document.activeElement.tagName;
-      if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (window.JLPlayer && JLPlayer.isOpen && JLPlayer.isOpen()) return;
+      var el = document.activeElement;
+      if (el && el !== document.body && el.matches('a, button, input, select, textarea, summary, [tabindex], [contenteditable]')) return;
+      if (activeIdx < 0 && e.key !== 'm' && e.key !== 'M') return; /* nothing playing: let Space/arrows scroll as normal */
       switch(e.key) {
-        case ' ':          e.preventDefault(); if(activeIdx>=0) toggle(activeIdx); break;
-        case 'ArrowRight': e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.min(pool[activeIdx].duration||0,pool[activeIdx].currentTime+10); break;
-        case 'ArrowLeft':  e.preventDefault(); if(activeIdx>=0) pool[activeIdx].currentTime=Math.max(0,pool[activeIdx].currentTime-10); break;
+        case ' ':          e.preventDefault(); toggle(activeIdx); break;
+        case 'ArrowRight': e.preventDefault(); pool[activeIdx].currentTime=Math.min(pool[activeIdx].duration||0,pool[activeIdx].currentTime+10); break;
+        case 'ArrowLeft':  e.preventDefault(); pool[activeIdx].currentTime=Math.max(0,pool[activeIdx].currentTime-10); break;
         case 'm': case 'M': isMuted?applyVol(preMuteVol):(preMuteVol=currentVol,applyVol(0)); break;
       }
     });

@@ -71,7 +71,11 @@
   var alreadySeen = false;
   try { alreadySeen = !!sessionStorage.getItem(KEY); } catch (e) {}
 
-  if (alreadySeen) {
+  /* Between the mobile breakpoint and ~1580px the expanded panel covers the page content,
+     so on those widths it arrives already collapsed to the tab */
+  var wouldCover = window.matchMedia('(min-width: 701px) and (max-width: 1579px)').matches;
+
+  if (alreadySeen || wouldCover) {
     /* Slide in already-collapsed */
     setTimeout(function () {
       banner.classList.add('is-visible');
@@ -119,26 +123,31 @@ rAF.start();
   var toggle = document.getElementById('navToggle');
   var panel  = document.getElementById('mobilePanel');
   var close  = document.getElementById('mobileClose');
+  function closeMenu(returnFocus) {
+    panel.classList.remove('open');
+    document.body.style.overflow = '';
+    toggle.setAttribute('aria-expanded', 'false');
+    if (returnFocus) toggle.focus();
+  }
   if (toggle && panel) {
     toggle.addEventListener('click', function () {
       var isOpen = panel.classList.contains('open');
       if (isOpen) {
-        panel.classList.remove('open');
-        document.body.style.overflow = '';
-        toggle.setAttribute('aria-expanded', 'false');
+        closeMenu(false);
       } else {
         panel.classList.add('open');
         document.body.style.overflow = 'hidden';
         toggle.setAttribute('aria-expanded', 'true');
+        var firstLink = panel.querySelector('a');
+        if (firstLink) firstLink.focus();
       }
     });
     if (close) {
-      close.addEventListener('click', function () {
-        panel.classList.remove('open');
-        document.body.style.overflow = '';
-        toggle.setAttribute('aria-expanded', 'false');
-      });
+      close.addEventListener('click', function () { closeMenu(true); });
     }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && panel.classList.contains('open')) closeMenu(true);
+    });
     panel.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
         panel.classList.remove('open');
@@ -239,6 +248,7 @@ rAF.start();
       });
     });
     document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var link = e.target.closest('a[href]');
       if (!link) return;
       var href = link.getAttribute('href');
@@ -274,6 +284,40 @@ document.addEventListener('click', function (e) {
   if (!e.target.closest('.custom-select')) {
     document.querySelectorAll('.custom-select.open').forEach(function (d) { d.classList.remove('open'); });
   }
+});
+/* Keyboard support for custom dropdowns: the trigger opens with Enter/Space/Down,
+   options are focusable and chosen with Enter/Space, Escape closes */
+document.querySelectorAll('.custom-select').forEach(function (sel) {
+  var trigger = sel.querySelector('.custom-select__trigger');
+  var options = Array.from(sel.querySelectorAll('[role="option"]'));
+  if (!trigger) return;
+  trigger.setAttribute('aria-expanded', 'false');
+  options.forEach(function (li) { li.setAttribute('tabindex', '-1'); });
+  new MutationObserver(function () {
+    trigger.setAttribute('aria-expanded', sel.classList.contains('open') ? 'true' : 'false');
+  }).observe(sel, { attributes: true, attributeFilter: ['class'] });
+  function focusOption(i) {
+    if (!options.length) return;
+    options[(i + options.length) % options.length].focus();
+  }
+  trigger.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!sel.classList.contains('open')) trigger.click();
+      var current = options.findIndex(function (li) { return li.classList.contains('selected'); });
+      focusOption(current > -1 ? current : 0);
+    } else if (e.key === 'Escape') {
+      sel.classList.remove('open');
+    }
+  });
+  options.forEach(function (li, i) {
+    li.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); focusOption(i + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); focusOption(i - 1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.click(); trigger.focus(); }
+      else if (e.key === 'Escape' || e.key === 'Tab') { sel.classList.remove('open'); if (e.key === 'Escape') trigger.focus(); }
+    });
+  });
 });
 
 /* ── Gold Particle System ── */
@@ -374,6 +418,7 @@ window.JLPlayer = (function () {
   var _infoOpen = false;
   var _overlay = null;
   var _els     = {};
+  var _returnFocus = null;
 
   /* ── Build the overlay HTML (once) ── */
   function _build() {
@@ -545,6 +590,7 @@ window.JLPlayer = (function () {
 
   function _open(videos, startIdx) {
     _build();
+    _returnFocus = document.activeElement;
     _videos = videos || [];
     _idx = startIdx || 0;
     _infoOpen = false;
@@ -571,10 +617,13 @@ window.JLPlayer = (function () {
       _stopMedia();
       _infoOpen = false;
       document.body.style.overflow = '';
+      if (_returnFocus && _returnFocus.focus) _returnFocus.focus();
     }, 240);
   }
 
-  return { open: _open, close: _close };
+  function _isOpen() { return !!(_overlay && _overlay.classList.contains('open')); }
+
+  return { open: _open, close: _close, isOpen: _isOpen };
 
 }());
 

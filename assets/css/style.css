@@ -568,7 +568,7 @@ img { max-width: 100%; display: block; }
   display: none;
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 999;
+  z-index: 1100; /* above the nav, announcement bar and Ancient Wanderer banner */
   background: rgba(6,6,6,0.97);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -2509,6 +2509,8 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   button:active, [role="button"]:active {
     transform: scale(0.97);
   }
+  /* keep the scroll-to-top button centred while pressed */
+  .scroll-top:active { transform: translateX(-50%) scale(0.97); }
   :focus-visible {
     outline: 2px solid var(--gold);
     outline-offset: 2px;

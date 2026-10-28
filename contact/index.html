@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://cdn.jacklarkincomposer.co.uk/Images/Composer%20Logo.png">
-<link rel="icon" href="../assets/images/logo.png" type="image/png">
+<link rel="icon" href="../assets/images/logo-small.jpg" type="image/jpeg">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link rel="canonical" href="https://jacklarkincomposer.co.uk/contact/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,7 +51,7 @@ gtag('config','G-SB5J4T9S4R');
 <!-- Navigation -->
 <nav class="nav" id="mainNav">
   <a href="/" class="nav__brand">
-    <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="nav__logo" width="28" height="28">
+    <img src="../assets/images/logo-small.jpg" alt="Jack Larkin Composer" class="nav__logo" width="28" height="28">
     <span class="nav__brand-text">Jack Larkin Composer</span>
   </a>
   <ul class="nav__links">
@@ -145,10 +145,10 @@ gtag('config','G-SB5J4T9S4R');
     </div>
 
     <div class="form-group" id="projectTypeGroup">
-      <label>Project Type <span class="required">*</span></label>
+      <label id="projectTypeLabel">Project Type <span class="required">*</span></label>
       <div class="custom-select" id="selectProjectType">
-        <div class="custom-select__trigger" onclick="toggleDropdown('selectProjectType')" role="button" tabindex="0" aria-haspopup="listbox">
-          <span class="custom-select__value">Select project type</span>
+        <div class="custom-select__trigger" onclick="toggleDropdown('selectProjectType')" role="button" tabindex="0" aria-haspopup="listbox" aria-labelledby="projectTypeLabel selectProjectTypeValue">
+          <span class="custom-select__value" id="selectProjectTypeValue">Select project type</span>
           <svg class="custom-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <ul class="custom-select__menu" role="listbox">
@@ -170,8 +170,8 @@ gtag('config','G-SB5J4T9S4R');
     </div>
 
     <div class="genre-section" id="genreSection">
-      <label class="genre-label">Music Style <span class="required">*</span></label>
-      <div class="genre-grid">
+      <label class="genre-label" id="genreLabel">Music Style <span class="required">*</span></label>
+      <div class="genre-grid" role="group" aria-labelledby="genreLabel">
         <div class="genre-btn" data-genre="Orchestral">Orchestral</div>
         <div class="genre-btn" data-genre="Cinematic">Cinematic</div>
         <div class="genre-btn" data-genre="Electronic">Electronic</div>
@@ -188,10 +188,10 @@ gtag('config','G-SB5J4T9S4R');
 
     <div class="form-row">
       <div class="form-group" id="budgetGroup">
-        <label>Budget Range <span class="required">*</span></label>
+        <label id="budgetLabel">Budget Range <span class="required">*</span></label>
         <div class="custom-select" id="selectBudget">
-          <div class="custom-select__trigger" onclick="toggleDropdown('selectBudget')" role="button" tabindex="0" aria-haspopup="listbox">
-            <span class="custom-select__value">Select budget</span>
+          <div class="custom-select__trigger" onclick="toggleDropdown('selectBudget')" role="button" tabindex="0" aria-haspopup="listbox" aria-labelledby="budgetLabel selectBudgetValue">
+            <span class="custom-select__value" id="selectBudgetValue">Select budget</span>
             <svg class="custom-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <ul class="custom-select__menu" role="listbox">
@@ -214,10 +214,10 @@ gtag('config','G-SB5J4T9S4R');
         <div class="error-message">Please select a budget</div>
       </div>
       <div class="form-group" id="timelineGroup">
-        <label>Timeline <span class="required">*</span></label>
+        <label id="timelineLabel">Timeline <span class="required">*</span></label>
         <div class="custom-select" id="selectTimeline">
-          <div class="custom-select__trigger" onclick="toggleDropdown('selectTimeline')" role="button" tabindex="0" aria-haspopup="listbox">
-            <span class="custom-select__value">When do you need it?</span>
+          <div class="custom-select__trigger" onclick="toggleDropdown('selectTimeline')" role="button" tabindex="0" aria-haspopup="listbox" aria-labelledby="timelineLabel selectTimelineValue">
+            <span class="custom-select__value" id="selectTimelineValue">When do you need it?</span>
             <svg class="custom-select__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <ul class="custom-select__menu" role="listbox">
@@ -257,7 +257,7 @@ gtag('config','G-SB5J4T9S4R');
   <div class="footer__inner">
     <div class="footer__col footer__col--brand">
       <a href="/" class="footer__logo-link">
-        <img src="../assets/images/logo.png" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
+        <img src="../assets/images/logo-small.jpg" alt="Jack Larkin Composer" class="footer__logo-img" width="36" height="36">
         <span class="footer__logo-name">Jack Larkin</span>
       </a>
       <p class="footer__tagline">Composer for Games, TV &amp; Film</p>
@@ -299,7 +299,7 @@ gtag('config','G-SB5J4T9S4R');
 
 <div class="notification" id="notification" role="status" aria-live="polite"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="../assets/js/main.js"></script>
+<script src="../assets/js/main.js"></script>
 <script>
 (function () {
   'use strict';
@@ -331,8 +331,15 @@ gtag('config','G-SB5J4T9S4R');
   });
 
   document.querySelectorAll('.genre-btn').forEach(function (btn) {
+    btn.setAttribute('role', 'checkbox');
+    btn.setAttribute('tabindex', '0');
+    btn.setAttribute('aria-checked', 'false');
+    btn.addEventListener('keydown', function (e) {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); btn.click(); }
+    });
     btn.addEventListener('click', function () {
       var g = this.dataset.genre, on = this.classList.toggle('selected');
+      this.setAttribute('aria-checked', on ? 'true' : 'false');
       if (g === 'Other') {
         otherGenreField.classList.toggle('show', on);
         if (on) otherGenreInput.focus(); else otherGenreInput.value = '';
@@ -396,7 +403,11 @@ gtag('config','G-SB5J4T9S4R');
     if (!validate()) {
       toast('Please fill in all required fields.', 'error');
       var first = form.querySelector('.form-group.error, .genre-section.error');
-      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (first) {
+        first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        var ctl = first.querySelector('input:not([type=hidden]), .custom-select__trigger, .genre-btn');
+        if (ctl) ctl.focus({ preventScroll: true });
+      }
       return;
     }
     var sendType = projType.value === 'Other' && otherProjInput.value.trim() ? otherProjInput.value.trim() : projType.value;
@@ -414,7 +425,7 @@ gtag('config','G-SB5J4T9S4R');
         toast("Message sent! I'll usually be in touch within a few days.", 'success');
         form.reset();
         selectedGenres = [];
-        document.querySelectorAll('.genre-btn.selected').forEach(function (b) { b.classList.remove('selected'); });
+        document.querySelectorAll('.genre-btn.selected').forEach(function (b) { b.classList.remove('selected'); b.setAttribute('aria-checked', 'false'); });
         document.getElementById('selectedGenres').value = '';
         otherGenreField.classList.remove('show');
         otherGenreInput.value = '';

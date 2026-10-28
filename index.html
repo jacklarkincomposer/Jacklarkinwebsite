@@ -445,6 +445,12 @@ gtag('config','G-SB5J4T9S4R');
       iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
       iframe.setAttribute('tabindex', '-1');
       iframe.title = HERO_VIDEO.title;
+      /* If the video player was already open when this loaded (e.g. a ?video= link), start paused */
+      iframe.addEventListener('load', function () {
+        setTimeout(function () {
+          if (window.JLPlayer && JLPlayer.isOpen()) { send('pauseVideo'); playing = false; sync(); }
+        }, 600);
+      });
       heroThumb.insertBefore(iframe, fsBtn);
       heroThumb.classList.add('has-video');
       muted = startMuted; playing = true; sync();
@@ -501,6 +507,17 @@ gtag('config','G-SB5J4T9S4R');
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && usingFallback) exitFull();
+    });
+
+    /* Pause while a Recent Work video is open in the player, resume afterwards if it was playing */
+    var resumeAfterPlayer = false;
+    window.addEventListener('jlp:open', function () {
+      resumeAfterPlayer = playing;
+      if (playing) { send('pauseVideo'); playing = false; sync(); }
+    });
+    window.addEventListener('jlp:close', function () {
+      if (resumeAfterPlayer && iframe && !isFull) { send('playVideo'); playing = true; sync(); }
+      resumeAfterPlayer = false;
     });
 
     fsBtn.addEventListener('click', enterFull);

@@ -606,6 +606,8 @@ window.JLPlayer = (function () {
     document.body.style.overflow = 'hidden';
     _overlay.classList.add('open');
     setTimeout(function () { _overlay.classList.add('visible'); }, 20);
+    /* Let other media on the page (e.g. the homepage hero video) pause while this plays */
+    window.dispatchEvent(new CustomEvent('jlp:open'));
     setTimeout(function () { _els.back.focus(); }, 240);
   }
 
@@ -618,6 +620,7 @@ window.JLPlayer = (function () {
       _infoOpen = false;
       document.body.style.overflow = '';
       if (_returnFocus && _returnFocus.focus) _returnFocus.focus();
+      window.dispatchEvent(new CustomEvent('jlp:close'));
     }, 240);
   }
 

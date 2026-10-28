@@ -1825,7 +1825,7 @@ img { max-width: 100%; display: block; }
 .service-block__title { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--white); margin-bottom: 10px; }
 .service-block__desc { font-size: 0.95rem; font-weight: 300; line-height: 1.75; color: var(--text-muted); }
 
-.service-quote { margin: 0 auto; max-width: 680px; padding: 28px 32px; border-left: 3px solid var(--gold); background: var(--glass-bg-mid); backdrop-filter: blur(var(--glass-blur)); border-radius: 0 8px 8px 0; }
+.service-quote { margin: 0 auto; max-width: 680px; padding: 28px 32px; border-left: 3px solid var(--gold); background: var(--glass-bg-mid); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: 0 8px 8px 0; }
 .service-quote p { font-family: var(--font-quote); font-size: 1.05rem; line-height: 1.7; color: var(--text); margin: 0 0 14px; }
 .service-quote footer { font-family: var(--font-heading); font-size: 0.78rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; }
 .service-quote cite { font-style: normal; color: var(--gold); }
@@ -2611,7 +2611,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
 /* ── Micro-interactions ── */
 @media (prefers-reduced-motion: no-preference) {
   a, button, .card, .gallery-item, .gal-card, .work-card {
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
   }
   button:active, [role="button"]:active {
     transform: scale(0.97);
@@ -2625,16 +2625,6 @@ html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent
   }
   :focus-visible:focus {
     outline-offset: 4px;
-  }
-  /* Underline animation on bare links */
-  main a:not(.btn):not([class]) {
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-underline-offset: 3px;
-    transition: text-decoration-color 0.25s ease;
-  }
-  main a:not(.btn):not([class]):hover {
-    text-decoration-color: var(--gold);
   }
 }
 
@@ -2737,3 +2727,23 @@ html {
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ── Skip link: hidden until a keyboard user tabs to it ── */
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 2000;
+  padding: 10px 18px;
+  background: var(--gold);
+  color: var(--black);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.skip-link:focus { top: 12px; color: var(--black); }
+
+/* ── Reduced motion: the Ancient Wanderer banner appears in place instead of sliding ── */
+@media (prefers-reduced-motion: reduce) {
+  .av-banner { transition: none; }
+}

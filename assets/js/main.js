@@ -74,8 +74,10 @@
   /* Between the mobile breakpoint and ~1580px the expanded panel covers the page content,
      so on those widths it arrives already collapsed to the tab */
   var wouldCover = window.matchMedia('(min-width: 701px) and (max-width: 1579px)').matches;
+  /* Visitors who've asked for less motion get the quiet, collapsed tab straight away */
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (alreadySeen || wouldCover) {
+  if (alreadySeen || wouldCover || reduceMotion) {
     /* Slide in already-collapsed */
     setTimeout(function () {
       banner.classList.add('is-visible');
